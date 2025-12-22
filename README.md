@@ -48,9 +48,25 @@ Platform | Description
 
 ## Installation
 
-### HACS
 
-tbd.
+### Install HACS Repository
+
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=AndyNew2&repository=hacs-idm-hpweb&category=integration)
+
+1. Install [HACS](https://hacs.xyz/) and complete its setup.
+2. Open HACS and select "Integrations".
+3. Add `AndyNew2/hacs-idm-heatpump` with category "Integration" as a [Custom Repository](https://hacs.xyz/docs/faq/custom_repositories/).
+4. Select "IDM hp web" from the list and click "Download".
+
+### Set up integration
+
+[![Add integration to Home Assistant!](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=idm_hpweb)
+
+The integration now appears like any other Home Assistant integration.
+To set it up, follow these steps:
+
+1. In the HA UI go to "Settings" -> "Devices & Services", click "+ Add Integration" in the bottom right corner, and search for "IDM hp web".
+2. Make sure the heat pump is configured correctly (see below), then fill out the necessary details in the setup form. See Configuration using Config Flow below for more details.
 
 ### Manual Installation
 
