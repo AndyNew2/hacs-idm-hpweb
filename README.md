@@ -74,7 +74,7 @@ Just create on your HA installation a subdir in homeassistant/
 1. A subdir called idm_hpweb
 2. Copy all files from here to that directory including subfolders like translations (probably the only one)
 3. Restart Home Assistant
-4. Go to devices, search now for idm_hpweb device and follow the config flow, see next section
+4. Go to devices, search now for idm_hpweb or "iDM Heatpump Web" device and follow the config flow, see next section
 
 ### Configuration using the Config Flow
 5. In the config flow you need to enter the IP Address of your heat pump (the same you use to access the local Web GUI). Enter the IP Address in the field "Host"
