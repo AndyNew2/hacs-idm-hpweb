@@ -85,8 +85,8 @@ Done the integration should check the access and start after that automatically 
 
 ## Recommendations & Tipps and Tricks
 
-1. Install both integrations and use the Kodebach integration on 1 minute update rate or even slower to relax both HA and the iDM heat pump controller. In this integration use the standard update rate of 10 seconds or around to have a faster update on a view needed signals.
-2. Disable all entities in this integration, you do not need faster update rate and(!) have the entity anyway in the Kodebach integration. Good examples are flow temperature and return temperature. By disabling them in this integration, you greatly safe resources on the Home Assistant world, mainly the recorder.
+1. Install both integrations and use the Kodebach integration on 1 minute update rate or even slower to relax both HA and the iDM heat pump controller. In this integration use the standard update rate of 10 seconds or around to have a faster update on signals, needing the higher update rate.
+2. Disable all entities in this integration, you do not need faster update rate and(!) having the entity anyway in the Kodebach integration. Good examples are flow temperature and return temperature. By disabling them in this integration, you greatly safe resources on the Home Assistant world, mainly the recorder.
 3. Disable all entities in the Kodebach integration, you plan to use from this integration, in case you need the higher update rate. That prevents having the same information recorded twice in Home Assistant.
 
 ***
