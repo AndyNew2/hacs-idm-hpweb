@@ -12,5 +12,6 @@
   "quality_scale": "bronze",
   "requirements": [],
   "ssdp": [],
-  "zeroconf": []
+  "zeroconf": [],
+  "version": "v0.1.0"
 }
