@@ -31,6 +31,7 @@ Platform | Description
 5. This integration do not provide all entities iDM heat pump can provide, not gives up to now any control. However the provided entities enriches other integration.
 6. This integration is actually a compantion designed to work together with the popular Kodebach iDM Integration see https://github.com/kodebach/hacs-idm-heatpump
 7. This integration will even run, if ModbusTCP protocol is not yet activated by your iDM service team. However I recommend to do so, to be able to run this integration together with the Kodebach integration
+8. See this Wiki for a picture, what you could see using this integration: https://github.com/AndyNew2/hacs-idm-hpweb/wiki
 
 
 ## #What is the difference to already existing integrations for iDM heat pumps, and why may I want to use it
