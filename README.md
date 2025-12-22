@@ -6,6 +6,8 @@ HACS integration for IDM heat pumps by using just the WEB interface
 
 # IDM heat pump web integration
 
+[![GitHub Release][releases-shield]][releases]
+[![GitHub Activity][commits-shield]][commits]
 [![License][license-shield]](LICENSE)
 
 _Component to integrate with [IDM heat pumps][https://www.idm-energie.at/]._
@@ -65,3 +67,12 @@ Just create on your HA installation a subdir in homeassistant/
 
 Done the integration should check the access and start after that automatically and start creating detected entities to your system
 
+***
+
+[commits-shield]: https://img.shields.io/github/commit-activity/y/AndyNew2/hacs-idm-hpweb.svg?style=for-the-badge
+[commits]: https://github.com/AndyNew2/hacs-idm-hpweb/commits/master
+[hacs]: https://github.com/hacs/integration
+[hacsbadge]: https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/AndyNew2/hacs-idm-hpweb.svg?style=for-the-badge
+[releases-shield]: https://img.shields.io/github/release/AndyNew2/hacs-idm-hpweb.svg?style=for-the-badge
+[releases]: https://github.com/AndyNew2/hacs-idm-hpweb/releases
