@@ -20,7 +20,9 @@ Platform | Description
 -- | --
 `sensor` | Show other info from the heat pump.
 
-## What is IDM heat pump web integration
+## Introduction - what is this home assistant integration about
+
+### What is IDM heat pump web integration
 
 1. This integration uses the local HTTP Web server, which comes now with all iDM heat pumps with Navigator 2.0.
 2. It do not use the iDM Web service nor is dependent on any iDM regsitration or internet or cloud service. All data is still collected local in your network
@@ -31,7 +33,7 @@ Platform | Description
 7. This integration will even run, if ModbusTCP protocol is not yet activated by your iDM service team. However I recommend to do so, to be able to run this integration together with the Kodebach integration
 
 
-## What is the difference to already existing integrations for iDM heat pumps
+## #What is the difference to already existing integrations for iDM heat pumps, and why may I want to use it
 
 1. This integration uses standard HTTP get and push commands to retries the data and provide it to Home Assistant via Entries.
 2. This integration tries to discover the entities themself and just add the entities, provided by your heatpump.
@@ -39,4 +41,26 @@ Platform | Description
 4. This is a contract to ModbusTCP based integrations. ModbusTCP can of course have faster update rates, however the way Home Assistant implements it and the way iDM has integrated it, allows a update rate by best 30 seconds. If you have a higher update rate, the iDM GUI and control can go static and the heatpump freezes. Recommended update rate is 1 min lowest. This might be quite slow for some Home Assistant controled temperature handling. This integration gives you the needed higher update rate for such conditions.
 5. iDM designed ModbusTCP as the interface for the heat pump. Therefore use the Kodebach integration as the main integration. However iDM lacks a few very important sensors on the ModbusTCP implementation. They are not willing to add them, even requesting them. This integration bridges the flaw, and adds: flowrate, hotgas temperature, compressor high and low pressure values and many more.
 6. As already mentioned, this integration is designed and implemented to run in parallel with a standard Modbus based integration for the heat pump like the one from Kodebach. By disabling sensors not needed in this integration, you could greatly relax Home Assistant data handling and still allow to have the few sensors of your interests, e.g. flowrate or hotgas temperature or flow temp and return temp on a high update rate. 
+
+
+## Installation
+
+### HACS
+
+tbd.
+
+### Manual Installation
+
+Just create on your HA installation a subdir in homeassistant/
+1. A subdir called idm_hpweb
+2. Copy all files from here to that directory including subfolders like translations (probably the only one)
+3. Restart Home Assistant
+4. Go to devices, search now for idm_hpweb device and follow the config flow, see next section
+
+### Configuration using the Config Flow
+5. In the config flow you need to enter the IP Address of your heat pump (the same you use to access the local Web GUI). Enter the IP Address in the field "Host"
+6. In the PIN field enter the PIN number to enter the Web Interface. Make sure you have assigned a PIN number, otherwise the Web Interface is disabled. By default this is "4444"
+7. Timeout and Update rate could be left to defaults or change it to your wishes.
+
+Done the integration should check the access and start after that automatically and start creating detected entities to your system
 
