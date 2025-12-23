@@ -70,7 +70,7 @@ To set it up, follow these steps:
 
 ### Manual Installation
 
-Just create on your HA installation a subdir in homeassistant/
+Just create on your HA installation a subdir in homeassistant/custom_components
 1. A subdir called idm_hpweb
 2. Copy all files from here to that directory including subfolders like translations (probably the only one)
 3. Restart Home Assistant
