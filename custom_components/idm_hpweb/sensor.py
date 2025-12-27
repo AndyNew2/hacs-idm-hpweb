@@ -15,6 +15,7 @@ from homeassistant.const import (
     UnitOfTemperature,
     UnitOfTime,
     UnitOfVolumeFlowRate,
+    UnitOfPower,
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -566,6 +567,39 @@ SENSOR_TYPES: tuple[SensorEntityDescription, ...] = (
         translation_key="valve_pos_evdmini",
         state_class=SensorStateClass.MEASUREMENT,
         native_unit_of_measurement="%",
+        suggested_display_precision=1,
+    ),
+    # idm PV Parameter (if PV is configured in iDM)
+    SensorEntityDescription(
+        key="cur_exp_power_heating",
+        translation_key="cur_exp_power_heating",
+        state_class=SensorStateClass.MEASUREMENT,
+        device_class=SensorDeviceClass.POWER,
+        native_unit_of_measurement=UnitOfPower.KILO_WATT,
+        suggested_display_precision=1,
+    ),
+    SensorEntityDescription(
+        key="cur_exp_power_cooling",
+        translation_key="cur_exp_power_cooling",
+        state_class=SensorStateClass.MEASUREMENT,
+        device_class=SensorDeviceClass.POWER,
+        native_unit_of_measurement=UnitOfPower.KILO_WATT,
+        suggested_display_precision=1,
+    ),
+    SensorEntityDescription(
+        key="cur_exp_power_hotwater",
+        translation_key="cur_exp_power_hotwater",
+        state_class=SensorStateClass.MEASUREMENT,
+        device_class=SensorDeviceClass.POWER,
+        native_unit_of_measurement=UnitOfPower.KILO_WATT,
+        suggested_display_precision=1,
+    ),
+    SensorEntityDescription(
+        key="cur_el_power",
+        translation_key="cur_el_power",
+        state_class=SensorStateClass.MEASUREMENT,
+        device_class=SensorDeviceClass.POWER,
+        native_unit_of_measurement=UnitOfPower.KILO_WATT,
         suggested_display_precision=1,
     ),
 )
