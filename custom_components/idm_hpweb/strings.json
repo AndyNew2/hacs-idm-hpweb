@@ -25,187 +25,199 @@
   "entity": {
     "sensor": {
       "software_version": {
-        "name": "0 0 iDM software version"
+        "name": "A A iDM software version"
       },
       "regler_online": {
-        "name": "0 1 Controller online time"
+        "name": "A B Controller online time"
       },
       "runtime_nb_1": {
-        "name": "0 2 Runtime heatpump 1"
+        "name": "A C Runtime heatpump 1"
       },
       "switch_cycles_nb_1": {
-        "name": "0 3 Run cycles heatpump 1"
+        "name": "A D Run cycles heatpump 1"
       },
       "runtime_nb_2": {
-        "name": "0 4 Runtime eheat 2"
+        "name": "A E Runtime eheat 2"
       },
       "switch_cycles_nb_2": {
-        "name": "0 5 Run cycles eheat 2"
+        "name": "A F Run cycles eheat 2"
       },
       "runtime_heating": {
-        "name": "0 6 Runtime heating"
+        "name": "A G Runtime heating"
       },
       "runtime_cooling": {
-        "name": "0 7 Runtime cooling"
+        "name": "A H Runtime cooling"
       },
       "runtime_hotwater": {
-        "name": "0 8 Runtime hot water"
+        "name": "A I Runtime hot water"
       },
       "runtime_defrosting": {
-        "name": "0 9 Runtime defrosting"
+        "name": "A J Runtime defrosting"
       },
       "outdoor_temperature": {
-        "name": "1 00 Outdoor temp"
+        "name": "B A Outdoor temp"
       },
       "flow_temperature": {
-        "name": "1 02 Flow temp"
+        "name": "B C Flow temp"
       },
       "return_temperature": {
-        "name": "1 04 Return temp"
+        "name": "B E Return temp"
       },
       "water_temp_top": {
-        "name": "1 13 Hotwater temp top"
+        "name": "B N Hotwater temp top"
       },
       "water_temp_bottom": {
-        "name": "1 14 Hotwater temp bottom"
+        "name": "B O Hotwater temp bottom"
       },
       "flow_temp_heatcircuit_c": {
-        "name": "1 03 Flow temp heatcircuit C"
+        "name": "B D Flow temp heatcircuit C"
       },
       "hotgas_temperature": {
-        "name": "1 06 Hotgas temp"
+        "name": "B G Hotgas temp"
       },
       "airsource_temperature": {
-        "name": "1 01 Airsource temp"
+        "name": "B B Airsource temp"
       },
       "vaporize_start_temperature": {
-        "name": "1 09 Vaporize start temp"
+        "name": "B J Vaporize start temp"
       },
       "vaporize_pressure": {
-        "name": "1 11 Vaporize pressure"
+        "name": "B L Vaporize pressure"
       },
       "vaporize_temperature": {
-        "name": "1 10 Vaporize temp"
+        "name": "B K Vaporize temp"
       },
       "condense_temperature": {
-        "name": "1 07 Condense temp"
+        "name": "B H Condense temp"
       },
       "condense_pressure": {
-        "name": "1 08 Condense pressure"
+        "name": "B I Condense pressure"
       },
       "liquid_temperature": {
-        "name": "1 05 Heatpump liquid temp"
+        "name": "B F Heatpump liquid temp"
       },
       "board_temperature": {
-        "name": "1 15 Heatpump mainboard temp"
+        "name": "B P Heatpump mainboard temp"
       },
       "flowmeter": {
-        "name": "1 12 Flowmeter"
+        "name": "B M Flowmeter"
       },
       "voltage_mainboard": {
-        "name": "1 16 Mainboard bat voltage"
+        "name": "B Q Mainboard bat voltage"
       },
       "external_trigger": {
-        "name": "3 0 External trigger"
+        "name": "D A External trigger"
       },
       "ext_trig_heat_cool": {
-        "name": "3 1 External trigger heating/cooling"
+        "name": "D B External trigger heating/cooling"
       },
       "ewu_evu_lock_contact": {
-        "name": "3 3 EWU/EVU lock contact"
+        "name": "D D EWU/EVU lock contact"
       },
       "problem_eheat": {
-        "name": "3 5 Problem e-heater"
+        "name": "D F Problem e-heater"
       },
       "dewpoint_protection_active": {
-        "name": "3 4 Dewpoint protection active"
+        "name": "D E Dewpoint protection active"
       },
       "ext_trig_hotwater": {
-        "name": "3 2 External trigger hot water"
+        "name": "D C External trigger hot water"
       },
       "problem_high_pressure": {
-        "name": "3 6 Problem high pressure"
+        "name": "D G Problem high pressure"
       },
       "flow_pumpe_active": {
-        "name": "3 7 Flow pump active"
+        "name": "D H Flow pump active"
       },
       "flow_pumpe_speed": {
-        "name": "2 0 Flow pump speed"
+        "name": "C A Flow pump speed"
       },
       "fan_speed": {
-        "name": "2 1 Air fan speed"
+        "name": "C B Air fan speed"
       },
       "ainout_80_81": {
-        "name": "2 2 AInOut 80-81"
+        "name": "C C AInOut 80-81"
       },
       "ainout_82_83": {
-        "name": "2 3 AInOut 82-83"
+        "name": "C D AInOut 82-83"
       },
       "ainout_84_85": {
-        "name": "2 4 AInOut 84-85"
+        "name": "C E AInOut 84-85"
       },
       "ainout_86_87": {
-        "name": "2 5 AInOut 86-87"
+        "name": "C F AInOut 86-87"
       },
       "ainout_88_89": {
-        "name": "2 6 AInOut 88-89"
+        "name": "C G AInOut 88-89"
       },
       "ainout_180_181": {
-        "name": "2 7 AInOut 180-181"
+        "name": "C H AInOut 180-181"
       },
       "flow_pumpe_actstate": {
-        "name": "4 02 Flow pump act state"
+        "name": "E C Flow pump act state"
       },
       "4_way_valve_circut1": {
-        "name": "4 06 4way value hp 1"
+        "name": "E G 4way value hp 1"
       },
       "flowpump_circuit_a": {
-        "name": "4 03 Flow pump act heatcircuit A"
+        "name": "E D Flow pump act heatcircuit A"
       },
       "flowpump_circuit_c": {
-        "name": "4 04 Flow pump act heatcircuit C"
+        "name": "E E Flow pump act heatcircuit C"
       },
       "mixer_circuit_c": {
-        "name": "4 05 Mixer heatcircuit C"
+        "name": "E F Mixer heatcircuit C"
       },
       "hotwater_circulation_pump": {
-        "name": "4 00 Hotwater circulation pump"
+        "name": "E A Hotwater circulation pump"
       },
       "siphon_heating": {
-        "name": "4 01 Heatpump siphon heating"
+        "name": "E B Heatpump siphon heating"
       },
       "e_heater_1kw_on": {
-        "name": "4 10 E-heater 1kW"
+        "name": "E K E-heater 1kW"
       },
       "e_heater_2kw_on": {
-        "name": "4 11 E-heater 2kW"
+        "name": "E L E-heater 2kW"
       },
       "e_heater_3kw_on": {
-        "name": "4 12 E-heater 3kW"
+        "name": "E M E-heater 3kW"
       },
       "valve_heating_cooling": {
-        "name": "4 07 Valve heat/cool"
+        "name": "E H Valve heat/cool"
       },
       "valve_warm_cold": {
-        "name": "4 08 Valve warm/cool"
+        "name": "E I Valve warm/cool"
       },
       "value_heating_hotwater": {
-        "name": "4 09 Valve heat/hotwater"
+        "name": "E J Valve heat/hotwater"
       },
       "super_heating_1": {
-        "name": "5 1 Super heating 1"
+        "name": "F A Super heating 1"
       },
       "sub_cooling": {
-        "name": "5 2 Sub cooling"
+        "name": "F B Sub cooling"
       },
       "valve_position": {
-        "name": "5 3 Valve position"
+        "name": "F C Valve position"
       },
       "valve_pos_sub_cool": {
-        "name": "5 4 Valve pos. sub cool"
+        "name": "F D Valve pos. sub cool"
       },
       "valve_pos_evdmini": {
-        "name": "5 5 Valve pos. EVDMini"
+        "name": "F E Valve pos. EVDMini"
+      },
+      "cur_exp_power_heating": {
+        "name": "G A Cur./exp. power heating"
+      },
+      "cur_exp_power_cooling": {
+        "name": "G B Cur./exp. power cooling"
+      },
+      "cur_exp_power_hotwater": {
+        "name": "G C Cur./exp. power hotwater"
+      },
+      "cur_el_power": {
+        "name": "G D Cur. electrical power"
       }
     }
   }
