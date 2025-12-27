@@ -11,7 +11,7 @@ _LOGGER = logging.getLogger(__name__)
 
 # --------------------------------------------------------------------
 # Constants
-idmReadAheadBlock = 4090
+idmReadAheadBlock = 4092
 idmKeyIntro = "<tr><td>"
 idmKeyEnding = "</td><td>"
 idmDescrIntro = "</td><td>"
@@ -99,6 +99,11 @@ idmSensorDefinitions_de = {
     "Ventilposition": "valve_position",
     "Ventilpos. Unterk.": "valve_pos_sub_cool",
     "Ventilpos. EVDMini": "valve_pos_evdmini",
+    # idm PV Parameter (if PV is configured in iDM)
+    "mom./prog. Leistung Heizen": "cur_exp_power_heating",
+    "mom./prog. Leistung Kühlen": "cur_exp_power_cooling",
+    "mom./prog. Leistung Vorrang": "cur_exp_power_hotwater",
+    "Wärmepumpe Aufnahmeleistung": "cur_el_power",
 }
 
 iDM_IdentificationString_en = '"name":"General Settings"'
@@ -177,6 +182,11 @@ idmSensorDefinitions_en = {
     "Valve position": "valve_position",
     "Valve pos. subc.": "valve_pos_sub_cool",
     "Valve pos. EVDMini": "valve_pos_evdmini",
+    # idm PV Parameter (if PV is configured in iDM)  Interestingly no english translation yet found in iDM GUI, please fix if seen differently
+    "mom./prog. Leistung Heizen": "cur_exp_power_heating",
+    "mom./prog. Leistung Kühlen": "cur_exp_power_cooling",
+    "mom./prog. Leistung Vorrang": "cur_exp_power_hotwater",
+    "Wärmepumpe Aufnahmeleistung": "cur_el_power",
 }
 
 
@@ -338,13 +348,16 @@ class idmHeatpumpWeb:
                     if v == "super_heating_1":
                         if serviceMode:
                             # we need to help, since service mode responses are very long
-                            afterPos = txt.find(k, startPos, len(txt))
+                            afterPos = txt.find(k, startPos)
                             if afterPos != -1:
                                 startPos = (
                                     afterPos - 50
                                 )  # set startPos shortly before finding, so intro can be found as well
                         else:
-                            break  # otherwise break loop here to avoid endless searching for nothing
+                            # check if there are PV data in response
+                            startPos = txt.find('"edesc":"_PV"', startPos)
+                            if startPos == -1:
+                                break  # if not PV data break loop here to avoid endless searching for nothing
 
                     if len(k) <= 5:
                         searchK = k
