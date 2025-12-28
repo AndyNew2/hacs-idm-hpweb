@@ -23,7 +23,7 @@ _LOGGER = logging.getLogger(__name__)
 
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
-        vol.Required(CONF_DISPLAY_NAME, default="iDM_WP"): cv.string,
+        vol.Required(CONF_DISPLAY_NAME, default="iDM_Web"): cv.string,
         vol.Required(CONF_HOST): cv.string,
         vol.Required(CONF_PIN, default=DEF_IDM_PIN): cv.string,
         vol.Required(CONF_TIMEOUT, default=3): int,
@@ -74,7 +74,7 @@ class idmWebConfigFlow(ConfigFlow, domain=DOMAIN):
                         errors[CONF_PIN] = result
                     errors["base"] = result
                 else:
-                    devUniqueId = str(user_input[CONF_DISPLAY_NAME]) + "web"
+                    devUniqueId = str(user_input[CONF_DISPLAY_NAME]) + "WP"
                     # await self.async_set_unique_id(devUniqueId)
                     # self._abort_if_unique_id_configured()  # this should not happen, since we checked the name, however safe is safe ;-)
 
