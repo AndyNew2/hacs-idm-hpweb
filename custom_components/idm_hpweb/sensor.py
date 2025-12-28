@@ -32,6 +32,7 @@ from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
     UpdateFailed,
 )
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.dispatcher import (
     async_dispatcher_connect,
     async_dispatcher_send,
@@ -40,7 +41,7 @@ from homeassistant.helpers.dispatcher import (
 from homeassistant.const import CONF_HOST, CONF_PIN, CONF_TIMEOUT
 from homeassistant.util.unit_conversion import UnitOfElectricPotential
 from .const import DEF_TIME_BETWEEN_UPDATES, DOMAIN
-from .const import DEF_IDM_PIN, CONF_DISPLAY_NAME, CONF_CYCLE_TIME, SIGNAL_IDM_TELEGRAM
+from .const import DEF_IDM_PIN, CONF_DISPLAY_NAME, CONF_CYCLE_TIME, DEF_DEVICE_NAME
 from .idmHeatpumpWeb import (
     idmHeatpumpWeb,
     IdmResponseData,
@@ -624,6 +625,10 @@ class IDM_SoftwareVersionSensor(CoordinatorEntity, SensorEntity):
         devId = coordinator.config_entry.data[CONF_DISPLAY_NAME]
         self._attr_unique_id = f"{devId}_{self.entity_description.translation_key}"
         # self.data = ""  # set initial value to empty string
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, devId)},
+            name=DEF_DEVICE_NAME,
+        )
 
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
@@ -666,6 +671,10 @@ class IDM_Entity(CoordinatorEntity, SensorEntity):
         # self.data = (
         #    "0"  # set initial value to 0 to avoid number errors for temp sensors
         # )
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, devId)},
+            name=DEF_DEVICE_NAME,
+        )
 
     def setValue(self, val: str) -> None:
         """Set the value of the sensor."""
