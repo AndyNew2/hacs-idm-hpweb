@@ -20,7 +20,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     timeout = entry.data.get(CONF_TIMEOUT)
     cycle_time = entry.data.get(CONF_CYCLE_TIME)
     stat_div = 0  # default to disabled
-    stat_div = entry.data.get(CONF_STAT_DIV)
+    try:
+        stat_div = entry.data.get(CONF_STAT_DIV)
+    except:
+        # we ignore errors here, we work with the default...
+        stat_div = 0
 
     entry.runtime_data = {
         CONF_DISPLAY_NAME: displayname,
