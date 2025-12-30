@@ -11,6 +11,13 @@ _LOGGER = logging.getLogger(__name__)
 
 # --------------------------------------------------------------------
 # Constants
+
+idmURL_Index = "/index.php"
+idmURL_Settings = "/data/settings.php"
+idmURL_Stat_Runtime = "/data/statistics.php?type=heatpump"
+idmURL_Stat_GenHeat = "/data/statistics.php?type=amountofheat"
+idmURL_Stat_ElCons = "/data/statistics.php?type=baenergyhp"
+
 idmReadAheadBlock = 4092
 idmKeyIntro = "<tr><td>"
 idmKeyEnding = "</td><td>"
@@ -106,6 +113,13 @@ idmSensorDefinitions_de = {
     "Wärmepumpe Aufnahmeleistung": "cur_el_power",
 }
 
+idmStatDefinitions_de = {
+    '"name":"Heizen"': "heating",
+    '"name":"Kühlen"': "cooling",
+    '"name":"Warmwasser"': "hotwater",
+    '"name":"Abtauung"': "defrost",
+}
+
 iDM_IdentificationString_en = '"name":"General Settings"'
 iDMExtraData_en = [
     ("<tr><td>Software Version</td>", "<td>", "</td></tr>", "software_version"),
@@ -189,6 +203,13 @@ idmSensorDefinitions_en = {
     "Wärmepumpe Aufnahmeleistung": "cur_el_power",
 }
 
+idmStatDefinitions_en = {
+    '"name":"Heating"': "heating",
+    '"name":"Cooling"': "cooling",
+    '"name":"Domestic Hot Water"': "hotwater",
+    '"name":"Defrost"': "defrost",
+}
+
 
 # Helper classes and functions for parsing responses
 class IdmResponseData:  # to store parsed response data  # noqa: D101
@@ -210,7 +231,9 @@ class IdmResponseData:  # to store parsed response data  # noqa: D101
 class idmHeatpumpWeb:
     """Class to interface with the iDM Heatpump Web."""
 
-    def __init__(self, hass: HomeAssistant, host: str, pin: str, timeout: int) -> None:
+    def __init__(
+        self, hass: HomeAssistant, host: str, pin: str, timeout: int, statDiv: int
+    ) -> None:
         """Initialize the iDM Heatpump Web interface."""
         self.hass = hass
         self._host = host
@@ -218,11 +241,14 @@ class idmHeatpumpWeb:
         self._timeout = timeout
         self.session = requests.Session()
         self.csrf_token = None
-        self.idmUrl = "http://" + host + "/index.php"
-        self.idmDataUrl = "http://" + host + "/data/settings.php"
+        self.idmUrl = "http://" + host + idmURL_Index
+        self.idmDataUrl = "http://" + host + idmURL_Settings
         self.idmExtraDefn = iDMExtraData_en  # try first english version
         self.idmSensorDefn = idmSensorDefinitions_en
         self.iDM_IdentificationString = iDM_IdentificationString_en
+        self.idmStatDefn = idmStatDefinitions_en
+        self.my_counter = 0
+        self.statDiv = statDiv
 
     async def async_idm_async_login(self) -> str:
         """Async Login to the heatpump web interface."""
@@ -296,10 +322,12 @@ class idmHeatpumpWeb:
                         self.iDM_IdentificationString = iDM_IdentificationString_de
                         self.idmExtraDefn = iDMExtraData_de
                         self.idmSensorDefn = idmSensorDefinitions_de
+                        self.idmStatDefn = idmStatDefinitions_de
                     else:  # there needs to be more checks, if further languanges are supported, but for now it is OK that way
                         self.iDM_IdentificationString = iDM_IdentificationString_en
                         self.idmExtraDefn = iDMExtraData_en
                         self.idmSensorDefn = idmSensorDefinitions_en
+                        self.idmStatDefn = idmStatDefinitions_en
 
                     # now check the new language
                     startPos = txt.find(self.iDM_IdentificationString, 0, len(txt))
@@ -309,6 +337,7 @@ class idmHeatpumpWeb:
                         )
                         return answerData  # we cannot do anything else with this frame, so discard it and stop processing here
 
+                self.my_counter += 1  # count this loop
                 afterPos = 0
                 for i in self.idmExtraDefn:
                     (key, startDel, endDel, sensorKey) = i
@@ -345,7 +374,7 @@ class idmHeatpumpWeb:
                 serviceMode = False
                 for k, v in self.idmSensorDefn.items():
                     sensorKey = k  # by default use k as sensor key
-                    if v == "super_heating_1":
+                    if (v == "super_heating_1") or (v == "cur_exp_power_heating"):
                         if serviceMode:
                             # we need to help, since service mode responses are very long
                             afterPos = txt.find(k, startPos)
@@ -409,7 +438,84 @@ class idmHeatpumpWeb:
                     else:
                         _LOGGER.debug("Key %s not found in response", k)
 
-                return answerData  # placeholder for actual data parsing logic
+                if self.statDiv >= 3:
+                    idmUrlStat = None
+                    keyValIntro = ""
+                    if (self.my_counter % self.statDiv) == 0:
+                        # get statistics for runtime
+                        idmUrlStat = "http://" + self._host + idmURL_Stat_Runtime
+                        keyValIntro = "stat_runtime_"
+                    elif (self.my_counter % self.statDiv) == 1:
+                        # get statistics for generated heat
+                        idmUrlStat = "http://" + self._host + idmURL_Stat_GenHeat
+                        keyValIntro = "stat_genheat_"
+                    elif (self.my_counter % self.statDiv) == 2:
+                        # get statistics for electrical heat consumption
+                        idmUrlStat = "http://" + self._host + idmURL_Stat_ElCons
+                        keyValIntro = "stat_elcons_"
+                    if idmUrlStat:
+                        response = self.session.get(
+                            idmUrlStat, headers=addHeader, timeout=self._timeout
+                        )
+                        if response.status_code == 200:
+                            txt = response.text
+
+                            startPos = txt.find(',"total":')
+                            if startPos != -1:
+                                index = 0
+                                foundStat = [0] * len(self.idmStatDefn)
+                                for k, v in self.idmStatDefn.items():
+                                    (valStr, afterPos) = extractParameterRaw(
+                                        txt,
+                                        startPos,
+                                        startPos + idmReadAheadBlock,
+                                        k,
+                                        '"value":',
+                                        "}",
+                                    )
+                                    if afterPos > startPos:  # something found
+                                        answerData.addResp(
+                                            keyValIntro + "total_" + v, valStr
+                                        )
+                                        startPos = afterPos
+                                        foundStat[index] = 1
+                                    else:
+                                        _LOGGER.debug("Key %s not found in response", k)
+                                    index += 1
+
+                                index = 0
+                                (valStr, afterPos) = extractParameterRaw(
+                                    txt,
+                                    startPos,
+                                    startPos + idmReadAheadBlock,
+                                    ',"yearly":[',
+                                    '"values":[[',
+                                    ",",
+                                )
+                                if afterPos > startPos:
+                                    for k, v in self.idmStatDefn.items():
+                                        if foundStat[index] == 1:
+                                            answerData.addResp(
+                                                keyValIntro + "cur_year_" + v, valStr
+                                            )
+                                            startPos = afterPos
+                                            while (afterPos < len(txt)) and (
+                                                (
+                                                    (txt[afterPos] >= "0")
+                                                    and (txt[afterPos] <= "9")
+                                                )
+                                                or (txt[afterPos] == ".")
+                                            ):
+                                                afterPos += 1
+                                            valStr = txt[startPos:afterPos]
+                                            while (afterPos < len(txt)) and (
+                                                (txt[afterPos] == ",")
+                                                or (txt[afterPos] == "[")
+                                                or (txt[afterPos] == "]")
+                                            ):
+                                                afterPos += 1
+                                        index += 1
+                return answerData  # return collected answer to caller
 
         except requests.RequestException as e:
             ## redo login with pin and csrf token extraction
