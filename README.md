@@ -66,7 +66,7 @@ The integration now appears like any other Home Assistant integration.
 To set it up, follow these steps:
 
 1. In the HA UI go to "Settings" -> "Devices & Services", click "+ Add Integration" in the bottom right corner, and search for "iDM Heatpump Web".
-2. Make sure the heat pump is configured correctly (see below), then fill out the necessary details in the setup form. See Configuration using Config Flow below for more details.
+2. Make sure the heat pump is configured correctly (see below), then fill out the necessary details in the setup form. See Configuration using Config Flow below for more details. Continue with step 5. in Config Flow
 
 ### Manual Installation
 
@@ -80,6 +80,7 @@ Just create on your HA installation a subdir in homeassistant/custom_components
 5. In the config flow you need to enter the IP Address of your heat pump (the same you use to access the local Web GUI). Enter the IP Address in the field "Host"
 6. In the PIN field enter the PIN number to enter the Web Interface. Make sure you have assigned a PIN number, otherwise the Web Interface is disabled. By default this is "4444"
 7. Timeout and Update rate could be left to defaults or change it to your wishes.
+8. If you want iDM statistics, add a dividers value greater than 0. 0 disables statistics, entities for that will not be created. The devider defines how often the statistics are read from web interface to lower traffic for the heatpump. Usually it should be enough to update them once a minute so gave them 6 or 12. Lower values are not recommended. Lowest allowed value is 3, which means in each cycle a statistic value is read from heatpump.
 
 Done the integration should check the access and start after that automatically and start creating detected entities to your system
 
