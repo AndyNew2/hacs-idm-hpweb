@@ -17,7 +17,12 @@ from functools import partial
 
 from .const import DEF_TIME_BETWEEN_UPDATES, DOMAIN
 from .const import DEF_IDM_PIN
-from .const import CONF_DISPLAY_NAME, CONF_CYCLE_TIME, DEF_MIN_TIME_BETWEEN_UPDATES
+from .const import (
+    CONF_DISPLAY_NAME,
+    CONF_CYCLE_TIME,
+    DEF_MIN_TIME_BETWEEN_UPDATES,
+    CONF_STAT_DIV,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -30,6 +35,7 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
         vol.Required(
             CONF_CYCLE_TIME, default=DEF_TIME_BETWEEN_UPDATES.total_seconds()
         ): int,
+        vol.Required(CONF_STAT_DIV, default=0): int,
     }
 )
 
@@ -50,11 +56,13 @@ class idmWebConfigFlow(ConfigFlow, domain=DOMAIN):
 
             if user_input[CONF_DISPLAY_NAME].find(" ") != -1:
                 errors[CONF_DISPLAY_NAME] = "display_name_no_spaces"
-            if (
+            elif (
                 user_input[CONF_CYCLE_TIME]
                 < DEF_MIN_TIME_BETWEEN_UPDATES.total_seconds()
             ):
                 errors[CONF_CYCLE_TIME] = "cycle_time_too_low"
+            elif (user_input[CONF_STAT_DIV] < 3) and (user_input[CONF_STAT_DIV] != 0):
+                errors[CONF_STAT_DIV] = "stat_div_too_small"
             else:
                 self._async_abort_entries_match(
                     {CONF_DISPLAY_NAME: user_input[CONF_DISPLAY_NAME]}
@@ -114,6 +122,7 @@ class idmWebConfigFlow(ConfigFlow, domain=DOMAIN):
                     user_input[CONF_HOST],
                     user_input[CONF_PIN],
                     user_input[CONF_TIMEOUT],
+                    0,  # during test we do not use stat values
                 )
                 result = await idm.async_idm_async_login()
 
