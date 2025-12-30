@@ -6,6 +6,7 @@
         "error": {
             "cannot_connect": "Verbindung konnte nicht erstellt werden",
             "cycle_time_too_low": "Updaterate ist zu klein, es müssen mindestens 2 Sekunden sein",
+            "stat_div_too_small": "Teiler muss entweder 0 (deaktiviert) oder mindestens 3 sein",
             "display_name_no_spaces": "Anzeigename darf keine Leerzeichen enthalten",
             "invalid_pin": "Eingegebene PIN ist falsch",
             "unknown": "Unbekannter Fehler"
@@ -14,6 +15,7 @@
             "user": {
                 "data": {
                     "CYCLE_TIME": "Zykluszeit zwischen Updates (in Sekunden)",
+                    "STATISTICS_DIV": "Teiler für Statistiken (0 = ausgeschaltet)",
                     "display_name": "Anzeigename für diese Wäremepumpe (keine Leerzeichen)",
                     "host": "Host - IP Adresse",
                     "pin": "PIN Code",
@@ -218,6 +220,78 @@
             },
             "cur_el_power": {
                 "name": "G D akt. el. Leistung"
+            },
+            "stat_runtime_total_heating": {
+                "name": "H A Laufzeit Gesamt Heizen"
+            },
+            "stat_runtime_total_cooling": {
+                "name": "H B Laufzeit Gesamt Kühlen"
+            },
+            "stat_runtime_total_hotwater": {
+                "name": "H C Laufzeit Gesamt Heißwasser"
+            },
+            "stat_runtime_total_defrost": {
+                "name": "H D Laufzeit Gesamt Abtauung"
+            },
+            "stat_runtime_cur_year_heating": {
+                "name": "H E Laufzeit Akt. Jahr Heizen"
+            },
+            "stat_runtime_cur_year_cooling": {
+                "name": "H F Laufzeit Akt. Jahr Kühlen"
+            },
+            "stat_runtime_cur_year_hotwater": {
+                "name": "H G Laufzeit Akt. Jahr Heißwasser"
+            },
+            "stat_runtime_cur_year_defrost": {
+                "name": "H H Laufzeit Akt. Jahr Abtauung"
+            },
+            "stat_genheat_total_heating": {
+                "name": "H I Wärmemenge Gesamt Heizen"
+            },
+            "stat_genheat_total_cooling": {
+                "name": "H J Wärmemenge Gesamt Kühlen"
+            },
+            "stat_genheat_total_hotwater": {
+                "name": "H K Wärmemenge Gesamt Heißwasser"
+            },
+            "stat_genheat_total_defrost": {
+                "name": "H L Wärmemenge Gesamt Abtauung"
+            },
+            "stat_genheat_cur_year_heating": {
+                "name": "H M Wärmemenge Akt. Jahr Heizen"
+            },
+            "stat_genheat_cur_year_cooling": {
+                "name": "H N Wärmemenge Akt. Jahr Kühlen"
+            },
+            "stat_genheat_cur_year_hotwater": {
+                "name": "H O Wärmemenge Akt. Jahr Heißwasser"
+            },
+            "stat_genheat_cur_year_defrost": {
+                "name": "H P Wärmemenge Akt. Jahr Abtauung"
+            },
+            "stat_elcons_total_heating": {
+                "name": "H Q Stromverbrauch Gesamt Heizen"
+            },
+            "stat_elcons_total_cooling": {
+                "name": "H R Stromverbrauch Gesamt Kühlen"
+            },
+            "stat_elcons_total_hotwater": {
+                "name": "H S Stromverbrauch Gesamt Heißwasser"
+            },
+            "stat_elcons_total_defrost": {
+                "name": "H T Stromverbrauch Gesamt Abtauung"
+            },
+            "stat_elcons_cur_year_heating": {
+                "name": "H U Stromverbrauch Akt. Jahr Heizen"
+            },
+            "stat_elcons_cur_year_cooling": {
+                "name": "H V Stromverbrauch Akt. Jahr Kühlen"
+            },
+            "stat_elcons_cur_year_hotwater": {
+                "name": "H W Stromverbrauch Akt. Jahr Heißwasser"
+            },
+            "stat_elcons_cur_year_defrost": {
+                "name": "H X Stromverbrauch Akt. Jahr Abtauung"
             }
         }
     }
