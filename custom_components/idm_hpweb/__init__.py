@@ -21,8 +21,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     cycle_time = entry.data.get(CONF_CYCLE_TIME)
     stat_div = 0  # default to disabled
     try:
-        stat_div = entry.data.get(CONF_STAT_DIV)
-    except:
+        stat_div = entry.data.get(CONF_STAT_DIV, 0)
+    except SomeError:
         # we ignore errors here, we work with the default...
         stat_div = 0
 
