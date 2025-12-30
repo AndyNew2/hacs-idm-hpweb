@@ -6,7 +6,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.const import CONF_HOST, CONF_PIN, CONF_TIMEOUT
-from .const import CONF_DISPLAY_NAME, CONF_CYCLE_TIME
+from .const import CONF_DISPLAY_NAME, CONF_CYCLE_TIME, CONF_STAT_DIV
 
 _PLATFORMS: list[Platform] = [Platform.SENSOR]
 
@@ -19,6 +19,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     pin = entry.data.get(CONF_PIN)
     timeout = entry.data.get(CONF_TIMEOUT)
     cycle_time = entry.data.get(CONF_CYCLE_TIME)
+    stat_div = 0  # default to disabled
+    stat_div = entry.data.get(CONF_STAT_DIV)
 
     entry.runtime_data = {
         CONF_DISPLAY_NAME: displayname,
@@ -26,6 +28,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         CONF_PIN: pin,
         CONF_TIMEOUT: timeout,
         CONF_CYCLE_TIME: cycle_time,
+        CONF_STAT_DIV: stat_div,
     }
 
     await hass.config_entries.async_forward_entry_setups(entry, _PLATFORMS)
