@@ -8,12 +8,14 @@
             "cycle_time_too_low": "Cycle time is too low, must be at least 2 seconds",
             "display_name_no_spaces": "Display name must not contain spaces",
             "invalid_pin": "Entered PIN is invalid",
+            "stat_div_too_small": "Divider must be either 0 (disabled) or at least 3",
             "unknown": "Unexpected error"
         },
         "step": {
             "user": {
                 "data": {
                     "CYCLE_TIME": "Cycle time between updates (in seconds)",
+                    "STATISTICS_DIV": "Divider for statistics (0 = disabled)",
                     "display_name": "Display name for the device (no spaces allowed)",
                     "host": "Host",
                     "pin": "PIN code",
@@ -170,6 +172,78 @@
             },
             "software_version": {
                 "name": "A A iDM software version"
+            },
+            "stat_elcons_cur_year_cooling": {
+                "name": "H V Electr. consumption cur. year cooling"
+            },
+            "stat_elcons_cur_year_defrost": {
+                "name": "H X Electr. consumption cur. year defrost"
+            },
+            "stat_elcons_cur_year_heating": {
+                "name": "H U Electr. consumption cur. year heating"
+            },
+            "stat_elcons_cur_year_hotwater": {
+                "name": "H W Electr. consumption cur. year hotwater"
+            },
+            "stat_elcons_total_cooling": {
+                "name": "H R Electr. consumption total cooling"
+            },
+            "stat_elcons_total_defrost": {
+                "name": "H T Electr. consumption total defrost"
+            },
+            "stat_elcons_total_heating": {
+                "name": "H Q Electr. consumption total heating"
+            },
+            "stat_elcons_total_hotwater": {
+                "name": "H S Electr. consumption total hotwater"
+            },
+            "stat_genheat_cur_year_cooling": {
+                "name": "H N Gen. heat cur. year cooling"
+            },
+            "stat_genheat_cur_year_defrost": {
+                "name": "H P Gen. heat cur. year defrost"
+            },
+            "stat_genheat_cur_year_heating": {
+                "name": "H M Gen. heat cur. year heating"
+            },
+            "stat_genheat_cur_year_hotwater": {
+                "name": "H O Gen. heat cur. year hotwater"
+            },
+            "stat_genheat_total_cooling": {
+                "name": "H J Gen. heat total cooling"
+            },
+            "stat_genheat_total_defrost": {
+                "name": "H L Gen. heat total defrost"
+            },
+            "stat_genheat_total_heating": {
+                "name": "H I Gen. heat total heating"
+            },
+            "stat_genheat_total_hotwater": {
+                "name": "H K Gen. heat total hotwater"
+            },
+            "stat_runtime_cur_year_cooling": {
+                "name": "H F Runtime cur. year cooling"
+            },
+            "stat_runtime_cur_year_defrost": {
+                "name": "H H Runtime cur. year defrost"
+            },
+            "stat_runtime_cur_year_heating": {
+                "name": "H E Runtime cur. year heating"
+            },
+            "stat_runtime_cur_year_hotwater": {
+                "name": "H G Runtime cur. year hotwater"
+            },
+            "stat_runtime_total_cooling": {
+                "name": "H B Runtime total cooling"
+            },
+            "stat_runtime_total_defrost": {
+                "name": "H D Runtime total defrost"
+            },
+            "stat_runtime_total_heating": {
+                "name": "H A Runtime total heating"
+            },
+            "stat_runtime_total_hotwater": {
+                "name": "H C Runtime total hotwater"
             },
             "sub_cooling": {
                 "name": "F B Sub cooling"
