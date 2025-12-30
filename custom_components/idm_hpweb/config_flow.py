@@ -74,6 +74,7 @@ class idmWebConfigFlow(ConfigFlow, domain=DOMAIN):
                     user_input[CONF_HOST],
                     user_input[CONF_PIN],
                     user_input[CONF_TIMEOUT],
+                    0,  # during test we do not use stat values
                 )
                 result = await idm.async_idm_async_login()
 
