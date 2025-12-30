@@ -16,6 +16,7 @@ from homeassistant.const import (
     UnitOfTime,
     UnitOfVolumeFlowRate,
     UnitOfPower,
+    UnitOfEnergy,
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -41,7 +42,13 @@ from homeassistant.helpers.dispatcher import (
 from homeassistant.const import CONF_HOST, CONF_PIN, CONF_TIMEOUT
 from homeassistant.util.unit_conversion import UnitOfElectricPotential
 from .const import DEF_TIME_BETWEEN_UPDATES, DOMAIN
-from .const import DEF_IDM_PIN, CONF_DISPLAY_NAME, CONF_CYCLE_TIME, DEF_DEVICE_NAME
+from .const import (
+    DEF_IDM_PIN,
+    CONF_DISPLAY_NAME,
+    CONF_CYCLE_TIME,
+    DEF_DEVICE_NAME,
+    CONF_STAT_DIV,
+)
 from .idmHeatpumpWeb import (
     idmHeatpumpWeb,
     IdmResponseData,
@@ -62,6 +69,7 @@ async def async_setup_entry(
         config_entry.data[CONF_HOST],
         config_entry.data[CONF_PIN],
         config_entry.data[CONF_TIMEOUT],
+        config_entry.data[CONF_STAT_DIV],
     )
 
     coordinator = IDM_Coordinator(
@@ -141,14 +149,9 @@ class IDM_Coordinator(DataUpdateCoordinator):
                 for i in range(data.lenResp()):
                     (key, answer) = data.getResp(i)
 
-                    # if key not in self._requisteredKeys:
                     if key not in self._mySensors:
                         entity_description = SENSORS.get(key)
                         if entity_description:
-                            # self.async_add_entities(
-                            #    [IDM_Entity(self, key, entity_description)]
-                            # )
-                            # self._requisteredKeys.append(key)
                             self._mySensors[key] = IDM_Entity(
                                 self, key, entity_description
                             )
@@ -165,14 +168,6 @@ class IDM_Coordinator(DataUpdateCoordinator):
                         if sensor.enabled:
                             sensor.setValue(answer)
                             sensor.async_write_ha_state()  # even value not changed, we need to inform HA to avoid stale data
-
-                    # if key == self.my_cycleSensor.getIdx():
-                    #    self.my_cycleSensor.setValue(answer)
-                    #    # self.my_cycleSensor.async_write_ha_state()
-                    # else:
-                    #    async_dispatcher_send(
-                    #        self.hass, SIGNAL_IDM_TELEGRAM, key, answer
-                    #    )
 
                 if data.lenResp() == 0:
                     _LOGGER.warning("No data received from iDM Heatpump")
@@ -603,6 +598,202 @@ SENSOR_TYPES: tuple[SensorEntityDescription, ...] = (
         native_unit_of_measurement=UnitOfPower.KILO_WATT,
         suggested_display_precision=1,
     ),
+    # statistics values if statistics are enabled
+    # first with runtime values
+    SensorEntityDescription(
+        key="stat_runtime_total_heating",
+        translation_key="stat_runtime_total_heating",
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=UnitOfTime.HOURS,
+        suggested_display_precision=6,
+    ),
+    SensorEntityDescription(
+        key="stat_runtime_total_cooling",
+        translation_key="stat_runtime_total_cooling",
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=UnitOfTime.HOURS,
+        suggested_display_precision=6,
+    ),
+    SensorEntityDescription(
+        key="stat_runtime_total_hotwater",
+        translation_key="stat_runtime_total_hotwater",
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=UnitOfTime.HOURS,
+        suggested_display_precision=6,
+    ),
+    SensorEntityDescription(
+        key="stat_runtime_total_defrost",
+        translation_key="stat_runtime_total_defrost",
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=UnitOfTime.HOURS,
+        suggested_display_precision=6,
+    ),
+    SensorEntityDescription(
+        key="stat_runtime_cur_year_heating",
+        translation_key="stat_runtime_cur_year_heating",
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=UnitOfTime.HOURS,
+        suggested_display_precision=6,
+    ),
+    SensorEntityDescription(
+        key="stat_runtime_cur_year_cooling",
+        translation_key="stat_runtime_cur_year_cooling",
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=UnitOfTime.HOURS,
+        suggested_display_precision=6,
+    ),
+    SensorEntityDescription(
+        key="stat_runtime_cur_year_hotwater",
+        translation_key="stat_runtime_cur_year_hotwater",
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=UnitOfTime.HOURS,
+        suggested_display_precision=6,
+    ),
+    SensorEntityDescription(
+        key="stat_runtime_cur_year_defrost",
+        translation_key="stat_runtime_cur_year_defrost",
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=UnitOfTime.HOURS,
+        suggested_display_precision=6,
+    ),
+    # now stats with generated heat
+    SensorEntityDescription(
+        key="stat_genheat_total_heating",
+        translation_key="stat_genheat_total_heating",
+        state_class=SensorStateClass.TOTAL,
+        device_class=SensorDeviceClass.ENERGY,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        icon="mdi:heat-wave",
+        suggested_display_precision=6,
+    ),
+    SensorEntityDescription(
+        key="stat_genheat_total_cooling",
+        translation_key="stat_genheat_total_cooling",
+        state_class=SensorStateClass.TOTAL,
+        device_class=SensorDeviceClass.ENERGY,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        icon="mdi:snowflake",
+        suggested_display_precision=6,
+    ),
+    SensorEntityDescription(
+        key="stat_genheat_total_hotwater",
+        translation_key="stat_genheat_total_hotwater",
+        state_class=SensorStateClass.TOTAL,
+        device_class=SensorDeviceClass.ENERGY,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        icon="mdi:heat-wave",
+        suggested_display_precision=6,
+    ),
+    SensorEntityDescription(
+        key="stat_genheat_total_defrost",
+        translation_key="stat_genheat_total_defrost",
+        state_class=SensorStateClass.TOTAL,
+        device_class=SensorDeviceClass.ENERGY,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        icon="mdi:snowflake-melt",
+        suggested_display_precision=6,
+    ),
+    SensorEntityDescription(
+        key="stat_genheat_cur_year_heating",
+        translation_key="stat_genheat_cur_year_heating",
+        state_class=SensorStateClass.TOTAL,
+        device_class=SensorDeviceClass.ENERGY,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        icon="mdi:heat-wave",
+        suggested_display_precision=6,
+    ),
+    SensorEntityDescription(
+        key="stat_genheat_cur_year_cooling",
+        translation_key="stat_genheat_cur_year_cooling",
+        state_class=SensorStateClass.TOTAL,
+        device_class=SensorDeviceClass.ENERGY,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        icon="mdi:snowflake",
+        suggested_display_precision=6,
+    ),
+    SensorEntityDescription(
+        key="stat_genheat_cur_year_hotwater",
+        translation_key="stat_genheat_cur_year_hotwater",
+        state_class=SensorStateClass.TOTAL,
+        device_class=SensorDeviceClass.ENERGY,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        icon="mdi:heat-wave",
+        suggested_display_precision=6,
+    ),
+    SensorEntityDescription(
+        key="stat_genheat_cur_year_defrost",
+        translation_key="stat_genheat_cur_year_defrost",
+        state_class=SensorStateClass.TOTAL,
+        device_class=SensorDeviceClass.ENERGY,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        icon="mdi:snowflake-melt",
+        suggested_display_precision=6,
+    ),
+    # now stats with electrical power consumption
+    SensorEntityDescription(
+        key="stat_elcons_total_heating",
+        translation_key="stat_elcons_total_heating",
+        state_class=SensorStateClass.TOTAL,
+        device_class=SensorDeviceClass.ENERGY,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        suggested_display_precision=6,
+    ),
+    SensorEntityDescription(
+        key="stat_elcons_total_cooling",
+        translation_key="stat_elcons_total_cooling",
+        state_class=SensorStateClass.TOTAL,
+        device_class=SensorDeviceClass.ENERGY,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        suggested_display_precision=6,
+    ),
+    SensorEntityDescription(
+        key="stat_elcons_total_hotwater",
+        translation_key="stat_elcons_total_hotwater",
+        state_class=SensorStateClass.TOTAL,
+        device_class=SensorDeviceClass.ENERGY,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        suggested_display_precision=6,
+    ),
+    SensorEntityDescription(
+        key="stat_elcons_total_defrost",
+        translation_key="stat_elcons_total_defrost",
+        state_class=SensorStateClass.TOTAL,
+        device_class=SensorDeviceClass.ENERGY,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        suggested_display_precision=6,
+    ),
+    SensorEntityDescription(
+        key="stat_elcons_cur_year_heating",
+        translation_key="stat_elcons_cur_year_heating",
+        state_class=SensorStateClass.TOTAL,
+        device_class=SensorDeviceClass.ENERGY,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        suggested_display_precision=6,
+    ),
+    SensorEntityDescription(
+        key="stat_elcons_cur_year_cooling",
+        translation_key="stat_elcons_cur_year_cooling",
+        state_class=SensorStateClass.TOTAL,
+        device_class=SensorDeviceClass.ENERGY,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        suggested_display_precision=6,
+    ),
+    SensorEntityDescription(
+        key="stat_elcons_cur_year_hotwater",
+        translation_key="stat_elcons_cur_year_hotwater",
+        state_class=SensorStateClass.TOTAL,
+        device_class=SensorDeviceClass.ENERGY,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        suggested_display_precision=6,
+    ),
+    SensorEntityDescription(
+        key="stat_elcons_cur_year_defrost",
+        translation_key="stat_elcons_cur_year_defrost",
+        state_class=SensorStateClass.TOTAL,
+        device_class=SensorDeviceClass.ENERGY,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        suggested_display_precision=6,
+    ),
 )
 
 SENSORS = {desc.key: desc for desc in SENSOR_TYPES}
@@ -665,12 +856,6 @@ class IDM_Entity(CoordinatorEntity, SensorEntity):
         self.entity_description = entity_description
         devId = coordinator.config_entry.data[CONF_DISPLAY_NAME]
         self._attr_unique_id = f"{devId}_{entity_description.translation_key}"
-        self._attr_native_value = (
-            "0"  # initial value to avoid number errors for temp sensors
-        )
-        # self.data = (
-        #    "0"  # set initial value to 0 to avoid number errors for temp sensors
-        # )
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, devId)},
             name=DEF_DEVICE_NAME,
@@ -683,91 +868,3 @@ class IDM_Entity(CoordinatorEntity, SensorEntity):
     def getIdx(self) -> str:
         """Get the index of the sensor."""
         return self.idx
-
-
-# We now directly set the value in setValue, so no need for dispatcher, should be much faster
-
-
-#    async def async_added_to_hass(self) -> None:
-#        """Run when entity about to be added to hass."""
-#
-#        @callback
-#        def handle_telegram(idx, data):
-#            """Update attributes from last received data for this object."""
-#            if self.idx != idx:
-#                return
-#            if self.data == data:  # nothing change, no update needed
-#                return
-#            self.data = data
-#            self.async_write_ha_state()
-
-#        self._async_remove_dispatcher = async_dispatcher_connect(
-#            self.hass, SIGNAL_IDM_TELEGRAM, handle_telegram
-#        )
-
-#    async def async_will_remove_from_hass(self) -> None:
-#        """Run when entity will be removed from hass."""
-#        if self._async_remove_dispatcher:
-#            self._async_remove_dispatcher()
-
-# @property
-# def native_value(self) -> str:
-#    """Return the value of the last received telegram."""
-#    return self.data
-
-
-# ---------------- Example sensors for testing purposes only ----------------
-class ExampleSensor(SensorEntity):
-    """Representation of a Sensor."""
-
-    _attr_name = "iDM Software Version"
-    _attr_unique_id = "idm_software_version"
-    _attr_has_entity_name = True
-    counter = 0
-    # _attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
-    # _attr_device_class = SensorDeviceClass.TEMPERATURE
-    # _attr_state_class = SensorStateClass.MEASUREMENT
-
-    def update(self) -> None:
-        """Fetch new state data for the sensor.
-
-        This is the only method that should fetch new data for Home Assistant.
-        """
-        self.counter += 1
-        self._attr_native_value = "exampleVersion" + str(self.counter)
-
-
-class ExampleSensor2(CoordinatorEntity, SensorEntity):
-    """Representation of a Sensor."""
-
-    _attr_name = "iDM Test Sensor"
-    _attr_unique_id = "idm_testSensor"
-    _attr_has_entity_name = True
-    counter = 0
-
-    # _attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
-    # _attr_device_class = SensorDeviceClass.TEMPERATURE
-    # _attr_state_class = SensorStateClass.MEASUREMENT
-    def __init__(self, coordinator, idx):
-        """Initialize the sensor."""
-        super().__init__(coordinator)
-        self.idx = idx  # Index to identify the sensor
-
-    def _handle_coordinator_update(self) -> None:
-        """Handle updated data from the coordinator."""
-        # Here you can extract data from the coordinator and update the sensor's state
-        self.update()
-        self.async_write_ha_state()
-
-    def update(self) -> None:
-        """Fetch new state data for the sensor.
-
-        This is the only method that should fetch new data for Home Assistant.
-        """
-        self.counter += 1
-        strCount = self.counter
-        if strCount > 20:
-            strCount = 20
-        if self.counter > 40:
-            self.counter = 0
-        self._attr_native_value = "SensorVal " + str(strCount)
