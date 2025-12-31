@@ -6,7 +6,13 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.const import CONF_HOST, CONF_PIN, CONF_TIMEOUT
-from .const import CONF_DISPLAY_NAME, CONF_CYCLE_TIME, CONF_STAT_DIV
+from .const import (
+    CONF_DISPLAY_NAME,
+    CONF_CYCLE_TIME,
+    CONF_STAT_DIV,
+    DEF_TIME_BETWEEN_UPDATES,
+    DEF_IDM_PIN,
+)
 
 _PLATFORMS: list[Platform] = [Platform.SENSOR]
 
@@ -16,15 +22,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     displayname = entry.data.get(CONF_DISPLAY_NAME)
     hostname = entry.data.get(CONF_HOST)
-    pin = entry.data.get(CONF_PIN)
-    timeout = entry.data.get(CONF_TIMEOUT)
-    cycle_time = entry.data.get(CONF_CYCLE_TIME)
-    stat_div = 0  # default to disabled
-    try:
-        stat_div = entry.data.get(CONF_STAT_DIV, 0)
-    except SomeError:
-        # we ignore errors here, we work with the default...
-        stat_div = 0
+    pin = entry.data.get(CONF_PIN, DEF_IDM_PIN)
+    timeout = entry.data.get(CONF_TIMEOUT, 3)
+    cycle_time = entry.data.get(
+        CONF_CYCLE_TIME, DEF_TIME_BETWEEN_UPDATES.total_seconds()
+    )
+    stat_div = entry.data.get(
+        CONF_STAT_DIV, 0
+    )  # we give divider a default, in case not defined...
 
     entry.runtime_data = {
         CONF_DISPLAY_NAME: displayname,
