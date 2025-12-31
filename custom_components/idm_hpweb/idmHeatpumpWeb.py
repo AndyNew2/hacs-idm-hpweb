@@ -247,7 +247,7 @@ class idmHeatpumpWeb:
         self.idmSensorDefn = idmSensorDefinitions_en
         self.iDM_IdentificationString = iDM_IdentificationString_en
         self.idmStatDefn = idmStatDefinitions_en
-        self.my_counter = 0
+        self.my_counter = -1
         self.statDiv = statDiv
 
     async def async_idm_async_login(self) -> str:
