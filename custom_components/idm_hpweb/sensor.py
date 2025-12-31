@@ -64,12 +64,16 @@ async def async_setup_entry(
 ) -> None:
     """Set up the idM coordinator."""
 
+    stat_divider = config_entry.data.get(
+        CONF_STAT_DIV, 0
+    )  # we added this parameter later, therefore needs proper default
+
     idmObj = idmHeatpumpWeb(
         hass,
         config_entry.data[CONF_HOST],
         config_entry.data[CONF_PIN],
         config_entry.data[CONF_TIMEOUT],
-        config_entry.data[CONF_STAT_DIV],
+        stat_divider,
     )
 
     coordinator = IDM_Coordinator(
