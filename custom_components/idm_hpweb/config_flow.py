@@ -56,6 +56,8 @@ class idmWebConfigFlow(ConfigFlow, domain=DOMAIN):
 
             if user_input[CONF_DISPLAY_NAME].find(" ") != -1:
                 errors[CONF_DISPLAY_NAME] = "display_name_no_spaces"
+            elif user_input[CONF_TIMEOUT] < 1:
+                errors[CONF_TIMEOUT] = "timeout_too_small"
             elif (
                 user_input[CONF_CYCLE_TIME]
                 < DEF_MIN_TIME_BETWEEN_UPDATES.total_seconds()
@@ -106,6 +108,8 @@ class idmWebConfigFlow(ConfigFlow, domain=DOMAIN):
 
             if user_input[CONF_DISPLAY_NAME].find(" ") != -1:
                 errors[CONF_DISPLAY_NAME] = "display_name_no_spaces"
+            elif user_input[CONF_TIMEOUT] < 1:
+                errors[CONF_TIMEOUT] = "timeout_too_small"
             elif (
                 user_input[CONF_CYCLE_TIME]
                 < DEF_MIN_TIME_BETWEEN_UPDATES.total_seconds()
