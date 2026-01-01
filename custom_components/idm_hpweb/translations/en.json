@@ -9,6 +9,7 @@
             "display_name_no_spaces": "Display name must not contain spaces",
             "invalid_pin": "Entered PIN is invalid",
             "stat_div_too_small": "Divider must be either 0 (disabled) or at least 3",
+            "timeout_too_small": "Timeout value to low, must be at least 1 second.",
             "unknown": "Unexpected error"
         },
         "step": {
@@ -62,6 +63,9 @@
             "cur_el_power": {
                 "name": "G D Cur. electrical power"
             },
+            "cur_el_power_pre": {
+                "name": "I B Cur. electrical power precise"
+            },
             "cur_exp_power_cooling": {
                 "name": "G B Cur./exp. power cooling"
             },
@@ -109,6 +113,27 @@
             },
             "flow_temp_heatcircuit_c": {
                 "name": "B D Flow temp heatcircuit C"
+            },
+            "flow_temp_set_hc_a": {
+                "name": "I A Flow temp. set for hc A"
+            },
+            "flow_temp_set_hc_b": {
+                "name": "I A Flow temp. set for hc B"
+            },
+            "flow_temp_set_hc_c": {
+                "name": "I A Flow temp. set for hc C"
+            },
+            "flow_temp_set_hc_d": {
+                "name": "I A Flow temp. set for hc D"
+            },
+            "flow_temp_set_hc_e": {
+                "name": "I A Flow temp. set for hc E"
+            },
+            "flow_temp_set_hc_f": {
+                "name": "I A Flow temp. set for hc F"
+            },
+            "flow_temp_set_hc_g": {
+                "name": "I A Flow temp. set for hc G"
             },
             "flow_temperature": {
                 "name": "B C Flow temp"
