@@ -147,7 +147,9 @@ class IDM_Coordinator(DataUpdateCoordinator):
         try:
             # Note: asyncio.TimeoutError and aiohttp.ClientError are already
             # handled by the data update coordinator.
-            async with async_timeout.timeout(self.config_entry.data[CONF_TIMEOUT] + 1):
+            async with async_timeout.timeout(
+                self.config_entry.data[CONF_TIMEOUT] + 2
+            ):  # add 2 seconds for additional data frames which might be needed
                 data: IdmResponseData = await self.my_api.async_idm_async_get_data()
 
                 for i in range(data.lenResp()):
@@ -797,6 +799,71 @@ SENSOR_TYPES: tuple[SensorEntityDescription, ...] = (
         device_class=SensorDeviceClass.ENERGY,
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         suggested_display_precision=6,
+    ),
+    # heatpump status values
+    SensorEntityDescription(
+        key="flow_temp_set_hc_A",
+        translation_key="flow_temp_set_hc_a",
+        state_class=SensorStateClass.MEASUREMENT,
+        device_class=SensorDeviceClass.TEMPERATURE,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        suggested_display_precision=1,
+    ),
+    SensorEntityDescription(
+        key="flow_temp_set_hc_B",
+        translation_key="flow_temp_set_hc_b",
+        state_class=SensorStateClass.MEASUREMENT,
+        device_class=SensorDeviceClass.TEMPERATURE,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        suggested_display_precision=1,
+    ),
+    SensorEntityDescription(
+        key="flow_temp_set_hc_C",
+        translation_key="flow_temp_set_hc_c",
+        state_class=SensorStateClass.MEASUREMENT,
+        device_class=SensorDeviceClass.TEMPERATURE,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        suggested_display_precision=1,
+    ),
+    SensorEntityDescription(
+        key="flow_temp_set_hc_D",
+        translation_key="flow_temp_set_hc_d",
+        state_class=SensorStateClass.MEASUREMENT,
+        device_class=SensorDeviceClass.TEMPERATURE,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        suggested_display_precision=1,
+    ),
+    SensorEntityDescription(
+        key="flow_temp_set_hc_E",
+        translation_key="flow_temp_set_hc_e",
+        state_class=SensorStateClass.MEASUREMENT,
+        device_class=SensorDeviceClass.TEMPERATURE,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        suggested_display_precision=1,
+    ),
+    SensorEntityDescription(
+        key="flow_temp_set_hc_F",
+        translation_key="flow_temp_set_hc_f",
+        state_class=SensorStateClass.MEASUREMENT,
+        device_class=SensorDeviceClass.TEMPERATURE,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        suggested_display_precision=1,
+    ),
+    SensorEntityDescription(
+        key="flow_temp_set_hc_G",
+        translation_key="flow_temp_set_hc_g",
+        state_class=SensorStateClass.MEASUREMENT,
+        device_class=SensorDeviceClass.TEMPERATURE,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        suggested_display_precision=1,
+    ),
+    SensorEntityDescription(
+        key="cur_el_power_pre",
+        translation_key="cur_el_power_pre",
+        state_class=SensorStateClass.MEASUREMENT,
+        device_class=SensorDeviceClass.POWER,
+        native_unit_of_measurement=UnitOfPower.KILO_WATT,
+        suggested_display_precision=4,
     ),
 )
 
