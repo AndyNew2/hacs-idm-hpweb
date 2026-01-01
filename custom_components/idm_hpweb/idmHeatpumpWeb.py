@@ -14,6 +14,7 @@ _LOGGER = logging.getLogger(__name__)
 
 idmURL_Index = "/index.php"
 idmURL_Settings = "/data/settings.php"
+idmURL_Heatpump = "/data/heatpump.php"
 idmURL_Stat_Runtime = "/data/statistics.php?type=heatpump"
 idmURL_Stat_GenHeat = "/data/statistics.php?type=amountofheat"
 idmURL_Stat_ElCons = "/data/statistics.php?type=baenergyhp"
@@ -243,6 +244,7 @@ class idmHeatpumpWeb:
         self.csrf_token = None
         self.idmUrl = "http://" + host + idmURL_Index
         self.idmDataUrl = "http://" + host + idmURL_Settings
+        self.idmHeatpumpUrl = "http://" + host + idmURL_Heatpump
         self.idmExtraDefn = iDMExtraData_en  # try first english version
         self.idmSensorDefn = idmSensorDefinitions_en
         self.iDM_IdentificationString = iDM_IdentificationString_en
@@ -438,6 +440,60 @@ class idmHeatpumpWeb:
                     else:
                         _LOGGER.debug("Key %s not found in response", k)
 
+                time.sleep(
+                    0.4
+                )  # relax a little bit to avoid idm heatpump web overloads
+                response = self.session.get(
+                    self.idmHeatpumpUrl, headers=addHeader, timeout=self._timeout
+                )
+                if response.status_code == 200:
+                    txt = response.text
+                    startPos = txt.find('{"flow":{')
+                    while startPos != -1:
+                        (valStr, afterPos) = extractParameterRaw(
+                            txt,
+                            startPos,
+                            startPos + idmReadAheadBlock,
+                            '"temperatures":{',
+                            '"set":"',
+                            '"',
+                        )
+                        if afterPos > startPos:
+                            startPos = afterPos
+                            afterPos = txt.find('"hk":"', startPos)
+                            if afterPos != -1:
+                                heatCircuitLetter = txt[afterPos + 6]
+                                if (heatCircuitLetter >= "A") and (
+                                    heatCircuitLetter <= "G"
+                                ):
+                                    answerData.addResp(
+                                        "flow_temp_set_hc_" + heatCircuitLetter,
+                                        valStr,
+                                    )
+                                startPos = afterPos
+                            else:
+                                afterPos = (
+                                    startPos  # restore afterPos for futher values
+                                )
+                                startPos = -1  # to abort this while loop
+                        else:
+                            startPos = -1  # this aborts while loop
+
+                    startPos = afterPos  # search new values after heat circuit set temperatures
+                    (valStr, afterPos) = extractParameterRaw(
+                        txt,
+                        startPos,
+                        startPos + idmReadAheadBlock,
+                        '"pv":{',
+                        '"hp":"',
+                        '"',
+                    )
+                    if afterPos > startPos:
+                        answerData.addResp(
+                            "cur_el_power_pre",
+                            valStr,
+                        )
+
                 if self.statDiv >= 3:
                     idmUrlStat = None
                     keyValIntro = ""
@@ -454,6 +510,7 @@ class idmHeatpumpWeb:
                         idmUrlStat = "http://" + self._host + idmURL_Stat_ElCons
                         keyValIntro = "stat_elcons_"
                     if idmUrlStat:
+                        time.sleep(1)  # relax to avoid idm heatpump web overloads
                         response = self.session.get(
                             idmUrlStat, headers=addHeader, timeout=self._timeout
                         )
