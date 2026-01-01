@@ -5,6 +5,7 @@
         },
         "error": {
             "cannot_connect": "Verbindung konnte nicht erstellt werden",
+            "timeout_too_small": "Timeout Wert zu klein, muss mindestens 1 Sekunde sein.",
             "cycle_time_too_low": "Updaterate ist zu klein, es müssen mindestens 2 Sekunden sein",
             "stat_div_too_small": "Teiler muss entweder 0 (deaktiviert) oder mindestens 3 sein",
             "display_name_no_spaces": "Anzeigename darf keine Leerzeichen enthalten",
@@ -292,6 +293,30 @@
             },
             "stat_elcons_cur_year_defrost": {
                 "name": "H X Stromverbrauch Akt. Jahr Abtauung"
+            },
+            "flow_temp_set_hc_a": {
+                "name": "I A Vorlauftemp Soll HK A"
+            },
+            "flow_temp_set_hc_b": {
+                "name": "I A Vorlauftemp Soll HK B"
+            },
+            "flow_temp_set_hc_c": {
+                "name": "I A Vorlauftemp Soll HK C"
+            },
+            "flow_temp_set_hc_d": {
+                "name": "I A Vorlauftemp Soll HK D"
+            },
+            "flow_temp_set_hc_e": {
+                "name": "I A Vorlauftemp Soll HK E"
+            },
+            "flow_temp_set_hc_f": {
+                "name": "I A Vorlauftemp Soll HK F"
+            },
+            "flow_temp_set_hc_g": {
+                "name": "I A Vorlauftemp Soll HK G"
+            },
+            "cur_el_power_pre": {
+                "name": "I B akt. el. Leistung genau"
             }
         }
     }
