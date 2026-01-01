@@ -495,8 +495,13 @@ class idmHeatpumpWeb:
                                 if afterPos > startPos:
                                     for k, v in self.idmStatDefn.items():
                                         if foundStat[index] == 1:
+                                            if (
+                                                valStr == ""
+                                            ):  # happens for defrost at begin of year, prevent writing unvalid string to entity
+                                                valStr = "0.0"
                                             answerData.addResp(
-                                                keyValIntro + "cur_year_" + v, valStr
+                                                keyValIntro + "cur_year_" + v,
+                                                valStr,
                                             )
                                             startPos = afterPos
                                             while (afterPos < len(txt)) and (
@@ -523,6 +528,13 @@ class idmHeatpumpWeb:
             time.sleep(10)  # relax to avoid idm heatpump web lockout
             result = self.idm_login()  # we do not care about the result here, if it fails we will trzy again next time
             return answerData
+        except:
+            ## unknown exception occured stop task controlled
+            _LOGGER.warning(
+                "Unknown Exception during data fetch, stopping reading data!"
+            )
+            return answerData
+
         return answerData
 
 
