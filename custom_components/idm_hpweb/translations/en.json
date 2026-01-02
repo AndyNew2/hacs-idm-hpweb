@@ -75,6 +75,9 @@
             "cur_exp_power_hotwater": {
                 "name": "G C Cur./exp. power hotwater"
             },
+            "cur_heat_power": {
+                "name": "I C Cur. heat power"
+            },
             "dewpoint_protection_active": {
                 "name": "D E Dewpoint protection active"
             },
@@ -158,6 +161,27 @@
             },
             "mixer_circuit_c": {
                 "name": "E F Mixer heatcircuit C"
+            },
+            "mode_heatcirc_a": {
+                "name": "I D Mode for hc A"
+            },
+            "mode_heatcirc_b": {
+                "name": "I D Mode for hc B"
+            },
+            "mode_heatcirc_c": {
+                "name": "I D Mode for hc C"
+            },
+            "mode_heatcirc_d": {
+                "name": "I D Mode for hc D"
+            },
+            "mode_heatcirc_e": {
+                "name": "I D Mode for hc E"
+            },
+            "mode_heatcirc_f": {
+                "name": "I D Mode for hc F"
+            },
+            "mode_heatcirc_g": {
+                "name": "I D Mode for hc G"
             },
             "outdoor_temperature": {
                 "name": "B A Outdoor temp"
