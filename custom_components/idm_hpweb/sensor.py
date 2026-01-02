@@ -865,6 +865,42 @@ SENSOR_TYPES: tuple[SensorEntityDescription, ...] = (
         native_unit_of_measurement=UnitOfPower.KILO_WATT,
         suggested_display_precision=4,
     ),
+    SensorEntityDescription(
+        key="mode_heatcirc_A",
+        translation_key="mode_heatcirc_a",
+    ),
+    SensorEntityDescription(
+        key="mode_heatcirc_B",
+        translation_key="mode_heatcirc_b",
+    ),
+    SensorEntityDescription(
+        key="mode_heatcirc_C",
+        translation_key="mode_heatcirc_c",
+    ),
+    SensorEntityDescription(
+        key="mode_heatcirc_D",
+        translation_key="mode_heatcirc_d",
+    ),
+    SensorEntityDescription(
+        key="mode_heatcirc_E",
+        translation_key="mode_heatcirc_e",
+    ),
+    SensorEntityDescription(
+        key="mode_heatcirc_F",
+        translation_key="mode_heatcirc_f",
+    ),
+    SensorEntityDescription(
+        key="mode_heatcirc_G",
+        translation_key="mode_heatcirc_g",
+    ),
+    SensorEntityDescription(
+        key="cur_heat_power",
+        translation_key="cur_heat_power",
+        state_class=SensorStateClass.MEASUREMENT,
+        device_class=SensorDeviceClass.POWER,
+        native_unit_of_measurement=UnitOfPower.KILO_WATT,
+        suggested_display_precision=1,
+    ),
 )
 
 SENSORS = {desc.key: desc for desc in SENSOR_TYPES}
