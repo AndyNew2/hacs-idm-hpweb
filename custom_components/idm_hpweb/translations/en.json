@@ -150,6 +150,9 @@
             "flowpump_circuit_c": {
                 "name": "E E Flow pump act heatcircuit C"
             },
+            "heatpump_compressor": {
+                "name": "I E Compressor state"
+            },
             "hotgas_temperature": {
                 "name": "B G Hotgas temp"
             },
