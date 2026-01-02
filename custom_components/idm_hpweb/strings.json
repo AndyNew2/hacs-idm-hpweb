@@ -317,6 +317,30 @@
       },
       "cur_el_power_pre": {
         "name": "I B Cur. electrical power precise"
+      },
+      "cur_heat_power": {
+        "name": "I C Cur. heat power"
+      },
+      "mode_heatcirc_a": {
+        "name": "I D Mode for hc A"
+      },
+      "mode_heatcirc_b": {
+        "name": "I D Mode for hc B"
+      },
+      "mode_heatcirc_c": {
+        "name": "I D Mode for hc C"
+      },
+      "mode_heatcirc_d": {
+        "name": "I D Mode for hc D"
+      },
+      "mode_heatcirc_e": {
+        "name": "I D Mode for hc E"
+      },
+      "mode_heatcirc_f": {
+        "name": "I D Mode for hc F"
+      },
+      "mode_heatcirc_g": {
+        "name": "I D Mode for hc G"
       }
     }
   }
