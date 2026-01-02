@@ -450,6 +450,22 @@ class idmHeatpumpWeb:
                     txt = response.text
                     startPos = txt.find('{"flow":{')
                     while startPos != -1:
+                        hc_mode = ""  # default for not found
+                        afterPos = txt.find(
+                            '"hcmode":', startPos, startPos + idmReadAheadBlock
+                        )
+                        if afterPos > startPos:
+                            if txt[afterPos + 9] == "0":
+                                hc_mode = "off"
+                            elif txt[afterPos + 9] == "1":
+                                hc_mode = "on"
+                            elif txt[afterPos + 9] == "2":
+                                hc_mode = (
+                                    "cooling"  # not sure just a guess in the moment
+                                )
+                            else:
+                                hc_mode = txt[afterPos + 9]
+
                         (valStr, afterPos) = extractParameterRaw(
                             txt,
                             startPos,
@@ -470,6 +486,11 @@ class idmHeatpumpWeb:
                                         "flow_temp_set_hc_" + heatCircuitLetter,
                                         valStr,
                                     )
+                                    if hc_mode != "":
+                                        answerData.addResp(
+                                            "mode_heatcirc_" + heatCircuitLetter,
+                                            hc_mode,
+                                        )
                                 startPos = afterPos
                             else:
                                 afterPos = (
@@ -491,6 +512,20 @@ class idmHeatpumpWeb:
                     if afterPos > startPos:
                         answerData.addResp(
                             "cur_el_power_pre",
+                            valStr,
+                        )
+                    startPos = afterPos  # search new values after heat circuit set temperatures
+                    (valStr, afterPos) = extractParameterRaw(
+                        txt,
+                        startPos,
+                        startPos + idmReadAheadBlock,
+                        '"system":{',
+                        '"value":"',
+                        '"',
+                    )
+                    if afterPos > startPos:
+                        answerData.addResp(
+                            "cur_heat_power",
                             valStr,
                         )
 
