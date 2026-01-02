@@ -317,6 +317,30 @@
             },
             "cur_el_power_pre": {
                 "name": "I B akt. el. Leistung genau"
+            },
+            "cur_heat_power": {
+                "name": "I C akt. Heizleistung"
+            },
+            "mode_heatcirc_a": {
+                "name": "I D Heizmodus HK A"
+            },
+            "mode_heatcirc_b": {
+                "name": "I D Heizmodus HK B"
+            },
+            "mode_heatcirc_c": {
+                "name": "I D Heizmodus HK C"
+            },
+            "mode_heatcirc_d": {
+                "name": "I D Heizmodus HK D"
+            },
+            "mode_heatcirc_e": {
+                "name": "I D Heizmodus HK E"
+            },
+            "mode_heatcirc_f": {
+                "name": "I D Heizmodus HK F"
+            },
+            "mode_heatcirc_g": {
+                "name": "I D Heizmodus HK G"
             }
         }
     }
