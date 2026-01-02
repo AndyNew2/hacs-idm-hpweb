@@ -80,9 +80,10 @@ Just create on your HA installation a subdir in homeassistant/custom_components
 5. In the config flow you need to enter the IP Address of your heat pump (the same you use to access the local Web GUI). Enter the IP Address in the field "Host"
 6. In the PIN field enter the PIN number to enter the Web Interface. Make sure you have assigned a PIN number, otherwise the Web Interface is disabled. By default this is "4444"
 7. Timeout and Update rate could be left to defaults or change it to your wishes.
-8. If you want iDM statistics, add a dividers value greater than 0. 0 disables statistics, entities for that will not be created. The devider defines how often the statistics are read from web interface to lower traffic for the heatpump. Usually it should be enough to update them once a minute so gave them 6 or 12. Lower values are not recommended. Lowest allowed value is 3, which means in each cycle a statistic value is read from heatpump.
+8. If you want iDM statistics, add a dividers value greater than 0. 0 disables statistics, entities for that will not be created. The devider defines how often the statistics are read from web interface to lower traffic for the heatpump. Usually it should be enough to update them once a minute so gave them 6 or 12. Lower values are not recommended. Lowest allowed value is 3, which means in each cycle a statistic value is read from heatpump. 
+See again in the Wiki more details on statistics values and what you can do with it https://github.com/AndyNew2/hacs-idm-hpweb/wiki.
 
-Done the integration should check the access and start after that automatically and start creating detected entities to your system
+Done the integration should check the access and start after that automatically and start creating detected entities to your system.
 
 ## Recommendations & Tipps and Tricks
 
