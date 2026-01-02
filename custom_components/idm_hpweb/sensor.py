@@ -901,6 +901,11 @@ SENSOR_TYPES: tuple[SensorEntityDescription, ...] = (
         native_unit_of_measurement=UnitOfPower.KILO_WATT,
         suggested_display_precision=1,
     ),
+    SensorEntityDescription(
+        key="heatpump_compressor",
+        translation_key="heatpump_compressor",
+        icon="mdi:play",
+    ),
 )
 
 SENSORS = {desc.key: desc for desc in SENSOR_TYPES}
