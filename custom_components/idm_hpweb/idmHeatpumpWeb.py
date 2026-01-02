@@ -251,6 +251,7 @@ class idmHeatpumpWeb:
         self.idmStatDefn = idmStatDefinitions_en
         self.my_counter = -1
         self.statDiv = statDiv
+        self.hasQheatSensor = 0  # by default we assume no heat sesnor is available, once a Q heat sensor values is seen it is set to 1
 
     async def async_idm_async_login(self) -> str:
         """Async Login to the heatpump web interface."""
@@ -410,6 +411,12 @@ class idmHeatpumpWeb:
                         "ext_hotwater_signal",
                         "hotwater_circulation_pump",
                         "siphon_heating",
+                        "pump_heating_circuitA",
+                        "pump_heating_circuitC",
+                        "4way_valve_circuit1",
+                        "e_heater_1kw_on",
+                        "e_heater_2kw_on",
+                        "e_heater_3kw_on",
                     ):
                         if valStr == "1":
                             valStr = "on"
@@ -519,13 +526,35 @@ class idmHeatpumpWeb:
                         txt,
                         startPos,
                         startPos + idmReadAheadBlock,
-                        '"system":{',
+                        '"system":{"q":{',
                         '"value":"',
                         '"',
                     )
                     if afterPos > startPos:
                         answerData.addResp(
                             "cur_heat_power",
+                            valStr,
+                        )
+                        self.hasQheatSensor = 1  # we have seen the Q value, so a gen. heat sesnor is available (may not be the case for all iDM heatpumps)
+                    elif self.hasQheatSensor == 1:
+                        # if we previously have seen a Q sensor, not providing it now means 0 heat generation, however do not create sensor, if no sensor have seen at all
+                        answerData.addResp(
+                            "cur_heat_power",
+                            "0.0",
+                        )
+                    startPos = afterPos
+                    afterPos = txt.find(
+                        '"sysmode":', startPos, startPos + idmReadAheadBlock
+                    )
+                    if afterPos > startPos:
+                        valStr = txt[afterPos + 10]
+                        if valStr == "0":
+                            valStr = "off"
+                        elif valStr == "1":
+                            valStr = "on"
+                        # we do not expect other values than 0 and 1, if it occurs we just leave it to the entity...
+                        answerData.addResp(
+                            "heatpump_compressor",
                             valStr,
                         )
 
