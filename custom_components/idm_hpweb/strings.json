@@ -341,6 +341,9 @@
       },
       "mode_heatcirc_g": {
         "name": "I D Mode for hc G"
+      },
+      "heatpump_compressor": {
+        "name": "I E Compressor state"
       }
     }
   }
