@@ -551,6 +551,29 @@ class idmHeatpumpWeb:
                         if valStr == "0":
                             valStr = "off"
                         elif valStr == "1":
+                            valStr = "heating"
+                        elif valStr == "2":
+                            valStr = "cooling"
+                        elif valStr == "4":
+                            valStr = "hotwater"
+                        elif valStr == "8":
+                            valStr = "defrost"
+
+                        # we do not expect other values than 0 and 1, if it occurs we just leave it to the entity...
+                        answerData.addResp(
+                            "heatpump_op_mode",
+                            valStr,
+                        )
+
+                    startPos = afterPos
+                    afterPos = txt.find(
+                        '"srcact":', startPos, startPos + idmReadAheadBlock
+                    )
+                    if afterPos > startPos:
+                        valStr = txt[afterPos + 9]
+                        if valStr == "0":
+                            valStr = "off"
+                        elif valStr == "1":
                             valStr = "on"
                         # we do not expect other values than 0 and 1, if it occurs we just leave it to the entity...
                         answerData.addResp(
