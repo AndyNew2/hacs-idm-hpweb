@@ -342,8 +342,22 @@
       "mode_heatcirc_g": {
         "name": "I D Mode for hc G"
       },
+      "heatpump_op_mode": {
+        "name": "I F Heatpump op. mode cur.",
+        "state": {
+          "off": "Off",
+          "heating": "Heating",
+          "cooling": "Cooling",
+          "hotwater": "Hotwater",
+          "defrost": "Defrost"
+        }
+      },
       "heatpump_compressor": {
-        "name": "I E Compressor state"
+        "name": "I E Compressor state",
+        "state": {
+           "on": "On",
+           "off": "Off"
+        }
       }
     }
   }
