@@ -902,6 +902,10 @@ SENSOR_TYPES: tuple[SensorEntityDescription, ...] = (
         suggested_display_precision=1,
     ),
     SensorEntityDescription(
+        key="heatpump_op_mode",
+        translation_key="heatpump_op_mode",
+    ),
+    SensorEntityDescription(
         key="heatpump_compressor",
         translation_key="heatpump_compressor",
         icon="mdi:play",
