@@ -322,28 +322,70 @@
                 "name": "I C akt. Heizleistung"
             },
             "mode_heatcirc_a": {
-                "name": "I D Heizmodus HK A"
+                "name": "I D Heizmodus HK A",
+                "state": {
+                    "on": "Ein",
+                    "off": "Aus"
+                }
             },
             "mode_heatcirc_b": {
-                "name": "I D Heizmodus HK B"
+                "name": "I D Heizmodus HK B",
+                "state": {
+                    "on": "Ein",
+                    "off": "Aus"
+                }
             },
             "mode_heatcirc_c": {
-                "name": "I D Heizmodus HK C"
+                "name": "I D Heizmodus HK C",
+                "state": {
+                    "on": "Ein",
+                    "off": "Aus"
+                }
             },
             "mode_heatcirc_d": {
-                "name": "I D Heizmodus HK D"
+                "name": "I D Heizmodus HK D",
+                "state": {
+                    "on": "Ein",
+                    "off": "Aus"
+                }
             },
             "mode_heatcirc_e": {
-                "name": "I D Heizmodus HK E"
+                "name": "I D Heizmodus HK E",
+                "state": {
+                    "on": "Ein",
+                    "off": "Aus"
+                }
             },
             "mode_heatcirc_f": {
-                "name": "I D Heizmodus HK F"
+                "name": "I D Heizmodus HK F",
+                "state": {
+                    "on": "Ein",
+                    "off": "Aus"
+                }
             },
             "mode_heatcirc_g": {
-                "name": "I D Heizmodus HK G"
+                "name": "I D Heizmodus HK G",
+                "state": {
+                    "on": "Ein",
+                    "off": "Aus"
+                }
+            },
+            "heatpump_op_mode": {
+                "name": "I F Betriebsart atk.",
+                "state": {
+                    "off": "Aus",
+                    "heating": "Heizen",
+                    "cooling": "Kühlen",
+                    "hotwater": "Heißwasser",
+                    "defrost": "Abtauen"
+                }
             },
             "heatpump_compressor": {
-                "name": "I E Kompressor Status"
+                "name": "I E Kompressor Status",
+                "state": {
+                    "on": "Ein",
+                    "off": "Aus"
+                }
             }
         }
     }
