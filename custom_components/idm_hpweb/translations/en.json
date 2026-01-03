@@ -151,7 +151,21 @@
                 "name": "E E Flow pump act heatcircuit C"
             },
             "heatpump_compressor": {
-                "name": "I E Compressor state"
+                "name": "I E Compressor state",
+                "state": {
+                    "off": "Off",
+                    "on": "On"
+                }
+            },
+            "heatpump_op_mode": {
+                "name": "I F Heatpump op. mode cur.",
+                "state": {
+                    "cooling": "Cooling",
+                    "defrost": "Defrost",
+                    "heating": "Heating",
+                    "hotwater": "Hotwater",
+                    "off": "Off"
+                }
             },
             "hotgas_temperature": {
                 "name": "B G Hotgas temp"
