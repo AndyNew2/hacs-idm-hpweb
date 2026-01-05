@@ -322,25 +322,60 @@
         "name": "I C Cur. heat power"
       },
       "mode_heatcirc_a": {
-        "name": "I D Mode for hc A"
+        "name": "I D Mode for hc A",
+        "state": {
+          "off": "Off",
+          "heating": "Heating",
+          "cooling": "Cooling"
+        }
       },
       "mode_heatcirc_b": {
-        "name": "I D Mode for hc B"
+        "name": "I D Mode for hc B",
+        "state": {
+          "off": "Off",
+          "heating": "Heating",
+          "cooling": "Cooling"
+        }
       },
       "mode_heatcirc_c": {
-        "name": "I D Mode for hc C"
+        "name": "I D Mode for hc C",
+        "state": {
+          "off": "Off",
+          "heating": "Heating",
+          "cooling": "Cooling"
+        }
       },
       "mode_heatcirc_d": {
-        "name": "I D Mode for hc D"
+        "name": "I D Mode for hc D",
+        "state": {
+          "off": "Off",
+          "heating": "Heating",
+          "cooling": "Cooling"
+        }
       },
       "mode_heatcirc_e": {
-        "name": "I D Mode for hc E"
+        "name": "I D Mode for hc E",
+        "state": {
+          "off": "Off",
+          "heating": "Heating",
+          "cooling": "Cooling"
+        }
       },
       "mode_heatcirc_f": {
-        "name": "I D Mode for hc F"
+        "name": "I D Mode for hc F",
+        "state": {
+          "off": "Off",
+          "heating": "Heating",
+          "cooling": "Cooling"
+        }
       },
       "mode_heatcirc_g": {
-        "name": "I D Mode for hc G"
+        "name": "I D Mode for hc G",
+        "state": {
+          "off": "Off",
+          "heating": "Heating",
+          "cooling": "Cooling"
+        }
       },
       "heatpump_op_mode": {
         "name": "I F Heatpump op. mode cur.",
