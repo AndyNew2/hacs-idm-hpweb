@@ -465,11 +465,9 @@ class idmHeatpumpWeb:
                             if txt[afterPos + 9] == "0":
                                 hc_mode = "off"
                             elif txt[afterPos + 9] == "1":
-                                hc_mode = "on"
+                                hc_mode = "heating"
                             elif txt[afterPos + 9] == "2":
-                                hc_mode = (
-                                    "cooling"  # not sure just a guess in the moment
-                                )
+                                hc_mode = "cooling"  # according ModbusTCP documentation, this should be correct
                             else:
                                 hc_mode = txt[afterPos + 9]
 
@@ -567,10 +565,10 @@ class idmHeatpumpWeb:
 
                     startPos = afterPos
                     afterPos = txt.find(
-                        '"srcact":', startPos, startPos + idmReadAheadBlock
+                        '"hpact":', startPos, startPos + idmReadAheadBlock
                     )
                     if afterPos > startPos:
-                        valStr = txt[afterPos + 9]
+                        valStr = txt[afterPos + 8]
                         if valStr == "0":
                             valStr = "off"
                         elif valStr == "1":
