@@ -324,50 +324,57 @@
             "mode_heatcirc_a": {
                 "name": "I D Heizmodus HK A",
                 "state": {
-                    "on": "Ein",
-                    "off": "Aus"
+                    "off": "Aus",
+                    "heating": "Heizen",
+                    "cooling": "Kühlen"
                 }
             },
             "mode_heatcirc_b": {
                 "name": "I D Heizmodus HK B",
                 "state": {
-                    "on": "Ein",
-                    "off": "Aus"
+                    "off": "Aus",
+                    "heating": "Heizen",
+                    "cooling": "Kühlen"
                 }
             },
             "mode_heatcirc_c": {
                 "name": "I D Heizmodus HK C",
                 "state": {
-                    "on": "Ein",
-                    "off": "Aus"
+                    "off": "Aus",
+                    "heating": "Heizen",
+                    "cooling": "Kühlen"
                 }
             },
             "mode_heatcirc_d": {
                 "name": "I D Heizmodus HK D",
                 "state": {
-                    "on": "Ein",
-                    "off": "Aus"
+                    "off": "Aus",
+                    "heating": "Heizen",
+                    "cooling": "Kühlen"
                 }
             },
             "mode_heatcirc_e": {
                 "name": "I D Heizmodus HK E",
                 "state": {
-                    "on": "Ein",
-                    "off": "Aus"
+                    "off": "Aus",
+                    "heating": "Heizen",
+                    "cooling": "Kühlen"
                 }
             },
             "mode_heatcirc_f": {
                 "name": "I D Heizmodus HK F",
                 "state": {
-                    "on": "Ein",
-                    "off": "Aus"
+                    "off": "Aus",
+                    "heating": "Heizen",
+                    "cooling": "Kühlen"
                 }
             },
             "mode_heatcirc_g": {
                 "name": "I D Heizmodus HK G",
                 "state": {
-                    "on": "Ein",
-                    "off": "Aus"
+                    "off": "Aus",
+                    "heating": "Heizen",
+                    "cooling": "Kühlen"
                 }
             },
             "heatpump_op_mode": {
