@@ -542,6 +542,25 @@ class idmHeatpumpWeb:
                         )
                     startPos = afterPos
                     afterPos = txt.find(
+                        '"stages":', startPos, startPos + idmReadAheadBlock
+                    )
+                    valStr == "off"  # there is no value for compressor off, therefore we default it to off
+                    if afterPos > startPos:
+                        # if stages exist, it means the heatpump compressor or heater runs
+                        valStr = txt[afterPos + 9]
+                        if valStr == "0":
+                            valStr = "on_0"  # not expected, but added to be shown in case it happens...
+                        elif valStr == "1":
+                            valStr = "on"
+                        elif valStr == "2":
+                            valStr = "on_2"  # assuming this is seens as the 2nd source
+                        # we do not expect other values than 0,1,2 if it occurs we just leave it to the entity...
+                    answerData.addResp(  # this is special to compressor state, we always write the state, even attribute is not found
+                        "heatpump_compressor",
+                        valStr,
+                    )
+                    startPos = afterPos
+                    afterPos = txt.find(
                         '"sysmode":', startPos, startPos + idmReadAheadBlock
                     )
                     if afterPos > startPos:
@@ -560,22 +579,6 @@ class idmHeatpumpWeb:
                         # we do not expect other values than 0 and 1, if it occurs we just leave it to the entity...
                         answerData.addResp(
                             "heatpump_op_mode",
-                            valStr,
-                        )
-
-                    startPos = afterPos
-                    afterPos = txt.find(
-                        '"hpact":', startPos, startPos + idmReadAheadBlock
-                    )
-                    if afterPos > startPos:
-                        valStr = txt[afterPos + 8]
-                        if valStr == "0":
-                            valStr = "off"
-                        elif valStr == "1":
-                            valStr = "on"
-                        # we do not expect other values than 0 and 1, if it occurs we just leave it to the entity...
-                        answerData.addResp(
-                            "heatpump_compressor",
                             valStr,
                         )
 
