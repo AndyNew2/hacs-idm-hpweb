@@ -8,6 +8,8 @@
             "timeout_too_small": "Timeout Wert zu klein, muss mindestens 1 Sekunde sein.",
             "cycle_time_too_low": "Updaterate ist zu klein, es müssen mindestens 2 Sekunden sein",
             "stat_div_too_small": "Teiler muss entweder 0 (deaktiviert) oder mindestens 3 sein",
+            "clock_set_deviation_too_small": "Uhr Abweichungswert ist zu klein, muss entweder 0 (deaktiviert) oder mindestens 4 sein",
+            "clock_set_hour_wrong": "Angebene Stunde ist falsch, muss zwischen 0 und 23 sein",
             "display_name_no_spaces": "Anzeigename darf keine Leerzeichen enthalten",
             "invalid_pin": "Eingegebene PIN ist falsch",
             "unknown": "Unbekannter Fehler"
@@ -16,6 +18,8 @@
             "user": {
                 "data": {
                     "CYCLE_TIME": "Zykluszeit zwischen Updates (in Sekunden)",
+                    "CLOCK_SET_DEVIATION": "Maximale iDM Uhrabweichung (in Sekunden), wenn größer wird die Zeit automatisch korrigiert (0 = deaktiviert)",
+                    "CLOCK_SET_HOUR": "Zum Start dieser Stunde wird die iDM Uhrprüfung und Korrektur durchgeführt, falls aktiviert",
                     "STATISTICS_DIV": "Teiler für Statistiken (0 = ausgeschaltet)",
                     "display_name": "Anzeigename für diese Wäremepumpe (keine Leerzeichen)",
                     "host": "Host - IP Adresse",
