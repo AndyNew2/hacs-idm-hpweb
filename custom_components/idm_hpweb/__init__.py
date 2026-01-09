@@ -10,6 +10,9 @@ from .const import (
     CONF_DISPLAY_NAME,
     CONF_CYCLE_TIME,
     CONF_STAT_DIV,
+    CONF_CLK_SET,
+    CONF_CLK_HOUR,
+    CONF_CLK_HOUR_DEFAULT,
     DEF_TIME_BETWEEN_UPDATES,
     DEF_IDM_PIN,
 )
@@ -30,6 +33,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     stat_div = entry.data.get(
         CONF_STAT_DIV, 0
     )  # we give divider a default, in case not defined...
+    clk_set = entry.data.get(
+        CONF_CLK_SET, 0
+    )  # if not yet defined work with default 0 = disabled
+    clk_set_hour = entry.data.get(
+        CONF_CLK_HOUR, CONF_CLK_HOUR_DEFAULT
+    )  # if not yet defined work with default at 2 o clock in the morning
 
     entry.runtime_data = {
         CONF_DISPLAY_NAME: displayname,
@@ -38,6 +47,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         CONF_TIMEOUT: timeout,
         CONF_CYCLE_TIME: cycle_time,
         CONF_STAT_DIV: stat_div,
+        CONF_CLK_SET: clk_set,
+        CONF_CLK_HOUR: clk_set_hour,
     }
 
     await hass.config_entries.async_forward_entry_setups(entry, _PLATFORMS)
