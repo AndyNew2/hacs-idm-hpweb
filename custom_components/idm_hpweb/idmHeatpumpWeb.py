@@ -6,15 +6,19 @@ import logging
 
 from functools import partial
 from homeassistant.core import HomeAssistant
+from datetime import datetime
+from datetime import timedelta
+from homeassistant.util import dt as dt_util
+from .const import CONF_CLK_HOUR_DEFAULT
 
 _LOGGER = logging.getLogger(__name__)
 
 # --------------------------------------------------------------------
 # Constants
-
 idmURL_Index = "/index.php"
 idmURL_Settings = "/data/settings.php"
 idmURL_Heatpump = "/data/heatpump.php"
+idmURL_Info = "/data/info.php"
 idmURL_Stat_Runtime = "/data/statistics.php?type=heatpump"
 idmURL_Stat_GenHeat = "/data/statistics.php?type=amountofheat"
 idmURL_Stat_ElCons = "/data/statistics.php?type=baenergyhp"
@@ -27,6 +31,8 @@ idmValueIntro = "</td><td>"
 idmValueEnding = "</td><td>"
 
 iDM_IdentificationString_de = '"name":"Allgemeine Einstellungen"'
+iDM_Settime_HTTP_PUT_Str_de = '{"edesc":"_SETDATETIME","id":"SSETDATETIME","index":3,"name":"Datum/Uhrzeit","type":"setdt","value":"'  # shall end like this 2026-01-05T14:04:00.000Z"}'
+
 iDMExtraData_de = [
     ("<tr><td>Software Version</td>", "<td>", "</td></tr>", "software_version"),
     ("<tr><td>Regler Online</td>", "<td>", "h</td></tr>", "regler_online"),
@@ -122,6 +128,7 @@ idmStatDefinitions_de = {
 }
 
 iDM_IdentificationString_en = '"name":"General Settings"'
+iDM_Settime_HTTP_PUT_Str_en = '{"edesc":"_SETDATETIME","id":"SSETDATETIME","index":3,"name":"Date/time","type":"setdt","value":"'  # shall end like this 2026-01-05T14:04:00.000Z"}'
 iDMExtraData_en = [
     ("<tr><td>Software Version</td>", "<td>", "</td></tr>", "software_version"),
     ("<tr><td>Controller Online</td>", "<td>", "h</td></tr>", "regler_online"),
@@ -233,7 +240,14 @@ class idmHeatpumpWeb:
     """Class to interface with the iDM Heatpump Web."""
 
     def __init__(
-        self, hass: HomeAssistant, host: str, pin: str, timeout: int, statDiv: int
+        self,
+        hass: HomeAssistant,
+        host: str,
+        pin: str,
+        timeout: int,
+        statDiv: int,
+        clkSet: int = 0,
+        clk_set_hour: int = CONF_CLK_HOUR_DEFAULT,
     ) -> None:
         """Initialize the iDM Heatpump Web interface."""
         self.hass = hass
@@ -245,13 +259,18 @@ class idmHeatpumpWeb:
         self.idmUrl = "http://" + host + idmURL_Index
         self.idmDataUrl = "http://" + host + idmURL_Settings
         self.idmHeatpumpUrl = "http://" + host + idmURL_Heatpump
+        self.idmInfoUrl = "http://" + host + idmURL_Info
         self.idmExtraDefn = iDMExtraData_en  # try first english version
         self.idmSensorDefn = idmSensorDefinitions_en
         self.iDM_IdentificationString = iDM_IdentificationString_en
         self.idmStatDefn = idmStatDefinitions_en
+        self.idmSettime_HTTP_PUT_Str = iDM_Settime_HTTP_PUT_Str_en
         self.my_counter = -1
         self.statDiv = statDiv
         self.hasQheatSensor = 0  # by default we assume no heat sesnor is available, once a Q heat sensor values is seen it is set to 1
+        self.clkSet = clkSet
+        self.clkSetHour = clk_set_hour
+        self.clkCheckSetToday = False
 
     async def async_idm_async_login(self) -> str:
         """Async Login to the heatpump web interface."""
@@ -298,6 +317,10 @@ class idmHeatpumpWeb:
         addHeader = {
             "CSRF-Token": self.csrf_token,
         }
+        postIDMHeader = {
+            "Content-Type": "application/json;charset=utf-8",
+            "CSRF-Token": self.csrf_token,
+        }
 
         _LOGGER.debug(
             "Fetching data from IDM Heatpump Web interface: CSRF-Token=%s",
@@ -321,16 +344,20 @@ class idmHeatpumpWeb:
                 startPos = txt.find(self.iDM_IdentificationString, 0, len(txt))
                 if startPos == -1:
                     _LOGGER.debug("Identification string not found, switch languange.")
-                    if self.iDM_IdentificationString == iDM_IdentificationString_en:
+                    if (
+                        self.iDM_IdentificationString == iDM_IdentificationString_en
+                    ):  # was till now English -> try German now
                         self.iDM_IdentificationString = iDM_IdentificationString_de
                         self.idmExtraDefn = iDMExtraData_de
                         self.idmSensorDefn = idmSensorDefinitions_de
                         self.idmStatDefn = idmStatDefinitions_de
+                        self.idmSettime_HTTP_PUT_Str = iDM_Settime_HTTP_PUT_Str_de
                     else:  # there needs to be more checks, if further languanges are supported, but for now it is OK that way
                         self.iDM_IdentificationString = iDM_IdentificationString_en
                         self.idmExtraDefn = iDMExtraData_en
                         self.idmSensorDefn = idmSensorDefinitions_en
                         self.idmStatDefn = idmStatDefinitions_en
+                        self.idmSettime_HTTP_PUT_Str = iDM_Settime_HTTP_PUT_Str_en
 
                     # now check the new language
                     startPos = txt.find(self.iDM_IdentificationString, 0, len(txt))
@@ -665,7 +692,97 @@ class idmHeatpumpWeb:
                                             ):
                                                 afterPos += 1
                                         index += 1
-                return answerData  # return collected answer to caller
+                if self.clkSet != 0:
+                    # we should check iDM clock and correct it in case out of sync
+                    # accept self.clkSet as max. deviation, if bigger, correct clock, if tooooo big, generate error message and do not touch
+
+                    # Developer info: Since HA decided to have only UIC time internally, all easy python local timestamp functions are destroyed
+                    # Thanks community for this crazy decision. Python would offer UTC on all locals, but they know everything better and destroyed it.
+                    # Due to that, the defined a buggy dt helper, which should do the trick to have actual local time
+                    # However only 50% of it is working and instead of converting a UTC time to local with dt_util.as_local() it just adds the timezone in the end, but not coverts the time
+                    # Luckily the dt_util.now seems to work and actually return the time properly. Cross fingers this will stay like this ...
+
+                    if dt_util.now().hour == self.clkSetHour:
+                        if not self.clkCheckSetToday:
+                            time.sleep(
+                                0.4
+                            )  # relax a little bit to avoid idm heatpump web overloads
+                            _LOGGER.info("Checking for time sync needs ..")
+                            response = self.session.get(
+                                self.idmInfoUrl,
+                                headers=addHeader,
+                                timeout=self._timeout,
+                            )
+                            compareTime = dt_util.now()  # store compare time as close as possible after receiving data
+                            if response.status_code == 200:
+                                txt = response.text
+                                startPos = txt.find('"datetime":"')
+                                if startPos != -1:
+                                    idmTime = txt[startPos + 12 : startPos + 31]
+                                    dtIdm = datetime.strptime(
+                                        idmTime, "%Y-%m-%d %H:%M:%S"
+                                    )
+                                    delta = abs(
+                                        (
+                                            dtIdm - compareTime.replace(tzinfo=None)
+                                        ).total_seconds()
+                                    )  # we need to remove the local string, because the dtIdm object do not have it as well
+                                    if (
+                                        delta > (60 * 35)
+                                    ):  # if time difference is more than 35 minutes, something is very wrong, do not touch ...
+                                        _LOGGER.warning(
+                                            "Timesync: Detected a very big time difference! Adjust iDM clock manually before autosync keeps it in sync"
+                                            + "Detected deviation: "
+                                            + str(round(delta / 60, 2))
+                                            + " minutes; Max. allowed are 35 minutes."
+                                        )
+
+                                    elif delta > (self.clkSet + 0.5):
+                                        # deviation is bigger than acceptable, therefore start correction now...
+                                        _LOGGER.info(
+                                            " .. Timesync actually needed! Diff: "
+                                            + str(round(delta, 2))
+                                        )
+                                        time.sleep(0.4)
+                                        setIdmTime = (
+                                            dt_util.now() + timedelta(seconds=2)
+                                        )  # emperical tests showed, adding 2 seconds give most accurate results
+                                        setDateData = (
+                                            self.idmSettime_HTTP_PUT_Str
+                                            + setIdmTime.strftime(
+                                                "%Y-%m-%dT%H:%M:%S.%f"
+                                            )[:-3]
+                                            + 'Z"}'
+                                        )
+                                        htPut = self.session.put(
+                                            self.idmDataUrl,
+                                            setDateData,
+                                            headers=postIDMHeader,
+                                            timeout=self._timeout,
+                                        )
+                                        if htPut.status_code != 200:
+                                            _LOGGER.warning(
+                                                ".. Timesync received unexpected response code, did not work! Code: "
+                                                + str(htPut.status_code)
+                                            )
+                                        afterPos = htPut.text.find('"status": "OK"')
+                                        if afterPos == -1:
+                                            _LOGGER.warning(
+                                                ".. Timesync received unexpected answer, may not work: Answer: "
+                                                + htPut.text
+                                            )
+                                            # log warning, timesync received unexpected result, may not working
+                                    else:
+                                        _LOGGER.info(
+                                            " .. Timesync not needed! Diff: "
+                                            + str(round(delta, 2))
+                                        )
+
+                            self.clkCheckSetToday = True
+                    else:
+                        self.clkCheckSetToday = False
+
+            return answerData  # return collected answer to caller
 
         except requests.RequestException as e:
             ## redo login with pin and csrf token extraction
@@ -674,7 +791,7 @@ class idmHeatpumpWeb:
             result = self.idm_login()  # we do not care about the result here, if it fails we will trzy again next time
             return answerData
         except:
-            ## unknown exception occured stop task controlled
+            # unknown exception occured stop task controlled
             _LOGGER.warning(
                 "Unknown Exception during data fetch, stopping reading data!"
             )
