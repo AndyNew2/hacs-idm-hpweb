@@ -48,6 +48,9 @@ from .const import (
     CONF_CYCLE_TIME,
     DEF_DEVICE_NAME,
     CONF_STAT_DIV,
+    CONF_CLK_SET,
+    CONF_CLK_HOUR,
+    CONF_CLK_HOUR_DEFAULT,
 )
 from .idmHeatpumpWeb import (
     idmHeatpumpWeb,
@@ -67,6 +70,12 @@ async def async_setup_entry(
     stat_divider = config_entry.data.get(
         CONF_STAT_DIV, 0
     )  # we added this parameter later, therefore needs proper default
+    clk_set = config_entry.data.get(
+        CONF_CLK_SET, 0
+    )  # this is a further added parameter, therfore a default needs to be defined here.
+    clk_set_hour = config_entry.data.get(
+        CONF_CLK_HOUR, CONF_CLK_HOUR_DEFAULT
+    )  # default defined in const, but logic is same as above
 
     idmObj = idmHeatpumpWeb(
         hass,
@@ -74,6 +83,8 @@ async def async_setup_entry(
         config_entry.data[CONF_PIN],
         config_entry.data[CONF_TIMEOUT],
         stat_divider,
+        clk_set,
+        clk_set_hour,
     )
 
     coordinator = IDM_Coordinator(
