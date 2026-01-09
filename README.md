@@ -82,6 +82,11 @@ Just create on your HA installation a subdir in homeassistant/custom_components
 3. Timeout and Update rate could be left to defaults or change it to your wishes.
 4. If you want iDM statistics, add a dividers value greater than 0. 0 disables statistics, entities for that will not be created. The devider defines how often the statistics are read from web interface to lower traffic for the heatpump. Usually it should be enough to update them once a minute so gave them 6 or 12. Lower values are not recommended. Lowest allowed value is 3, which means in each cycle a statistic value is read from heatpump. 
 See again in the Wiki more details on statistics values and what you can do with it https://github.com/AndyNew2/hacs-idm-hpweb/wiki.
+5. If you want this integration to keep the clock on the idm heatpump in sync (it drifts away very slowly from correct time), you set an accepted time difference in seconds. The integration works like this:
+  5.1  If there is a difference more than 0 configured (0 = disabled), then it reads once a day the clock from idm heatpump and compared the time with the Home Assistant time (which is synced to internet). If the detected deviation is more than the seconds configured, it runs a clock set procedure on the iDM heatpump.
+  5.2  This check runs at the begin of the configured hour (default 2 = 02:00 in the night). This check is just done once a day, to minimize the impact on the heatpump.
+  Be aware to often time corrections may corrupt the timing calculation of the heatpump. Therefore this integration just does it once a day (even if it would fail, there is no instant retry). It should be fine, all my tests showed no issue and the delays timeframes had been done fine.
+  This integration just uses the official time set function you would use on the Web GUI as well. However, just to be very careful, it is recommended to configure a heatpump EVU protection in the same hour you configure this integration to change the time. This would prevent the heatpump from running, while the time is corrected. 
 
 Done the integration should check the access and start after that automatically and start creating detected entities to your system.
 
