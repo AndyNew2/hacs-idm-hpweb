@@ -66,9 +66,6 @@ The integration now appears like any other Home Assistant integration.
 To set it up, follow these steps:
 
 1. In the HA UI go to "Settings" -> "Devices & Services", click "+ Add Integration" in the bottom right corner, and search for "iDM Heatpump Web".
-
-Or use this:  [![Add integration to Home Assistant!](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=idm_hpweb)
-
 2. Make sure the heat pump is configured correctly (see below), then fill out the necessary details in the setup form. See Configuration using Config Flow below for more details.
 
 ### Manual Installation
