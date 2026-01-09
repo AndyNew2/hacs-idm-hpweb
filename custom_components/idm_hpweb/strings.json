@@ -21,7 +21,7 @@
       "timeout_too_small": "Timeout value to low, must be at least 1 second.",
       "cycle_time_too_low": "Cycle time is too low, must be at least 2 seconds",
       "stat_div_too_small": "Divider must be either 0 (disabled) or at least 3",
-      "clock_set_deviation_too_small": "Accepted clock deviation value too small, must be 0 (disabled) or at least 4",
+      "clock_set_deviation_too_small": "Accepted clock deviation value too small, must be 0 (disabled) or at least 3",
       "clock_set_hour_wrong": "Given hour is wrong, must be between 0 and 23",
       "unknown": "[%key:common::config_flow::error::unknown%]"
     },
