@@ -22,6 +22,9 @@ from .const import (
     CONF_CYCLE_TIME,
     DEF_MIN_TIME_BETWEEN_UPDATES,
     CONF_STAT_DIV,
+    CONF_CLK_SET,
+    CONF_CLK_HOUR,
+    CONF_CLK_HOUR_DEFAULT,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -36,6 +39,8 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
             CONF_CYCLE_TIME, default=DEF_TIME_BETWEEN_UPDATES.total_seconds()
         ): int,
         vol.Optional(CONF_STAT_DIV, default=0): int,
+        vol.Optional(CONF_CLK_SET, default=0): int,
+        vol.Optional(CONF_CLK_HOUR, default=CONF_CLK_HOUR_DEFAULT): int,
     }
 )
 
@@ -65,6 +70,10 @@ class idmWebConfigFlow(ConfigFlow, domain=DOMAIN):
                 errors[CONF_CYCLE_TIME] = "cycle_time_too_low"
             elif (user_input[CONF_STAT_DIV] < 3) and (user_input[CONF_STAT_DIV] != 0):
                 errors[CONF_STAT_DIV] = "stat_div_too_small"
+            elif (user_input[CONF_CLK_SET] < 4) and (user_input[CONF_CLK_SET] != 0):
+                errors[CONF_CLK_SET] = "clock_set_deviation_too_small"
+            elif (user_input[CONF_CLK_HOUR] < 0) or (user_input[CONF_CLK_HOUR] > 23):
+                errors[CONF_CLK_HOUR] = "clock_set_hour_wrong"
             else:
                 self._async_abort_entries_match(
                     {CONF_DISPLAY_NAME: user_input[CONF_DISPLAY_NAME]}
@@ -117,6 +126,10 @@ class idmWebConfigFlow(ConfigFlow, domain=DOMAIN):
                 errors[CONF_CYCLE_TIME] = "cycle_time_too_low"
             elif (user_input[CONF_STAT_DIV] < 3) and (user_input[CONF_STAT_DIV] != 0):
                 errors[CONF_STAT_DIV] = "stat_div_too_small"
+            elif (user_input[CONF_CLK_SET] < 4) and (user_input[CONF_CLK_SET] != 0):
+                errors[CONF_CLK_SET] = "clock_set_deviation_too_small"
+            elif (user_input[CONF_CLK_HOUR] < 0) or (user_input[CONF_CLK_HOUR] > 23):
+                errors[CONF_CLK_HOUR] = "clock_set_hour_wrong"
             else:
                 # user_input[CONF_DISPLAY_NAME] = user_input[CONF_DISPLAY_NAME].replace(" ", "_")  # we cannot have spaces
                 self._async_abort_entries_match(
