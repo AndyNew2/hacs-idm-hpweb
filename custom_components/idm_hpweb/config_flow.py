@@ -70,7 +70,7 @@ class idmWebConfigFlow(ConfigFlow, domain=DOMAIN):
                 errors[CONF_CYCLE_TIME] = "cycle_time_too_low"
             elif (user_input[CONF_STAT_DIV] < 3) and (user_input[CONF_STAT_DIV] != 0):
                 errors[CONF_STAT_DIV] = "stat_div_too_small"
-            elif (user_input[CONF_CLK_SET] < 4) and (user_input[CONF_CLK_SET] != 0):
+            elif (user_input[CONF_CLK_SET] < 3) and (user_input[CONF_CLK_SET] != 0):
                 errors[CONF_CLK_SET] = "clock_set_deviation_too_small"
             elif (user_input[CONF_CLK_HOUR] < 0) or (user_input[CONF_CLK_HOUR] > 23):
                 errors[CONF_CLK_HOUR] = "clock_set_hour_wrong"
@@ -126,7 +126,7 @@ class idmWebConfigFlow(ConfigFlow, domain=DOMAIN):
                 errors[CONF_CYCLE_TIME] = "cycle_time_too_low"
             elif (user_input[CONF_STAT_DIV] < 3) and (user_input[CONF_STAT_DIV] != 0):
                 errors[CONF_STAT_DIV] = "stat_div_too_small"
-            elif (user_input[CONF_CLK_SET] < 4) and (user_input[CONF_CLK_SET] != 0):
+            elif (user_input[CONF_CLK_SET] < 3) and (user_input[CONF_CLK_SET] != 0):
                 errors[CONF_CLK_SET] = "clock_set_deviation_too_small"
             elif (user_input[CONF_CLK_HOUR] < 0) or (user_input[CONF_CLK_HOUR] > 23):
                 errors[CONF_CLK_HOUR] = "clock_set_hour_wrong"
