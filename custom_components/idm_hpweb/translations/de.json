@@ -8,7 +8,7 @@
             "timeout_too_small": "Timeout Wert zu klein, muss mindestens 1 Sekunde sein.",
             "cycle_time_too_low": "Updaterate ist zu klein, es müssen mindestens 2 Sekunden sein",
             "stat_div_too_small": "Teiler muss entweder 0 (deaktiviert) oder mindestens 3 sein",
-            "clock_set_deviation_too_small": "Uhr Abweichungswert ist zu klein, muss entweder 0 (deaktiviert) oder mindestens 4 sein",
+            "clock_set_deviation_too_small": "Uhr Abweichungswert ist zu klein, muss entweder 0 (deaktiviert) oder mindestens 3 sein",
             "clock_set_hour_wrong": "Angebene Stunde ist falsch, muss zwischen 0 und 23 sein",
             "display_name_no_spaces": "Anzeigename darf keine Leerzeichen enthalten",
             "invalid_pin": "Eingegebene PIN ist falsch",
