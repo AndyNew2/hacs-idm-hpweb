@@ -56,7 +56,7 @@ Platform | Description
 
 1. Install [HACS](https://hacs.xyz/) and complete its setup.
 2. Open HACS and select "Integrations".
-3. Add `AndyNew2/hacs-idm-heatpump` with category "Integration" as a [Custom Repository](https://hacs.xyz/docs/faq/custom_repositories/).
+3. Add `AndyNew2/hacs-idm-heatpump` with category "Integration" as a [Custom Repository](https://hacs.xyz/docs/faq/custom_repositories/). Or just use linke above.
 4. Select "iDM Heatpump Web" from the list and click "Download". You can also use the link provided below...
 
 ### Set up integration
