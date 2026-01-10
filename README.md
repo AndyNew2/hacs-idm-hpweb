@@ -22,15 +22,15 @@ Platform | Description
 -- | --
 `sensor` | Show other info from the heat pump.
 
-## Introduction - what is this home assistant integration about
+## Introduction
 
 ### What is IDM heat pump web integration
 
 1. This integration uses the **local HTTP Web** server, which comes now with all iDM heat pumps with **Navigator 2.0**.
 2. It do not use the iDM Web service nor is dependent on any iDM regsitration or **internet or cloud service**. All data is still collected **local in your network**.
-3. To make this integration work, your iDM heat pump need to have a **static IP** address or you configured your network router in a way it always assigns the same **ip address**. Use the **IP address as the host** name for the integration.
-4. This integration needs the **PIN code** from you iDM heat pump to open the HTTP connection. If no PIN code is assigned, the local HTTP on the heat pump is disabled. Activate a PIN on the iDM heatpump display.
-5. This integration do not provide all entities iDM heat pump can provide, nor gives you any control. However, the provided entities enriches other integrations.
+3. To make this integration work, your iDM heat pump need to have a **static IP** address or you configure your network router in a way, it always assigns the same **ip address**. Use the **IP address as the host** name for this integration.
+4. This integration needs the **PIN code** from you iDM heat pump to open the HTTP connection. If no PIN code is assigned, the local HTTP server on the heat pump is disabled. Activate a PIN on the iDM heatpump display, otherwise the integration will not work.
+5. This integration do not provide all entities iDM heat pump can provide, nor gives you any control, till now. However, the provided entities enriches other integrations.
 6. This integration is **actually a compantion**, designed to **work together** with the popular **Kodebach iDM Integration** see https://github.com/kodebach/hacs-idm-heatpump . However, it still can run standalone, but you will lack a lot of further information.
 7. This integration will run without enabling ModbusTCP protocol by your iDM service team. However, I recommend to do so, to be able to run this integration together with the Kodebach integration.
 8. See this Wiki for a picture, what you could see using this integration: https://github.com/AndyNew2/hacs-idm-hpweb/wiki.
@@ -38,13 +38,13 @@ Platform | Description
 
 ### What is the difference to already existing integrations for iDM heat pumps, and why may I want to use it
 
-1. This integration uses standard **HTTP get and push commands** to retries the data and provide it to Home Assistant via Entries.
-2. This integration tries to discover the entities themself and just add the entities, provided by your heatpump.
-3. Since the standard iDM Web server runs a **10 seconds update cycle**, this is the default for this integration. It can be **lowered to 2 seconds**. I tried it without a glich with 5 seconds update cycle. Of course, you could slow down the update cycle to relax Home Assistant entity handling. But the iDM interface and this integration has no issue with higher update rates.
-4. This is very different to the ModbusTCP based integrations. ModbusTCP can of course have faster update rates, however the way Home Assistant implements it, and the way iDM has integrated it, allows a update rate by best 30 seconds. If you have a higher update rate, the iDM GUI and control can go static and the heatpump freezes. Recommended update rate is 1 min lowest. This might be quite slow for some Home Assistant controlled temperature handling. This integration gives you the needed higher update rate for such conditions. The heat pump itself is not stressed by the HTTP requests, but it is with ModbusTCP. (Maybe implementation specific and not a generic issue on ModbusTCP, however for the iDM heat pump this is true.)
-5. iDM designed ModbusTCP as the interface for the heat pump. Therefore, use the **Kodebach integration as the main integration**. However, iDM lacks a few very important sensors on the ModbusTCP implementation. iDM till now, is not willing to add them. This integration bridges the flaw, and adds: **flowrate, hotgas temperature, compressor high and low pressure values** and many more.
+1. This integration uses standard **HTTP get and push commands** to retrieve the data and provide it to Home Assistant via entities.
+2. This integration tries to discover the entities automatically, and just add the entities, provided by your heatpump.
+3. Since the standard iDM Web server runs a **5-10 seconds update cycle**, the default for this integration as 10 seconds. It can be **lowered to 2 seconds**. I tried it without a glich with 5 seconds update cycle. Of course, you could slow down the update cycle to relax Home Assistant entity handling. But the iDM interface and this integration has no issue with higher update rates.
+4. This is very different to the ModbusTCP based integrations. ModbusTCP can of course have faster update rates, however the way Home Assistant implements it, and the way iDM has integrated it, allows a update rate at best 30 seconds. If you have a higher update rate, the iDM GUI and control can go static and the heatpump freezes. Recommended update rate is 1 min lowest. This might be quite slow for some Home Assistant controlled temperature handling. This integration gives you the needed higher update rate for such conditions. The heat pump itself is not stressed by the HTTP requests, but it is with ModbusTCP. (Maybe implementation specific and not a generic issue on ModbusTCP, however for the iDM heat pump this is true.)
+5. iDM designed ModbusTCP as the interface for the heat pump. Therefore, use the **Kodebach integration as the main integration**. However, iDM lacks a few very important sensors on the ModbusTCP implementation. iDM till now, did not add them. This integration bridges the shortfall, and adds: **flowrate, hotgas temperature, compressor high and low pressure values** and many more.
 6. As already mentioned, this integration is designed and implemented to run in parallel with a standard ModbusTCP based integration for the heat pump like the one from Kodebach. By disabling sensors not needed in this integration, you could greatly relax Home Assistant data handling and still allow to have the few sensors of your interests, e.g. flowrate or hotgas temperature or flow temp and return temp on a high update rate.
-7. Last but not least, you have now the option to keep the idm clock in sync with Home Assistant and therefore with the internet and the global time. No more time corrections needed to be done manually.
+7. Last but not least, you have now the option to keep the idm clock in sync with Home Assistant. No more time corrections needed to be done manually.
 
 
 ## Installation
@@ -66,14 +66,14 @@ Platform | Description
 The integration now appears like any other Home Assistant integration.
 To set it up, follow these steps:
 
-1. In the HA UI go to "Settings" -> "Devices & Services", click "+ Add Integration" in the bottom right corner, and search for "iDM Heatpump Web".
+1. In the HA UI go to "Settings" -> "Devices & Services", click "+ Add Integration" in the bottom right corner, and search for "iDM Heatpump Web". (Or use linke above.)
 2. Make sure the heat pump is configured correctly (see below), then fill out the necessary details in the setup form. See Configuration using Config Flow below for more details.
 
 ### Manual Installation
 
 Just create on your HA installation a subdir in homeassistant/custom_components
-1. A subdir called idm_hpweb
-2. Copy all files from here to that directory including subfolders like translations (probably the only one)
+1. A further subdir called idm_hpweb
+2. Copy all files from here to that directory including subfolders like translations
 3. Restart Home Assistant
 4. Go to devices, search now for idm_hpweb or "iDM Heatpump Web" device and follow the config flow, see next section
 
@@ -84,9 +84,9 @@ Just create on your HA installation a subdir in homeassistant/custom_components
 4. If you want iDM statistics, add a dividers value greater than 0. 0 disables statistics, entities for that will not be created. The devider defines how often the statistics are read from web interface to lower traffic for the heatpump. Usually it should be enough to update them once a minute so gave them 6 or 12. Lower values are not recommended. Lowest allowed value is 3, which means in each cycle a statistic value is read from heatpump. 
 See again in the Wiki more details on statistics values and what you can do with it https://github.com/AndyNew2/hacs-idm-hpweb/wiki.
 5. If you want this integration to keep the clock on the idm heatpump in sync (it drifts away very slowly from correct time), you set an accepted time difference in seconds. The integration works like this:
-*  5.1  If there is a difference more than 0 configured (0 = disabled), then it reads once a day the clock from idm heatpump and compared the time with the Home Assistant time (which is synced to internet). If the detected deviation is more than the seconds configured, it runs a clock set procedure on the iDM heatpump.
-*  5.2  This check runs at the begin of the configured hour (default 2 = 02:00 in the night). This check is just done once a day, to minimize the impact on the heatpump.
-*  Note: Be aware to often time corrections may corrupt the timing calculation of the heatpump. Therefore this integration just does it once a day (even if it would fail, there is no instant retry). It should be fine, all my tests showed no issue and all timedelays and visible timings had been fine. This integration just uses the official time set function you would use on the Web GUI as well. However, just to be very careful, it is recommended to configure a heatpump EVU protection in the same hour you configure this integration to change the time. This would prevent the heatpump from running, while the time is corrected. To skip out the heatpump one or more hours in the night is anyway a good practise many people use for long.
+*  5.1  If there is a difference more than 0 configured (0 = disabled), then it reads once a day the clock from idm heatpump and compares the time with the Home Assistant time (which is synced to internet). If the detected deviation is more than the seconds configured, it runs a clock set procedure on the iDM heatpump.
+*  5.2  This check runs at the begin of the configured hour (default 2 = 02:00 in the night). This check is just done once a day, to minimize the impact on the heatpump. So in the configured hour, it just runs once.
+*  Note: Be aware to often time corrections may corrupt the timing calculation of the heatpump. Therefore this integration just does it once a day (even if it would fail, there is no instant retry). It should be fine, all my tests showed no issue. This integration just uses the official time set function you would use on the Web GUI as well. However, just to be very careful, it is recommended to configure a heatpump EVU protection in the same hour you configure this integration to change the time. This would prevent the heatpump from running, while the time is corrected. To skip out the heatpump one or more hours in the night is anyway a good practise many people use it for long, to optimise heating process.
 
 Done the integration should check the access and start after that automatically and start creating detected entities to your system.
 
