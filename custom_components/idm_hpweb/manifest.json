@@ -6,7 +6,7 @@
   ],
   "config_flow": true,
   "dependencies": [],
-  "documentation": "https://www.home-assistant.io/integrations/idm_hpweb",
+  "documentation": "https://github.com/AndyNew2/hacs-idm-hpweb",
   "homekit": {},
   "iot_class": "local_polling",
   "quality_scale": "bronze",
