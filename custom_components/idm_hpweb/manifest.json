@@ -8,6 +8,7 @@
   "dependencies": [],
   "documentation": "https://github.com/AndyNew2/hacs-idm-hpweb",
   "homekit": {},
+  "issue_tracker": "https://github.com/AndyNew2/hacs-idm-hpweb/issues",
   "iot_class": "local_polling",
   "quality_scale": "bronze",
   "requirements": [],
