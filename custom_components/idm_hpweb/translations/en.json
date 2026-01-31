@@ -254,6 +254,9 @@
             "return_temperature": {
                 "name": "B E Return temp"
             },
+            "heatstore_temperature": {
+                "name": "B E S Heatstore temp"
+            },
             "runtime_cooling": {
                 "name": "A H Runtime cooling"
             },
@@ -401,3 +404,4 @@
         }
     }
 }
+
