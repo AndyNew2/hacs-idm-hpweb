@@ -29,6 +29,19 @@ idmKeyEnding = "</td><td>"
 idmDescrIntro = "</td><td>"
 idmValueIntro = "</td><td>"
 idmValueEnding = "</td><td>"
+idmEntryEnding = "</td></tr>"
+idmSectionDelimiter = '"edesc":'
+
+idmInputOutputDescr = [
+    '"edesc":"_SYSTEM_INFO"',
+    '"edesc":"_SENSORS"',
+    '"edesc":"_DIGITAL_INPUTS"',
+    '"edesc":"_ANALOGUE_OUTPUTS"',
+    '"edesc":"_DIGITAL_OUTPUTS"',
+    '"edesc":"_EVR_OVERVIEW"',
+    '"edesc":"_PV_POWER"',
+]
+idmServiceModeIndicatorIndex = 5  # index in idmInputOutputDescr where service mode is indicated
 
 iDM_IdentificationString_de = '"name":"Allgemeine Einstellungen"'
 iDM_Settime_HTTP_PUT_Str_de = '{"edesc":"_SETDATETIME","id":"SSETDATETIME","index":3,"name":"Datum/Uhrzeit","type":"setdt","value":"'  # shall end like this 2026-01-05T14:04:00.000Z"}'
@@ -37,19 +50,9 @@ iDMExtraData_de = [
     ("<tr><td>Software Version</td>", "<td>", "</td></tr>", "software_version"),
     ("<tr><td>Regler Online</td>", "<td>", "h</td></tr>", "regler_online"),
     ("<tr><td>Laufzeit Stufe&nbsp1</td>", "<td>", "h</td></tr>", "runtime_nb_1"),
-    (
-        "<tr><td>Schaltzyklen Stufe&nbsp1</td>",
-        "<td>",
-        "</td></tr>",
-        "switch_cycles_nb_1",
-    ),
+    ("<tr><td>Schaltzyklen Stufe&nbsp1</td>", "<td>", "</td></tr>", "switch_cycles_nb_1"),
     ("<tr><td>Laufzeit 2.Wärmeerzeuger</td>", "<td>", "h</td></tr>", "runtime_nb_2"),
-    (
-        "<tr><td>Schaltzyklen 2.Wärmeerzeuger</td>",
-        "<td>",
-        "</td></tr>",
-        "switch_cycles_nb_2",
-    ),
+    ("<tr><td>Schaltzyklen 2.Wärmeerzeuger</td>", "<td>", "</td></tr>", "switch_cycles_nb_2"),
     ("<tr><td>Laufzeit Heizen</td>", "<td>", "h</td></tr>", "runtime_heating"),
     ("<tr><td>Laufzeit Kühlen</td>", "<td>", "h</td></tr>", "runtime_cooling"),
     ("<tr><td>Laufzeit Warmwasser</td>", "<td>", "h</td></tr>", "runtime_hotwater"),
@@ -61,6 +64,7 @@ idmSensorDefinitions_de = {
     "B32": "outside_air_temperature",
     "B33": "flow_temperature",
     "B34": "return_temperature",
+    "B38": "heatstore_temperature",
     "B48": "water_temp_top",
     "B41": "water_temp_bottom",
     "B53": "flow_temp_HK_C",
@@ -138,12 +142,7 @@ iDMExtraData_en = [
     ("<tr><td>Starts 2nd Stage</td>", "<td>", "</td></tr>", "switch_cycles_nb_2"),
     ("<tr><td>Runtime Heating</td>", "<td>", "h</td></tr>", "runtime_heating"),
     ("<tr><td>Runtime Cooling</td>", "<td>", "h</td></tr>", "runtime_cooling"),
-    (
-        "<tr><td>Runtime Domestic Hot Water</td>",
-        "<td>",
-        "h</td></tr>",
-        "runtime_hotwater",
-    ),
+    ("<tr><td>Runtime Domestic Hot Water</td>", "<td>", "h</td></tr>", "runtime_hotwater" ),
     ("<tr><td>Runtime Defrost</td>", "<td>", "h</td></tr>", "runtime_defrosting"),
 ]
 
@@ -152,6 +151,7 @@ idmSensorDefinitions_en = {
     "B32": "outside_air_temperature",
     "B33": "flow_temperature",
     "B34": "return_temperature",
+    "B38": "heatstore_temperature",
     "B48": "water_temp_top",
     "B41": "water_temp_bottom",
     "B53": "flow_temp_HK_C",
@@ -222,18 +222,10 @@ idmStatDefinitions_en = {
 # Helper classes and functions for parsing responses
 class IdmResponseData:  # to store parsed response data  # noqa: D101
     _response = []  # list of tuples (key, answer)
-
-    def __init__(self):
-        self._response = []
-
-    def addResp(self, key: str, answer: str) -> None:
-        self._response.append((key, answer))
-
-    def lenResp(self) -> int:
-        return len(self._response)
-
-    def getResp(self, i):
-        return self._response[i]
+    def __init__(self): self._response = []
+    def addResp(self, key: str, answer: str) -> None: self._response.append((key, answer))
+    def lenResp(self) -> int: return len(self._response)
+    def getResp(self, i): return self._response[i]
 
 
 class idmHeatpumpWeb:
@@ -245,7 +237,7 @@ class idmHeatpumpWeb:
         host: str,
         pin: str,
         timeout: int,
-        statDiv: int,
+        statDiv: int = 0,
         clkSet: int = 0,
         clk_set_hour: int = CONF_CLK_HOUR_DEFAULT,
     ) -> None:
@@ -287,23 +279,16 @@ class idmHeatpumpWeb:
         """Log in to the heatpump web interface."""
         try:
             payload = {"pin": self._pin}
-            response = self.session.post(
-                self.idmUrl,
-                payload,
-                self._timeout,
-            )
+            response = self.session.post(self.idmUrl,payload,self._timeout)
             response.raise_for_status()
             if response.status_code == 200:
                 txt = response.text
-                if txt.find("Authorization Required") > 0:
-                    return "invalid_pin"
+                if txt.find("Authorization Required") > 0: return "invalid_pin"
 
                 startpos = txt.find('csrf_token="')
-                if startpos == -1:
-                    return "unknown"
+                if startpos == -1: return "unknown"
                 endpos = txt.find('"', startpos + 12, startpos + 132)
-                if endpos == -1:
-                    return "unknown"
+                if endpos == -1: return "unknown"
                 self.csrf_token = txt[startpos + 12 : endpos]
                 return "success"
 
@@ -322,15 +307,10 @@ class idmHeatpumpWeb:
             "CSRF-Token": self.csrf_token,
         }
 
-        _LOGGER.debug(
-            "Fetching data from IDM Heatpump Web interface: CSRF-Token=%s",
-            self.csrf_token,
-        )
+        _LOGGER.debug("Fetching data from IDM Heatpump Web interface: CSRF-Token=%s",self.csrf_token)
 
         try:
-            response = self.session.get(
-                self.idmDataUrl, headers=addHeader, timeout=self._timeout
-            )
+            response = self.session.get(self.idmDataUrl, headers=addHeader, timeout=self._timeout)
             if response.status_code == 200:
                 txt = response.text
                 startPos = txt.find('"invalid csrf token"', 0, 128)
@@ -344,9 +324,7 @@ class idmHeatpumpWeb:
                 startPos = txt.find(self.iDM_IdentificationString, 0, len(txt))
                 if startPos == -1:
                     _LOGGER.debug("Identification string not found, switch languange.")
-                    if (
-                        self.iDM_IdentificationString == iDM_IdentificationString_en
-                    ):  # was till now English -> try German now
+                    if (self.iDM_IdentificationString == iDM_IdentificationString_en):  # was till now English -> try German now
                         self.iDM_IdentificationString = iDM_IdentificationString_de
                         self.idmExtraDefn = iDMExtraData_de
                         self.idmSensorDefn = idmSensorDefinitions_de
@@ -362,132 +340,108 @@ class idmHeatpumpWeb:
                     # now check the new language
                     startPos = txt.find(self.iDM_IdentificationString, 0, len(txt))
                     if startPos == -1:
-                        _LOGGER.warning(
-                            "Identification string not found, wrong frame, or unknown language!"
-                        )
-                        return answerData  # we cannot do anything else with this frame, so discard it and stop processing here
+                        _LOGGER.warning("Identification string not found, wrong frame, or unknown language! We still try to extract data.")
+                        startPos = 0  # start at begin of frame to try to extract data anyway
 
-                self.my_counter += 1  # count this loop
+                startPos = txt.find(idmInputOutputDescr[0], startPos)  # idenifier for extra data
+                if startPos == -1:
+                    _LOGGER.warning("Wrong answer received, no extra data can be extracted!")
+                    return answerData  # we cannot do anything else with this frame, so discard it and stop processing here
+
+                self.my_counter += 1  # count this loop (for statistics division)
                 afterPos = 0
                 for i in self.idmExtraDefn:
                     (key, startDel, endDel, sensorKey) = i
                     # _LOGGER.debug("Extracting extra key: startPos=%d key=%s", startPos, key)
-                    (valStr, afterPos) = extractParameterRaw(
-                        txt,
-                        startPos,
-                        startPos + idmReadAheadBlock,
-                        key,
-                        startDel,
-                        endDel,
-                    )
+                    (valStr, afterPos) = extractParameterRaw(txt,startPos,startPos+idmReadAheadBlock,key,startDel,endDel)
                     if afterPos > startPos:  # something found
                         answerData.addResp(sensorKey, valStr)
                         startPos = afterPos
                         # _LOGGER.debug("Extracting extra key: afterPos=%d key=%s value=%s",afterPos,key,valStr,
                     else:
-                        _LOGGER.debug(
-                            "Extra Key %s not found in response for sensor",
-                            key,
-                            sensorKey,
-                        )
+                        _LOGGER.debug("Extra Key %s not found in response for sensor",key,sensorKey)
 
                 afterPos = txt.find('"edesc":"_INPUTS_OUTPUTS_INFO"', startPos)
                 if afterPos == -1:
-                    _LOGGER.warning(
-                        "Wrong answer received, no values can be extracted!"
-                    )
+                    _LOGGER.warning("Wrong answer received, no further values can be extracted!")
                     return answerData
 
                 # extract all defined sensor values
                 _LOGGER.debug("Parsing data response from IDM Heatpump Web")
                 startPos = afterPos
                 serviceMode = False
-                for k, v in self.idmSensorDefn.items():
-                    sensorKey = k  # by default use k as sensor key
-                    if (v == "super_heating_1") or (v == "cur_exp_power_heating"):
-                        if serviceMode:
-                            # we need to help, since service mode responses are very long
-                            afterPos = txt.find(k, startPos)
-                            if afterPos != -1:
-                                startPos = (
-                                    afterPos - 50
-                                )  # set startPos shortly before finding, so intro can be found as well
+                for i in range(1, len(idmInputOutputDescr)):
+                    if (i==idmServiceModeIndicatorIndex) and (not serviceMode):
+                        # skip service mode section if not indicated
+                        continue
+                    if (i>=idmServiceModeIndicatorIndex):
+                        afterPos = txt.find(idmInputOutputDescr[i], startPos)  # in service mode or PV data is much later, we cannot optimize here
+                    else:
+                        afterPos = txt.find(idmInputOutputDescr[i], startPos, startPos + idmReadAheadBlock)
+                    if (afterPos == -1) and (i<idmServiceModeIndicatorIndex):
+                        _LOGGER.warning("Wrong order of input/output sections, try to search again ...")
+                        afterPos = txt.find(idmInputOutputDescr[i], 0)
+                        if afterPos == -1:
+                            _LOGGER.warning("Cannot find section %s, stop parsing for this section.", idmInputOutputDescr[i])
+                            break
+                    startPos = afterPos+len(idmInputOutputDescr[i])
+                    keyStr = ""
+                    while True:
+                        (valStr, keyStr, afterPos) = extractParameterInputOutputInSectionWithKey(txt, startPos)
+                        if startPos==afterPos:
+                            break # no more entries in this section or error, do not matter, we proceed with next section
+                        # search of key in sensor definitions
+                        v = self.idmSensorDefn.get(keyStr)
+                        if v is None:
+                            # try again with #1, #2, #3 ... in case of multiple same keys in different sections
+                            keyStr = keyStr+"#"+str(i-1)  # to differenciate multiple same keys in different sections
+                            v = self.idmSensorDefn.get(keyStr)
+                        if v is None:
+                            _LOGGER.debug("Key %s not found in sensor definitions. Will be ignored.", keyStr)
                         else:
-                            # check if there are PV data in response
-                            startPos = txt.find('"edesc":"_PV"', startPos)
-                            if startPos == -1:
-                                break  # if not PV data break loop here to avoid endless searching for nothing
-
-                    if len(k) <= 5:
-                        searchK = k
-                        hashPos = k.find("#")
-                        if hashPos != -1:
-                            searchK = k[0:hashPos]
-                            # unfortunately some keys are used more than once, we solve this with the context (position of the data)
-                        (valStr, afterPos) = extractParameterStr(txt, startPos, searchK)
-                    else:
-                        sensorKey = v  # by long search strings (localized) use the description field as index
-                        (valStr, afterPos) = extractParameterStr(txt, startPos, "", k)
-                    # _LOGGER.debug("Parsed %s: %s", k, valStr)
-
-                    # extra interpretation of digital input values
-                    if v in (
-                        "flow_pump_on",
-                        "external_request",
-                        "ext_switch_heating_cooling",
-                        "ext_hotwater_signal",
-                        "hotwater_circulation_pump",
-                        "siphon_heating",
-                        "pump_heating_circuitA",
-                        "pump_heating_circuitC",
-                        "4way_valve_circuit1",
-                        "e_heater_1kw_on",
-                        "e_heater_2kw_on",
-                        "e_heater_3kw_on",
-                    ):
-                        if valStr == "1":
-                            valStr = "on"
-                        elif valStr == "0":
-                            valStr = "off"
-                    elif v in (
-                        "failure_eheating",
-                        "dewpoint_humidity_alarm",
-                        "high_pressure_error",
-                    ):
-                        if valStr == "1":
-                            valStr = "OK"
-                        elif valStr == "0":
-                            valStr = "Problem!"
-                    elif v in ("ew_evu_lock_contact"):
-                        if valStr == "1":
-                            valStr = "off"
-                        elif valStr == "0":
-                            valStr = "on"
-                    elif (v == "ainout_80_81") and (afterPos > startPos):
-                        serviceMode = (
-                            True  # detected Service mode, longer search needed
-                        )
-
-                    if afterPos > startPos:  # something found
-                        answerData.addResp(sensorKey, valStr)
+                            # extra interpretation of digital input values
+                            if v in (
+                                "flow_pump_on",
+                                "external_request",
+                                "ext_switch_heating_cooling",
+                                "ext_hotwater_signal",
+                                "hotwater_circulation_pump",
+                                "siphon_heating",
+                                "pump_heating_circuitA",
+                                "pump_heating_circuitC",
+                                "4way_valve_circuit1",
+                                "e_heater_1kw_on",
+                                "e_heater_2kw_on",
+                                "e_heater_3kw_on",
+                            ):
+                                if valStr == "1":
+                                    valStr = "on"
+                                elif valStr == "0":
+                                    valStr = "off"
+                            elif v in ("failure_eheating","dewpoint_humidity_alarm","high_pressure_error"):
+                                if valStr == "1":
+                                    valStr = "OK"
+                                elif valStr == "0":
+                                    valStr = "Problem!"
+                            elif v in ("ew_evu_lock_contact"):
+                                if valStr == "1":
+                                    valStr = "off"
+                                elif valStr == "0":
+                                    valStr = "on"
+                            elif (v == "ainout_80_81"):
+                                serviceMode = True  # detected Service mode, add further section
+                            if len(keyStr) <= 5: v = keyStr  # for short keys, just use the key as sensor name
+                            answerData.addResp(v, valStr)
                         startPos = afterPos
-                    else:
-                        _LOGGER.debug("Key %s not found in response", k)
 
-                time.sleep(
-                    0.4
-                )  # relax a little bit to avoid idm heatpump web overloads
-                response = self.session.get(
-                    self.idmHeatpumpUrl, headers=addHeader, timeout=self._timeout
-                )
+                time.sleep(0.4)  # relax a little bit to avoid idm heatpump web overloads
+                response = self.session.get(self.idmHeatpumpUrl, headers=addHeader, timeout=self._timeout)
                 if response.status_code == 200:
                     txt = response.text
                     startPos = txt.find('{"flow":{')
                     while startPos != -1:
                         hc_mode = ""  # default for not found
-                        afterPos = txt.find(
-                            '"hcmode":', startPos, startPos + idmReadAheadBlock
-                        )
+                        afterPos = txt.find('"hcmode":', startPos, startPos + idmReadAheadBlock)
                         if afterPos > startPos:
                             if txt[afterPos + 9] == "0":
                                 hc_mode = "off"
@@ -498,79 +452,40 @@ class idmHeatpumpWeb:
                             else:
                                 hc_mode = txt[afterPos + 9]
 
-                        (valStr, afterPos) = extractParameterRaw(
-                            txt,
-                            startPos,
-                            startPos + idmReadAheadBlock,
-                            '"temperatures":{',
-                            '"set":"',
-                            '"',
-                        )
+                        (valStr, afterPos) = extractParameterRaw(txt,startPos,startPos+idmReadAheadBlock,'"temperatures":{',
+                            '"set":"','"',)
                         if afterPos > startPos:
                             startPos = afterPos
                             afterPos = txt.find('"hk":"', startPos)
                             if afterPos != -1:
                                 heatCircuitLetter = txt[afterPos + 6]
-                                if (heatCircuitLetter >= "A") and (
-                                    heatCircuitLetter <= "G"
-                                ):
-                                    answerData.addResp(
-                                        "flow_temp_set_hc_" + heatCircuitLetter,
-                                        valStr,
-                                    )
+                                if (heatCircuitLetter >= "A") and (heatCircuitLetter <= "G"):
+                                    answerData.addResp("flow_temp_set_hc_" + heatCircuitLetter,valStr)
                                     if hc_mode != "":
-                                        answerData.addResp(
-                                            "mode_heatcirc_" + heatCircuitLetter,
-                                            hc_mode,
-                                        )
+                                        answerData.addResp("mode_heatcirc_" + heatCircuitLetter,hc_mode)
                                 startPos = afterPos
                             else:
-                                afterPos = (
-                                    startPos  # restore afterPos for futher values
-                                )
+                                afterPos = (startPos)  # restore afterPos for futher values
                                 startPos = -1  # to abort this while loop
                         else:
                             startPos = -1  # this aborts while loop
 
                     startPos = afterPos  # search new values after heat circuit set temperatures
-                    (valStr, afterPos) = extractParameterRaw(
-                        txt,
-                        startPos,
-                        startPos + idmReadAheadBlock,
-                        '"pv":{',
-                        '"hp":"',
-                        '"',
-                    )
+                    (valStr, afterPos) = extractParameterRaw(txt,startPos,startPos+idmReadAheadBlock,
+                        '"pv":{','"hp":"', '"')
                     if afterPos > startPos:
-                        answerData.addResp(
-                            "cur_el_power_pre",
-                            valStr,
-                        )
+                        answerData.addResp("cur_el_power_pre",valStr)
                     startPos = afterPos  # search new values after heat circuit set temperatures
-                    (valStr, afterPos) = extractParameterRaw(
-                        txt,
-                        startPos,
-                        startPos + idmReadAheadBlock,
-                        '"system":{"q":{',
-                        '"value":"',
-                        '"',
-                    )
+                    (valStr, afterPos) = extractParameterRaw(txt,startPos,startPos+idmReadAheadBlock,
+                        '"system":{"q":{','"value":"','"')
                     if afterPos > startPos:
-                        answerData.addResp(
-                            "cur_heat_power",
-                            valStr,
-                        )
+                        answerData.addResp("cur_heat_power",valStr)
                         self.hasQheatSensor = 1  # we have seen the Q value, so a gen. heat sesnor is available (may not be the case for all iDM heatpumps)
                     elif self.hasQheatSensor == 1:
                         # if we previously have seen a Q sensor, not providing it now means 0 heat generation, however do not create sensor, if no sensor have seen at all
-                        answerData.addResp(
-                            "cur_heat_power",
-                            "0.0",
-                        )
+                        answerData.addResp("cur_heat_power","0.0")
                     startPos = afterPos
-                    afterPos = txt.find(
-                        '"stages":', startPos, startPos + idmReadAheadBlock
-                    )
+                    afterPos = txt.find('"stages":', startPos, startPos + idmReadAheadBlock)
                     valStr = "off"  # there is no value for compressor off, therefore we default it to off
                     if afterPos > startPos:
                         # if stages exist, it means the heatpump compressor or heater runs
@@ -584,12 +499,8 @@ class idmHeatpumpWeb:
                         # we do not expect other values than 0,1,2 if it occurs we just leave it to the entity...
                         startPos = afterPos
                     answerData.addResp(  # this is special to compressor state, we always write the state, even attribute is not found
-                        "heatpump_compressor",
-                        valStr,
-                    )
-                    afterPos = txt.find(
-                        '"sysmode":', startPos, startPos + idmReadAheadBlock
-                    )
+                        "heatpump_compressor", valStr)
+                    afterPos = txt.find('"sysmode":', startPos, startPos + idmReadAheadBlock)
                     if afterPos > startPos:
                         valStr = txt[afterPos + 10]
                         if valStr == "0":
@@ -604,10 +515,7 @@ class idmHeatpumpWeb:
                             valStr = "defrost"
 
                         # we do not expect other values than 0 to 8, if it occurs we just leave it to the entity...
-                        answerData.addResp(
-                            "heatpump_op_mode",
-                            valStr,
-                        )
+                        answerData.addResp("heatpump_op_mode",valStr)
 
                 if self.statDiv >= 3:
                     idmUrlStat = None
@@ -860,3 +768,48 @@ def extractParameterStr(txt, startPos, pattern, descr=""):
         idmValueIntro,
         idmValueEnding,
     )
+
+# txt = text to search value for expecting input/output format of idM heatpump web
+# startpos = index where to start (to overjump begin of string for performance and avoid ambiguity)
+# return (string, key, afterPos) a tripple of the valueString, the key and the position in text after that value string
+# afterPos == startPos in case no more values found in that section
+def extractParameterInputOutputInSectionWithKey(txt, startPos):
+    entryStart = txt.find(idmKeyIntro, startPos, startPos + idmReadAheadBlock)
+    if entryStart == -1:
+        return ("No more values found", "no key", startPos)
+    newPos = txt.find(idmSectionDelimiter, startPos, entryStart)  # in case there is a section delimiter before entry start, we have reached end of section
+    if newPos != -1:
+        return ("No more entries in this section", "no key", startPos)
+    entryEnd = txt.find(idmEntryEnding, entryStart, startPos + idmReadAheadBlock)
+    if entryEnd == -1:
+        return ("No entry ending found", "no key", startPos)
+    # the whole entry is between entryStart and entryEnd
+    newPos = entryStart+len(idmKeyIntro) # position for key is straight after entry begin
+    endPos = txt.find(idmKeyEnding, newPos, entryEnd)
+    if endPos == -1:
+        return ("No key ending found", "no key", startPos)
+    keyStr = txt[newPos:endPos]
+    if (keyStr == "") or (keyStr == " "):
+        # use description as key
+        newPos = txt.find(idmDescrIntro, endPos, entryEnd)
+        if newPos == -1:
+            return ("No description intro found", "no key", startPos)
+        newPos += len(idmDescrIntro)
+        endPos = txt.find(idmKeyEnding, newPos, entryEnd)
+        if endPos == -1:
+            return ("No description ending found", "no key", startPos)
+        keyStr = txt[newPos:endPos]
+        # _LOGGER.debug("Description found: %s", keyStr)
+        newPos = endPos + len(idmKeyEnding)  # description ending is the same as value intro, therefore set newPos to it
+    else:
+        endPos += len(idmKeyEnding)  # we need to search for value intro, but make sure we are after key ending
+        newPos = txt.find(idmValueIntro, endPos, entryEnd)
+        if newPos == -1:
+            return ("No value intro found", keyStr, startPos)
+        newPos += len(idmValueIntro)
+    endPos = txt.find(idmValueEnding, newPos, entryEnd)
+    if endPos == -1:
+        return ("No value ending found", keyStr, startPos)
+    # _LOGGER.debug("entryFound Key: %s, value = %s", keyStr, txt[newPos:endPos])
+    return (txt[newPos:endPos], keyStr, entryEnd + len(idmEntryEnding))
+
