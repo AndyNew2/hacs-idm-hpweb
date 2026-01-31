@@ -142,6 +142,9 @@
             "return_temperature": {
                 "name": "B E Rücklauftemp"
             },
+            "heatstore_temperature": {
+                "name": "B E S Wärmespeichertemp"
+            },
             "runtime_cooling": {
                 "name": "A H Laufzeit Kühlen"
             },
