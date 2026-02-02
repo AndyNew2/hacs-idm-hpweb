@@ -402,5 +402,240 @@
                 }
             }
         }
+    },
+    "exceptions": {
+        "risk_not_acknowledged": {
+            "message": "Sie müssen das Risiko bestätigen (d.h. acknowledge_risk=true setzen) um diesen Dienst aufzurufen."
+        },
+        "risk_not_acknowledged_advanced": {
+            "message": "Sie müssen sowohl 'Risikobestätigung' (d.h. acknowledge_risk=true setzen) als auch 'Erweiterte Risikobestätigung' (d.h. acknowledge_risk_advanced=true setzen) aktivieren, um diesen Dienst aufzurufen."
+        }
+    },
+    "selector": {
+        "acknowledge_set_value": {
+            "value": "Ich habe die IDM Dokumentation gelesen, ich weiß, welchen Effekt das Setzen dieses Wertes hat, und ich akzeptiere die Risiken im Falle eines Missbrauchs oder Fehlers."
+        },
+        "acknowledge_set_value_advanced": {
+            "value": "Ich bin ein erfahrener Benutzer, ich habe die IDM Dokumentation detailliert gelesen, ich weiß, welchen Effekt das Setzen dieses Wertes hat, und ich akzeptiere die zusätzlichen Risiken im Falle eines Missbrauchs oder Fehlers."
+        },
+        "heatpump_operation_modes": {
+            "name": "Wärmepumpen Betriebsarten",
+            "options": {
+                "automatic": "Automatik",
+                "away": "Abwesend",
+                "heating_cooling_only": "Nur Heizen/Kühlen",
+                "hot_water_only": "Nur Warmwasser",
+                "off": "Aus",
+                "standby": "Standby"
+            }
+        },
+        "legionella_function_options": {
+            "options": {
+                "off": "Aus",
+                "second_heat": "Zweiter Wärmeerzeuger"
+            }
+        }
+    },
+    "services": {
+        "set_heatpump_operation_mode": {
+            "description": "Wärmepumpen Betriebsart setzen (aus, automatisch, nur Warmwasser, ...).",
+            "fields": {
+                "acknowledge_risk": {
+                    "description": "Ich akzeptiere die Risiken.",
+                    "name": "Risikobestätigung"
+                },
+                "operation_mode": {
+                    "description": "Der zu setzende Betriebsmodus.",
+                    "example": "automatic",
+                    "name": "Betriebsmodus"
+                }
+            },
+            "name": "Betriebsmodus setzen"
+        },
+        "set_hot_water_min_temp": {
+            "description": "Setzt die Aktivierungstemperatur für die Warmwassererzeugung (30-50°C).",
+            "fields": {
+                "acknowledge_risk": {
+                    "description": "Ich akzeptiere die Risiken.",
+                    "name": "Risikobestätigung!"
+                },
+                "min_temp": {
+                    "description": "Die Warmwassertemperatur in Grad Celsius zur Aktivierung der Warmwassererzeugung (30-50°C).",
+                    "example": "35",
+                    "name": "Minimale Warmwassertemperatur"
+                }
+            },
+            "name": "Setze minimale Warmwassertemperatur"
+        },
+        "set_hot_water_max_temp": {
+            "description": "Setzt die Ausschalttemperatur für die Warmwassererzeugung (35-55°C).",
+            "fields": {
+                "acknowledge_risk": {
+                    "description": "Ich akzeptiere die Risiken.",
+                    "name": "Risikobestätigung!"
+                },
+                "max_temp": {
+                    "description": "Die Warmwassertemperatur in Grad Celsius zur Ausschaltung der Warmwassererzeugung (35-55°C).",
+                    "example": "50",
+                    "name": "Maximale Warmwassertemperatur"
+                }
+            },
+            "name": "Setze maximale Warmwassertemperatur"
+        },
+        "set_hot_water_boost_temp": {
+            "description": "Setzt die Boost Temperatur für die Warmwassererzeugung (55-75°C).",
+            "fields": {
+                "acknowledge_risk": {
+                    "description": "Ich akzeptiere die Risiken.",
+                    "name": "Risikobestätigung!"
+                },
+                "boost_temp": {
+                    "description": "Die Boost Temperatur in Grad Celsius für die Warmwassererzeugung (55-75°C).",
+                    "example": "60",
+                    "name": "Boost Warmwassertemperatur"
+                }
+            },
+            "name": "Setze Boost Warmwassertemperatur"
+        },
+        "set_hot_water_legionella_fct": {
+            "description": "Legionellenfunktion für die Warmwassererzeugung aktivieren (aus, zweiter Wärmeerzeuger).",
+            "fields": {
+                "acknowledge_risk": {
+                    "description": "Ich akzeptiere die Risiken.",
+                    "name": "Risikobestätigung!"
+                },
+                "legionella_fct": {
+                    "description": "Legionellenfunktion aktivieren.",
+                    "example": "second_heat",
+                    "name": "Legionellenfunktion"
+                }
+            },
+            "name": "Aktiviere Legionellenfunktion"
+        },
+        "set_hot_water_legionella_temp": {
+            "description": "Setzt die Legionellenzieltemperatur für die Warmwassererzeugung (60-67°C).",
+            "fields": {
+                "acknowledge_risk": {
+                    "description": "Ich akzeptiere die Risiken.",
+                    "name": "Risikobestätigung!"
+                },
+                "legionella_temp": {
+                    "description": "Setze die Temperatur in Grad Celsius für die Legionellenbehandlung (60-67°C).",
+                    "example": "65",
+                    "name": "Legionellentemperatur"
+                }
+            },
+            "name": "Setze Legionellentemperatur"
+        },
+        "set_hot_water_legionella_days": {
+            "description": "Legionellenbehandlungsintervall in Tagen (0-7 Tage). 0 bedeutet bei jeder Warmwasseranforderung.",
+            "fields": {
+                "acknowledge_risk": {
+                    "description": "Ich akzeptiere die Risiken.",
+                    "name": "Risikobestätigung!"
+                },
+                "legionella_days": {
+                    "description": "Das Intervall in Tagen für die Legionellenbehandlung (0-7 Tage).",
+                    "example": "7",
+                    "name": "Legionellenintervall in Tagen"
+                }
+            },
+            "name": "Setze Legionellenintervall"
+        },
+        "set_max_heating_power": {
+            "description": "Definiert die maximale Heizleistung der Wärmepumpe (in Prozent, 25-100%).",
+            "fields": {
+                "acknowledge_risk": {
+                    "description": "Ich akzeptiere die Risiken.",
+                    "name": "Risikobestätigung!"
+                },
+                "acknowledge_risk_advanced": {
+                    "description": "Ich akzeptiere die zusätzlichen Risiken.",
+                    "name": "Erweiterte Risikobestätigung!"
+                },
+                "max_heating_power": {
+                    "description": "Die maximale Heizleistung in Prozent (25-100%).",
+                    "example": "65",
+                    "name": "Maximale Heizleistung"
+                }
+            },
+            "name": "Setze maximale Heizleistung"
+        },
+        "set_max_hot_water_power": {
+            "description": "Definiert die maximale Warmwasserleistung der Wärmepumpe (in Prozent, 35-90%).",
+            "fields": {
+                "acknowledge_risk": {
+                    "description": "Ich akzeptiere die Risiken.",
+                    "name": "Risikobestätigung!"
+                },
+                "acknowledge_risk_advanced": {
+                    "description": "Ich akzeptiere die zusätzlichen Risiken.",
+                    "name": "Erweiterte Risikobestätigung!"
+                },
+                "max_hot_water_power": {
+                    "description": "Die maximale Warmwasserleistung in Prozent (35-90%).",
+                    "example": "65",
+                    "name": "Maximale Warmwasserleistung"
+                }
+            },
+            "name": "Setze maximale Warmwasserleistung"
+        },
+        "set_defrost_power": {
+            "description": "Definiert die Abtauleistung der Wärmepumpe (in Prozent, 50-100%).",
+            "fields": {
+                "acknowledge_risk": {
+                    "description": "Ich akzeptiere die Risiken.",
+                    "name": "Risikobestätigung!"
+                },
+                "acknowledge_risk_advanced": {
+                    "description": "Ich akzeptiere die zusätzlichen Risiken.",
+                    "name": "Erweiterte Risikobestätigung!"
+                },
+                "defrost_power": {
+                    "description": "Die Abtauleistung in Prozent (50-100%).",
+                    "example": "65",
+                    "name": "Abtauleistung"
+                }
+            },
+            "name": "Setze Abtauleistung"
+        },
+        "set_max_flowpump_power": {
+            "description": "Definiert die maximale Ladepumpenleistung (in Prozent, 32-100%).",
+            "fields": {
+                "acknowledge_risk": {
+                    "description": "Ich akzeptiere die Risiken.",
+                    "name": "Risikobestätigung!"
+                },
+                "acknowledge_risk_advanced": {
+                    "description": "Ich akzeptiere die zusätzlichen Risiken.",
+                    "name": "Erweiterte Risikobestätigung!"
+                },
+                "max_flowpump_power": {
+                    "description": "Definiert die maximale Ladepumpenleistung (in Prozent, 32-100%).",
+                    "example": "80",
+                    "name": "Maximale Ladepumpenleistung"
+                }
+            },
+            "name": "Setze maximale Ladepumpenleistung"
+        },
+        "set_hot_water_bivalence_switchtemp": {
+            "description": "Setzt die Bivalenz Umschalttemperatur für die Warmwassererzeugung (35-55°C). Diese ist für die Boost und Legionellenfunktion relevant.",
+            "fields": {
+                "acknowledge_risk": {
+                    "description": "Ich akzeptiere die Risiken.",
+                    "name": "Risikobestätigung!"
+                },
+                "acknowledge_risk_advanced": {
+                    "description": "Ich akzeptiere die zusätzlichen Risiken.",
+                    "name": "Erweiterte Risikobestätigung!"
+                },
+                "bivalence_switchtemp": {
+                    "description": "Die Bivalenz Umschalttemperatur in Grad Celsius für die Warmwassererzeugung (35-55°C).",
+                    "example": "50",
+                    "name": "Bivalenz Umschalttemperatur"
+                }
+            },
+            "name": "Setze Bivalenz Umschalttemperatur"
+        }
     }
 }
