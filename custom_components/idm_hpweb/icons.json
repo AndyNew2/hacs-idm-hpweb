@@ -1,1 +1,25 @@
-
+{
+  "services": {
+    "set_heatpump_operation_mode": {
+      "service": "mdi:heat-pump"
+    },
+    "set_hot_water_min_temp": {
+      "service": "mdi:thermometer-minus"
+    },
+    "set_hot_water_max_temp": {
+      "service": "mdi:thermometer-plus"
+    },
+    "set_hot_water_boost_temp": {
+      "service": "mdi:thermometer-plus"
+    },
+    "set_hot_water_legionella_fct": {
+      "service": "mdi:shield-check"
+    },
+    "set_hot_water_legionella_temp": {
+      "service": "mdi:thermometer-check"
+    },
+    "set_hot_water_legionella_days": {
+      "service": "mdi:calendar-check"
+    }
+  }
+}
