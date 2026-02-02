@@ -7,18 +7,12 @@ from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.const import CONF_HOST, CONF_PIN, CONF_TIMEOUT
 from .const import (
-    CONF_DISPLAY_NAME,
-    CONF_CYCLE_TIME,
-    CONF_STAT_DIV,
-    CONF_CLK_SET,
-    CONF_CLK_HOUR,
-    CONF_CLK_HOUR_DEFAULT,
-    DEF_TIME_BETWEEN_UPDATES,
-    DEF_IDM_PIN,
+    CONF_DISPLAY_NAME, CONF_CYCLE_TIME, CONF_STAT_DIV,
+    CONF_CLK_SET, CONF_CLK_HOUR, CONF_CLK_HOUR_DEFAULT,
+    DEF_TIME_BETWEEN_UPDATES, DEF_IDM_PIN,
 )
 
 _PLATFORMS: list[Platform] = [Platform.SENSOR]
-
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up iDM Heatpump Web from a config entry."""
@@ -27,18 +21,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hostname = entry.data.get(CONF_HOST)
     pin = entry.data.get(CONF_PIN, DEF_IDM_PIN)
     timeout = entry.data.get(CONF_TIMEOUT, 3)
-    cycle_time = entry.data.get(
-        CONF_CYCLE_TIME, DEF_TIME_BETWEEN_UPDATES.total_seconds()
-    )
-    stat_div = entry.data.get(
-        CONF_STAT_DIV, 0
-    )  # we give divider a default, in case not defined...
-    clk_set = entry.data.get(
-        CONF_CLK_SET, 0
-    )  # if not yet defined work with default 0 = disabled
-    clk_set_hour = entry.data.get(
-        CONF_CLK_HOUR, CONF_CLK_HOUR_DEFAULT
-    )  # if not yet defined work with default at 2 o clock in the morning
+    cycle_time = entry.data.get(CONF_CYCLE_TIME, DEF_TIME_BETWEEN_UPDATES.total_seconds())
+    stat_div = entry.data.get(CONF_STAT_DIV, 0)  # we give divider a default, in case not defined...
+    clk_set = entry.data.get(CONF_CLK_SET, 0)  # if not yet defined work with default 0 = disabled
+    clk_set_hour = entry.data.get(CONF_CLK_HOUR, CONF_CLK_HOUR_DEFAULT)  # if not yet defined work with default at 2 o clock in the morning
 
     entry.runtime_data = {
         CONF_DISPLAY_NAME: displayname,
@@ -50,11 +36,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         CONF_CLK_SET: clk_set,
         CONF_CLK_HOUR: clk_set_hour,
     }
-
     await hass.config_entries.async_forward_entry_setups(entry, _PLATFORMS)
-
     return True
-
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
