@@ -1,1 +1,118 @@
-
+set_heatpump_operation_mode:
+  fields:
+    operation_mode:
+      required: true
+      selector:
+        select:
+          translation_key: heatpump_operation_modes
+          options:
+            - "off"
+            - "standby"
+            - "automatic"
+            - "away"
+            - "hot_water_only"
+            - "heating_cooling_only"
+      example: "automatic"
+      default: "automatic"
+    acknowledge_risk:
+      selector:
+        constant:
+          value: true
+          translation_key: acknowledge_set_value
+set_hot_water_min_temp:
+  fields:
+    min_temp:
+      required: true
+      selector:
+        number:
+          min: 30
+          max: 50
+          step: 1
+      example: 35
+      default: 40
+    acknowledge_risk:
+      selector:
+        constant:
+          value: true
+          translation_key: acknowledge_set_value
+set_hot_water_max_temp:
+  fields:
+    max_temp:
+      required: true
+      selector:
+        number:
+          min: 35
+          max: 55
+          step: 1
+      example: 42
+      default: 45
+    acknowledge_risk:
+      selector:
+        constant:
+          value: true
+          translation_key: acknowledge_set_value
+set_hot_water_boost_temp:
+  fields:
+    boost_temp:
+      required: true
+      selector:
+        number:
+          min: 55
+          max: 75
+          step: 1
+      example: 65
+      default: 60
+    acknowledge_risk:
+      selector:
+        constant:
+          value: true
+          translation_key: acknowledge_set_value
+set_hot_water_legionella_fct:
+  fields:
+    legionella_fct:
+      required: true
+      selector:
+        select:
+          translation_key: legionella_function_options
+          options:
+            - "off"
+            - "second_heat"
+      example: "second_heat"
+      default: "second_heat"
+    acknowledge_risk:
+      selector:
+        constant:
+          value: true
+          translation_key: acknowledge_set_value
+set_hot_water_legionella_temp:
+  fields:
+    legionella_temp:
+      required: true
+      selector:
+        number:
+          min: 60
+          max: 67
+          step: 1
+      example: 65
+      default: 67
+    acknowledge_risk:
+      selector:
+        constant:
+          value: true
+          translation_key: acknowledge_set_value
+set_hot_water_legionella_days:
+  fields:
+    legionella_days:
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 7
+          step: 1
+      example: 7
+      default: 0
+    acknowledge_risk:
+      selector:
+        constant:
+          value: true
+          translation_key: acknowledge_set_value
