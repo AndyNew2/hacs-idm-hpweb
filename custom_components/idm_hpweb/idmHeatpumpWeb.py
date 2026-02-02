@@ -430,6 +430,7 @@ class idmHeatpumpWeb:
                                     valStr = "on"
                             elif (v == "ainout_80_81"):
                                 serviceMode = True  # detected Service mode, add further section
+                                _LOGGER.debug("Service mode detected, enabling service mode parameters.")
                             if len(keyStr) <= 5: v = keyStr  # for short keys, just use the key as sensor name
                             answerData.addResp(v, valStr)
                         startPos = afterPos
