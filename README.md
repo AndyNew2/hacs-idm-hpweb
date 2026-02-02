@@ -45,7 +45,7 @@ Platform | Description
 5. iDM designed ModbusTCP as the interface for the heat pump. Therefore, use the **Kodebach integration as the main integration**. However, iDM lacks a few very important sensors on the ModbusTCP implementation. iDM till now, did not add them. This integration bridges the shortfall, and adds: **flowrate, hotgas temperature, compressor high and low pressure values** and many more.
 6. As already mentioned, this integration is designed and implemented to run in parallel with a standard ModbusTCP based integration for the heat pump like the one from Kodebach. By disabling sensors not needed in this integration, you could greatly relax Home Assistant data handling and still allow to have the few sensors of your interests, e.g. flowrate or hotgas temperature or flow temp and return temp on a high update rate.
 7. You have now the option to keep the idm clock in sync with Home Assistant. No more time corrections needed to be done manually.
-8. Last but not least, you have now service control functions to control e.g. anti-legionella function via Home Assistant.
+8. Last but not least, you have now service control functions to control e.g. anti-legionella function via Home Assistant. See Wiki for more details: https://github.com/AndyNew2/hacs-idm-hpweb/wiki/Anti%E2%80%90legionella-control-via-Home-Assistant
 
 
 ## Installation
