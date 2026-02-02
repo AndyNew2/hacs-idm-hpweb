@@ -35,9 +35,7 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
         vol.Required(CONF_HOST): cv.string,
         vol.Required(CONF_PIN, default=DEF_IDM_PIN): cv.string,
         vol.Required(CONF_TIMEOUT, default=3): int,
-        vol.Required(
-            CONF_CYCLE_TIME, default=DEF_TIME_BETWEEN_UPDATES.total_seconds()
-        ): int,
+        vol.Required(CONF_CYCLE_TIME, default=DEF_TIME_BETWEEN_UPDATES.total_seconds() ): int,
         vol.Optional(CONF_STAT_DIV, default=0): int,
         vol.Optional(CONF_CLK_SET, default=0): int,
         vol.Optional(CONF_CLK_HOUR, default=CONF_CLK_HOUR_DEFAULT): int,
@@ -57,7 +55,7 @@ class idmWebConfigFlow(ConfigFlow, domain=DOMAIN):
         """Handle the initial step."""
         errors: dict[str, str] = {}
         if user_input is not None:
-            # self._async_abort_entries_match({CONF_HOST: user_input[CONF_HOST]})
+            self._async_abort_entries_match({CONF_HOST: user_input[CONF_HOST]})
 
             if user_input[CONF_DISPLAY_NAME].find(" ") != -1:
                 errors[CONF_DISPLAY_NAME] = "display_name_no_spaces"
@@ -131,10 +129,7 @@ class idmWebConfigFlow(ConfigFlow, domain=DOMAIN):
             elif (user_input[CONF_CLK_HOUR] < 0) or (user_input[CONF_CLK_HOUR] > 23):
                 errors[CONF_CLK_HOUR] = "clock_set_hour_wrong"
             else:
-                # user_input[CONF_DISPLAY_NAME] = user_input[CONF_DISPLAY_NAME].replace(" ", "_")  # we cannot have spaces
-                self._async_abort_entries_match(
-                    {CONF_DISPLAY_NAME: user_input[CONF_DISPLAY_NAME]}
-                )
+                self._async_abort_entries_match( {CONF_DISPLAY_NAME: user_input[CONF_DISPLAY_NAME]} )
                 # we want both be unique, the host name and the display name!
 
                 idm = idmHeatpumpWeb(
