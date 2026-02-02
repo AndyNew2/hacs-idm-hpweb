@@ -18,7 +18,7 @@ from homeassistant.const import (
     UnitOfPower,
     UnitOfEnergy,
 )
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, HomeAssistantError, ServiceCall
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 from functools import partial
@@ -43,60 +43,133 @@ from homeassistant.const import CONF_HOST, CONF_PIN, CONF_TIMEOUT
 from homeassistant.util.unit_conversion import UnitOfElectricPotential
 from .const import DEF_TIME_BETWEEN_UPDATES, DOMAIN
 from .const import (
-    DEF_IDM_PIN,
-    CONF_DISPLAY_NAME,
-    CONF_CYCLE_TIME,
-    DEF_DEVICE_NAME,
-    CONF_STAT_DIV,
-    CONF_CLK_SET,
-    CONF_CLK_HOUR,
-    CONF_CLK_HOUR_DEFAULT,
+    DEF_IDM_PIN, CONF_DISPLAY_NAME, CONF_CYCLE_TIME,
+    DEF_DEVICE_NAME, CONF_STAT_DIV, CONF_CLK_SET,
+    CONF_CLK_HOUR, CONF_CLK_HOUR_DEFAULT,
+    SERVICE_SET_HEATPUMP_OPERATION_MODE,
+    SERVICE_SET_HOT_WATER_MIN_TEMP,
+    SERVICE_SET_HOT_WATER_MAX_TEMP,
+    SERVICE_SET_HOT_WATER_BOOST_TEMP,
+    SERVICE_SET_HOT_WATER_LEGIONELLA_FCT,
+    SERVICE_SET_HOT_WATER_LEGIONELLA_TEMP,
+    SERVICE_SET_HOT_WATER_LEGIONELLA_DAYS,
 )
 from .idmHeatpumpWeb import (
     idmHeatpumpWeb,
     IdmResponseData,
 )
 
+from .idmHeatpumpWeb_Services import idmHeatpumpWebService
+
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(
-    hass: HomeAssistant,
-    config_entry: ConfigEntry,
-    async_add_entities: AddEntitiesCallback,
-) -> None:
+async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     """Set up the idM coordinator."""
 
-    stat_divider = config_entry.data.get(
-        CONF_STAT_DIV, 0
-    )  # we added this parameter later, therefore needs proper default
-    clk_set = config_entry.data.get(
-        CONF_CLK_SET, 0
-    )  # this is a further added parameter, therfore a default needs to be defined here.
-    clk_set_hour = config_entry.data.get(
-        CONF_CLK_HOUR, CONF_CLK_HOUR_DEFAULT
-    )  # default defined in const, but logic is same as above
+    stat_divider = config_entry.data.get(CONF_STAT_DIV, 0)  # we added this parameter later, therefore needs proper default
+    clk_set = config_entry.data.get(CONF_CLK_SET, 0)  # this is a further added parameter, therfore a default needs to be defined here.
+    clk_set_hour = config_entry.data.get(CONF_CLK_HOUR, CONF_CLK_HOUR_DEFAULT)  # default defined in const, but logic is same as above
 
-    idmObj = idmHeatpumpWeb(
+    idmObj = idmHeatpumpWebService(
         hass,
         config_entry.data[CONF_HOST],
         config_entry.data[CONF_PIN],
         config_entry.data[CONF_TIMEOUT],
-        stat_divider,
-        clk_set,
-        clk_set_hour,
+        stat_divider, clk_set, clk_set_hour,
     )
-
     coordinator = IDM_Coordinator(
-        hass,
-        config_entry,
+        hass, config_entry,
         timedelta(seconds=config_entry.data[CONF_CYCLE_TIME]),
-        idmObj,
-        async_add_entities,
+        idmObj, async_add_entities,
     )
     hass.data[DOMAIN] = coordinator  # probably not needed, but we keep it for now
     await coordinator.async_config_entry_first_refresh()
 
+    async def handle_set_heatpump_operation_mode(call: ServiceCall):
+        """Handle the service call to set heatpump operation mode."""
+        mode: str = call.data.get("operation_mode", "automatic")
+
+        acknowledge = call.data.get("acknowledge_risk")
+        if acknowledge is not True:
+            raise HomeAssistantError( f"Must acknowledge risk to call {SERVICE_SET_HEATPUMP_OPERATION_MODE}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged" )
+
+        result = await idmObj.async_set_heatpump_operation_mode(mode)
+        if not result:
+            raise HomeAssistantError( f"Failed to set heatpump operation mode to {mode}", translation_domain=DOMAIN, translation_key="set_heatpump_operation_mode_failed" )
+    hass.services.async_register( domain=DOMAIN, service=SERVICE_SET_HEATPUMP_OPERATION_MODE, service_func=handle_set_heatpump_operation_mode )
+
+    async def handle_set_hot_water_min_temp(call: ServiceCall):
+        """Handle the service call to set hot water minimum temperature."""
+        temp: int = call.data.get("min_temp", 40.0)
+
+        acknowledge = call.data.get("acknowledge_risk")
+        if acknowledge is not True:
+            raise HomeAssistantError( f"Must acknowledge risk to call {SERVICE_SET_HOT_WATER_MIN_TEMP}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged")
+        result = await idmObj.async_set_hot_water_min_temp(temp)
+        if not result:
+            raise HomeAssistantError( f"Failed to set hot water minimum temperature to {temp}°C", translation_domain=DOMAIN )
+    hass.services.async_register(domain=DOMAIN, service=SERVICE_SET_HOT_WATER_MIN_TEMP, service_func=handle_set_hot_water_min_temp)
+
+    async def handle_set_hot_water_max_temp(call: ServiceCall):
+        """Handle the service call to set hot water maximum temperature."""
+        temp: int = call.data.get("max_temp", 50)
+
+        acknowledge = call.data.get("acknowledge_risk")
+        if acknowledge is not True:
+            raise HomeAssistantError( f"Must acknowledge risk to call {SERVICE_SET_HOT_WATER_MAX_TEMP}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged")
+        result = await idmObj.async_set_hot_water_max_temp(temp)
+        if not result:
+            raise HomeAssistantError( f"Failed to set hot water maximum temperature to {temp}°C", translation_domain=DOMAIN )
+    hass.services.async_register(domain=DOMAIN, service=SERVICE_SET_HOT_WATER_MAX_TEMP, service_func=handle_set_hot_water_max_temp)
+
+    async def handle_set_hot_water_boost_temp(call: ServiceCall):
+        """Handle the service call to set hot water boost temperature."""
+        temp: int = call.data.get("boost_temp", 60)
+
+        acknowledge = call.data.get("acknowledge_risk")
+        if acknowledge is not True:
+            raise HomeAssistantError( f"Must acknowledge risk to call {SERVICE_SET_HOT_WATER_BOOST_TEMP}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged")
+        result = await idmObj.async_set_hot_water_boost_temp(temp)
+        if not result:
+            raise HomeAssistantError( f"Failed to set hot water boost temperature to {temp}°C", translation_domain=DOMAIN )
+    hass.services.async_register(domain=DOMAIN, service=SERVICE_SET_HOT_WATER_BOOST_TEMP, service_func=handle_set_hot_water_boost_temp)
+
+    async def handle_set_hot_water_legionella_fct(call: ServiceCall):
+        """Handle the service call to set hot water legionella function."""
+        legio_fct: str = call.data.get("legionella_fct", "off")
+
+        acknowledge = call.data.get("acknowledge_risk")
+        if acknowledge is not True:
+            raise HomeAssistantError( f"Must acknowledge risk to call {SERVICE_SET_HOT_WATER_LEGIONELLA_FCT}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged")
+        result = await idmObj.async_set_hot_water_legionella_fct(legio_fct)
+        if not result:
+            raise HomeAssistantError( f"Failed to set hot water legionella function to {legio_fct}", translation_domain=DOMAIN )
+    hass.services.async_register(domain=DOMAIN, service=SERVICE_SET_HOT_WATER_LEGIONELLA_FCT, service_func=handle_set_hot_water_legionella_fct)
+
+    async def handle_set_hot_water_legionella_temp(call: ServiceCall):
+        """Handle the service call to set hot water legionella temperature."""
+        temp: int = call.data.get("legionella_temp", 67)
+
+        acknowledge = call.data.get("acknowledge_risk")
+        if acknowledge is not True:
+            raise HomeAssistantError( f"Must acknowledge risk to call {SERVICE_SET_HOT_WATER_LEGIONELLA_TEMP}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged")
+        result = await idmObj.async_set_hot_water_legionella_temp(temp)
+        if not result:
+            raise HomeAssistantError( f"Failed to set hot water legionella temperature to {temp}°C", translation_domain=DOMAIN )
+    hass.services.async_register(domain=DOMAIN, service=SERVICE_SET_HOT_WATER_LEGIONELLA_TEMP, service_func=handle_set_hot_water_legionella_temp)
+
+    async def handle_set_hot_water_legionella_days(call: ServiceCall):
+        """Handle the service call to set hot water legionella days interval."""
+        days: int = call.data.get("legionella_days", 7)
+
+        acknowledge = call.data.get("acknowledge_risk")
+        if acknowledge is not True:
+            raise HomeAssistantError( f"Must acknowledge risk to call {SERVICE_SET_HOT_WATER_LEGIONELLA_DAYS}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged")
+        result = await idmObj.async_set_hot_water_legionella_days(days)
+        if not result:
+            raise HomeAssistantError( f"Failed to set hot water legionella days interval to {days} days", translation_domain=DOMAIN )
+    hass.services.async_register(domain=DOMAIN, service=SERVICE_SET_HOT_WATER_LEGIONELLA_DAYS, service_func=handle_set_hot_water_legionella_days)
 
 class IDM_Coordinator(DataUpdateCoordinator):
     """My custom coordinator."""
@@ -158,9 +231,7 @@ class IDM_Coordinator(DataUpdateCoordinator):
         try:
             # Note: asyncio.TimeoutError and aiohttp.ClientError are already
             # handled by the data update coordinator.
-            async with async_timeout.timeout(
-                self.config_entry.data[CONF_TIMEOUT] + 2
-            ):  # add 2 seconds for additional data frames which might be needed
+            async with async_timeout.timeout(self.config_entry.data[CONF_TIMEOUT]+2):  # add 2 seconds for additional data frames which might be needed
                 data: IdmResponseData = await self.my_api.async_idm_async_get_data()
 
                 for i in range(data.lenResp()):
@@ -169,16 +240,11 @@ class IDM_Coordinator(DataUpdateCoordinator):
                     if key not in self._mySensors:
                         entity_description = SENSORS.get(key)
                         if entity_description:
-                            self._mySensors[key] = IDM_Entity(
-                                self, key, entity_description
-                            )
+                            self._mySensors[key] = IDM_Entity(self, key, entity_description)
                             self.async_add_entities([self._mySensors[key]])
                             _LOGGER.debug("Added new sensor for key %s", key)
                         else:
-                            _LOGGER.debug(
-                                "Small warning! No sensor description found for key %s",
-                                key,
-                            )
+                            _LOGGER.warning("Small warning! No sensor description found for key %s",key)
 
                     sensor = self._mySensors.get(key)
                     if sensor:
@@ -186,12 +252,9 @@ class IDM_Coordinator(DataUpdateCoordinator):
                             sensor.setValue(answer)
                             sensor.async_write_ha_state()  # even value not changed, we need to inform HA to avoid stale data
 
-                if data.lenResp() == 0:
-                    _LOGGER.warning("No data received from iDM Heatpump")
+                if data.lenResp() == 0: _LOGGER.warning("No data received from iDM Heatpump")
 
-                _LOGGER.debug(
-                    "IDM Data update complete. Found: %d items", data.lenResp()
-                )
+                _LOGGER.debug("IDM Data update complete. Found: %d items", data.lenResp())
                 return ""
         except Exception as err:
             raise UpdateFailed(f"Error communicating with API: {err}") from err
@@ -500,58 +563,19 @@ SENSOR_TYPES: tuple[SensorEntityDescription, ...] = (
         suggested_display_precision=2,
     ),
     # Digital Outputs
-    SensorEntityDescription(
-        key="M73#3",
-        translation_key="flow_pumpe_actstate",
-    ),
-    SensorEntityDescription(
-        key="M51",
-        translation_key="4_way_valve_circut1",
-    ),
-    SensorEntityDescription(
-        key="M31",
-        translation_key="flowpump_circuit_a",
-    ),
-    SensorEntityDescription(
-        key="M33",
-        translation_key="flowpump_circuit_c",
-    ),
-    SensorEntityDescription(
-        key="M43",
-        translation_key="mixer_circuit_c",
-    ),
-    SensorEntityDescription(
-        key="M64",
-        translation_key="hotwater_circulation_pump",
-    ),
-    SensorEntityDescription(
-        key="E31",
-        translation_key="siphon_heating",
-    ),
-    SensorEntityDescription(
-        key="e_heater_1kw_on",
-        translation_key="e_heater_1kw_on",
-    ),
-    SensorEntityDescription(
-        key="e_heater_2kw_on",
-        translation_key="e_heater_2kw_on",
-    ),
-    SensorEntityDescription(
-        key="e_heater_3kw_on",
-        translation_key="e_heater_3kw_on",
-    ),
-    SensorEntityDescription(
-        key="M61",
-        translation_key="valve_heating_cooling",
-    ),
-    SensorEntityDescription(
-        key="M62",
-        translation_key="valve_warm_cold",
-    ),
-    SensorEntityDescription(
-        key="M63",
-        translation_key="value_heating_hotwater",
-    ),
+    SensorEntityDescription( key="M73#3", translation_key="flow_pumpe_actstate" ),
+    SensorEntityDescription( key="M51", translation_key="4_way_valve_circut1" ),
+    SensorEntityDescription( key="M31", translation_key="flowpump_circuit_a" ),
+    SensorEntityDescription( key="M33", translation_key="flowpump_circuit_c" ),
+    SensorEntityDescription( key="M43", translation_key="mixer_circuit_c" ),
+    SensorEntityDescription( key="M64", translation_key="hotwater_circulation_pump" ),
+    SensorEntityDescription( key="E31", translation_key="siphon_heating" ),
+    SensorEntityDescription( key="e_heater_1kw_on", translation_key="e_heater_1kw_on" ),
+    SensorEntityDescription( key="e_heater_2kw_on", translation_key="e_heater_2kw_on" ),
+    SensorEntityDescription( key="e_heater_3kw_on", translation_key="e_heater_3kw_on" ),
+    SensorEntityDescription( key="M61", translation_key="valve_heating_cooling" ),
+    SensorEntityDescription( key="M62", translation_key="valve_warm_cold" ),
+    SensorEntityDescription( key="M63", translation_key="value_heating_hotwater" ),
     # idm Service Parameter
     SensorEntityDescription(
         key="super_heating_1",
@@ -884,34 +908,13 @@ SENSOR_TYPES: tuple[SensorEntityDescription, ...] = (
         native_unit_of_measurement=UnitOfPower.KILO_WATT,
         suggested_display_precision=4,
     ),
-    SensorEntityDescription(
-        key="mode_heatcirc_A",
-        translation_key="mode_heatcirc_a",
-    ),
-    SensorEntityDescription(
-        key="mode_heatcirc_B",
-        translation_key="mode_heatcirc_b",
-    ),
-    SensorEntityDescription(
-        key="mode_heatcirc_C",
-        translation_key="mode_heatcirc_c",
-    ),
-    SensorEntityDescription(
-        key="mode_heatcirc_D",
-        translation_key="mode_heatcirc_d",
-    ),
-    SensorEntityDescription(
-        key="mode_heatcirc_E",
-        translation_key="mode_heatcirc_e",
-    ),
-    SensorEntityDescription(
-        key="mode_heatcirc_F",
-        translation_key="mode_heatcirc_f",
-    ),
-    SensorEntityDescription(
-        key="mode_heatcirc_G",
-        translation_key="mode_heatcirc_g",
-    ),
+    SensorEntityDescription( key="mode_heatcirc_A", translation_key="mode_heatcirc_a" ),
+    SensorEntityDescription( key="mode_heatcirc_B", translation_key="mode_heatcirc_b" ),
+    SensorEntityDescription( key="mode_heatcirc_C", translation_key="mode_heatcirc_c" ),
+    SensorEntityDescription( key="mode_heatcirc_D", translation_key="mode_heatcirc_d" ),
+    SensorEntityDescription( key="mode_heatcirc_E", translation_key="mode_heatcirc_e" ),
+    SensorEntityDescription( key="mode_heatcirc_F", translation_key="mode_heatcirc_f" ),
+    SensorEntityDescription( key="mode_heatcirc_G", translation_key="mode_heatcirc_g" ),
     SensorEntityDescription(
         key="cur_heat_power",
         translation_key="cur_heat_power",
@@ -920,15 +923,8 @@ SENSOR_TYPES: tuple[SensorEntityDescription, ...] = (
         native_unit_of_measurement=UnitOfPower.KILO_WATT,
         suggested_display_precision=1,
     ),
-    SensorEntityDescription(
-        key="heatpump_op_mode",
-        translation_key="heatpump_op_mode",
-    ),
-    SensorEntityDescription(
-        key="heatpump_compressor",
-        translation_key="heatpump_compressor",
-        icon="mdi:play",
-    ),
+    SensorEntityDescription( key="heatpump_op_mode", translation_key="heatpump_op_mode" ),
+    SensorEntityDescription( key="heatpump_compressor", translation_key="heatpump_compressor", icon="mdi:play" ),
 )
 
 SENSORS = {desc.key: desc for desc in SENSOR_TYPES}
@@ -944,17 +940,12 @@ class IDM_SoftwareVersionSensor(CoordinatorEntity, SensorEntity):
     def __init__(self, coordinator):
         """Initialize the sensor."""
         super().__init__(coordinator)
-        # self.idx = idx  # Index to identify the sensor (index string)
         self._async_remove_dispatcher = None
         self.entity_description = SENSORS.get("software_version")
         self.idx = self.entity_description.key
         devId = coordinator.config_entry.data[CONF_DISPLAY_NAME]
         self._attr_unique_id = f"{devId}_{self.entity_description.translation_key}"
-        # self.data = ""  # set initial value to empty string
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, devId)},
-            name=DEF_DEVICE_NAME,
-        )
+        self._attr_device_info = DeviceInfo( identifiers={(DOMAIN, devId)}, name=DEF_DEVICE_NAME)
 
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
@@ -964,7 +955,6 @@ class IDM_SoftwareVersionSensor(CoordinatorEntity, SensorEntity):
 
     def setValue(self, val: str) -> None:
         """Set the value of the sensor."""
-        # self.data = val
         self._attr_native_value = val
 
     def getIdx(self) -> str:
@@ -991,10 +981,7 @@ class IDM_Entity(CoordinatorEntity, SensorEntity):
         self.entity_description = entity_description
         devId = coordinator.config_entry.data[CONF_DISPLAY_NAME]
         self._attr_unique_id = f"{devId}_{entity_description.translation_key}"
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, devId)},
-            name=DEF_DEVICE_NAME,
-        )
+        self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, devId)}, name=DEF_DEVICE_NAME)
 
     def setValue(self, val: str) -> None:
         """Set the value of the sensor."""
