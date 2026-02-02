@@ -13,3 +13,12 @@ DEF_DEVICE_NAME = "iDMwb"
 DEF_MIN_TIME_BETWEEN_UPDATES = timedelta(seconds=2)
 DEF_TIME_BETWEEN_UPDATES = timedelta(seconds=10)
 DEF_IDM_PIN = "4444"
+
+# Services
+SERVICE_SET_HEATPUMP_OPERATION_MODE = "set_heatpump_operation_mode"
+SERVICE_SET_HOT_WATER_MIN_TEMP = "set_hot_water_min_temp"
+SERVICE_SET_HOT_WATER_MAX_TEMP = "set_hot_water_max_temp"
+SERVICE_SET_HOT_WATER_BOOST_TEMP = "set_hot_water_boost_temp"
+SERVICE_SET_HOT_WATER_LEGIONELLA_FCT = "set_hot_water_legionella_fct"
+SERVICE_SET_HOT_WATER_LEGIONELLA_TEMP = "set_hot_water_legionella_temp"
+SERVICE_SET_HOT_WATER_LEGIONELLA_DAYS = "set_hot_water_legionella_days"
