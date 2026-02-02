@@ -29,6 +29,240 @@
       "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
     }
   },
+  "services": {
+    "set_heatpump_operation_mode": {
+      "name": "Set heatpump operation mode",
+      "description": "Set the operation mode (off, automatic, hot water only, .. of the heat pump.",
+      "fields": {
+        "operation_mode": {
+          "name": "Operation Mode",
+          "description": "The operation mode to set.",
+          "example": "automatic"
+        },
+        "acknowledge_risk": {
+          "name": "Confirmation",
+          "description": "I accept the risks."
+        }
+      }
+    },
+    "set_hot_water_min_temp": {
+      "name": "Set minimum hot water temperature",
+      "description": "Set the activation temperature for hot water generation (30-50°C).",
+      "fields": {
+        "min_temp": {
+          "name": "Minimum Hot Water Temperature",
+          "description": "The minimum hot water temperature to set in degrees Celsius (30-50°C).",
+          "example": "35"
+        },
+        "acknowledge_risk": {
+          "name": "Confirmation",
+          "description": "I accept the risks."
+        }
+      }
+    },
+    "set_hot_water_max_temp": {
+      "name": "Set maximum hot water temperature",
+      "description": "Set the heat pump switch off temperature for hot water generation (35-55°C).",
+      "fields": {
+        "max_temp": {
+          "name": "Maximum Hot Water Temperature",
+          "description": "The maximum hot water temperature to set in degrees Celsius (35-55°C).",
+          "example": "50"
+        },
+        "acknowledge_risk": {
+          "name": "Confirmation",
+          "description": "I accept the risks."
+        }
+      }
+    },
+    "set_hot_water_boost_temp": {
+      "name": "Set hot water boost temperature",
+      "description": "Set the boost temperature for hot water generation (55-75°C).",
+      "fields": {
+        "boost_temp": {
+          "name": "Hot Water Boost Temperature",
+          "description": "The boost hot water temperature to set in degrees Celsius (55-75°C).",
+          "example": "60"
+        },
+        "acknowledge_risk": {
+          "name": "Confirmation",
+          "description": "I accept the risks."
+        }
+      }
+    },
+    "set_hot_water_legionella_fct": {
+      "name": "Set hot water anti-legionella function",
+      "description": "Set the anti-legionella function for hot water generation (off, second heat source).",
+      "fields": {
+        "legionella_fct": {
+          "name": "Anti-legionella Function",
+          "description": "The anti-legionella function to set. (off or second heat source).",
+          "example": "second_heat"
+        },
+        "acknowledge_risk": {
+          "name": "Confirmation",
+          "description": "I accept the risks."
+        }
+      }
+    },
+    "set_hot_water_legionella_temp": {
+      "name": "Set hot water anti-legionella temperature",
+      "description": "Set the anti-legionella temperature for hot water generation (60-67°C).",
+      "fields": {
+        "legionella_temp": {
+          "name": "Legionella Temperature",
+          "description": "The anti-legionella temperature to set in degrees Celsius (60-67°C).",
+          "example": "65"
+        },
+        "acknowledge_risk": {
+          "name": "Confirmation",
+          "description": "I accept the risks."
+        }
+      }
+    },
+    "set_hot_water_legionella_days": {
+      "name": "Set hot water anti-legionella days interval",
+      "description": "Set the anti-legionella days interval for hot water generation (0-7 days).",
+      "fields": {
+        "legionella_days": {
+          "name": "Anti-Legionella Days Interval",
+          "description": "The anti-legionella days interval to set (0-7 days).",
+          "example": "7"
+        },
+        "acknowledge_risk": {
+          "name": "Confirmation",
+          "description": "I accept the risks."
+        }
+      }
+    },
+    "set_max_heating_power": {
+      "name": "Set maximum heating power",
+      "description": "Set the maximum heating power of the heat pump (in percent, 25-100%).",
+      "fields": {
+        "max_heating_power": {
+          "name": "Maximum Heating Power",
+          "description": "The maximum heating power to set in percent (25-100%).",
+          "example": "65"
+        },
+        "acknowledge_risk": {
+          "name": "Confirmation",
+          "description": "I accept the risks."
+        },
+        "acknowledge_risk_advanced": {
+          "name": "Advanced Risk Confirmation",
+          "description": "I accept the additional risk of advanced settings."
+        }
+      }
+    },
+    "set_max_hot_water_power": {
+      "name": "Set maximum hot water power",
+      "description": "Set the maximum hot water power of the heat pump (in percent, 35-90%).",
+      "fields": {
+        "max_hot_water_power": {
+          "name": "Maximum Hot Water Power",
+          "description": "The maximum hot water power to set in percent (35-90%).",
+          "example": "65"
+        },
+        "acknowledge_risk": {
+          "name": "Confirmation",
+          "description": "I accept the risks."
+        },
+        "acknowledge_risk_advanced": {
+          "name": "Advanced Risk Confirmation",
+          "description": "I accept the additional risk of advanced settings."
+        }
+      }
+    },
+    "set_defrost_power": {
+      "name": "Set defrost power",
+      "description": "Set the defrost power of the heat pump (in percent, 50-100%).",
+      "fields": {
+        "defrost_power": {
+          "name": "Defrost Power",
+          "description": "The defrost power to set in percent (50-100%).",
+          "example": "65"
+        },
+        "acknowledge_risk": {
+          "name": "Confirmation",
+          "description": "I accept the risks."
+        },
+        "acknowledge_risk_advanced": {
+          "name": "Advanced Risk Confirmation",
+          "description": "I accept the additional risk of advanced settings."
+        }
+      }
+    },
+    "set_max_flowpump_power": {
+      "name": "Set maximum flow pump power",
+      "description": "Set the maximum flow pump power of the heat pump (in percent, 32-100%).",
+      "fields": {
+        "max_flowpump_power": {
+          "name": "Maximum Flow Pump Power",
+          "description": "The maximum flow pump power to set in percent (32-100%).",
+          "example": "80"
+        },
+        "acknowledge_risk": {
+          "name": "Confirmation",
+          "description": "I accept the risks."
+        },
+        "acknowledge_risk_advanced": {
+          "name": "Advanced Risk Confirmation",
+          "description": "I accept the additional risk of advanced settings."
+        }
+      }
+    },
+    "set_hot_water_bivalence_switchtemp": {
+      "name": "Set hot water bivalence switch temperature",
+      "description": "Set the bivalence switch temperature for hot water generation, valid for boost or anti-legionella (30-55°C).",
+      "fields": {
+        "bivalence_switchtemp": {
+          "name": "Bivalence Switch Temperature",
+          "description": "The bivalence switch temperature to set in degrees Celsius (30-55°C).",
+          "example": "45"
+        },
+        "acknowledge_risk": {
+          "name": "Confirmation",
+          "description": "I accept the risks."
+        },
+        "acknowledge_risk_advanced": {
+          "name": "Advanced Risk Confirmation",
+          "description": "I accept the additional risk of advanced settings."
+        }
+      }
+    }
+  },
+  "selector": {
+    "heatpump_operation_modes": {
+      "options": {
+        "off": "Off",
+        "standby": "Standby",
+        "automatic": "Automatic",
+        "away": "Away",
+        "hot_water_only": "Hot Water Only",
+        "heating_cooling_only": "Heating/Cooling Only"
+      }
+    },
+    "legionella_function_options": {
+      "options": {
+        "off": "Off",
+        "second_heat": "Second Heat Source"
+      }
+    },
+    "acknowledge_set_value": {
+      "value": "I have read IDM's documentation, I know what effect setting this value has and I accept the risks in case of misuse or problems."
+    },
+    "acknowledge_set_value_advanced": {
+      "value": "I am an advanced user, I have read IDM's documentation in detail, I know what effect setting this value has and I accept the additional risks in case of misuse or problems."
+    }
+  },
+  "exceptions": {
+    "risk_not_acknowledged": {
+      "message": "You must enable 'Confirmation' (i.e. set acknowledge_risk=true) to call this service."
+    },
+    "risk_not_acknowledged_advanced": {
+      "message": "You must enable both 'Confirmation' (i.e. set acknowledge_risk=true) and 'Advanced Risk Confirmation' (i.e. set acknowledge_risk_advanced=true) to call this service."
+    }
+  },
   "entity": {
     "sensor": {
       "software_version": {
