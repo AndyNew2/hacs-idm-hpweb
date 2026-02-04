@@ -428,6 +428,12 @@
                 "standby": "Standby"
             }
         },
+        "hot_water_trigger_options": {
+            "options": {
+                "boost_generation": "Boost Generation (using Boost Temp)",
+                "standard_generation": "Standard Generation"
+            }
+        },
         "legionella_function_options": {
             "options": {
                 "off": "Off",
@@ -578,6 +584,21 @@
                 }
             },
             "name": "Set minimum hot water temperature"
+        },
+        "set_hot_water_trigger_generation": {
+            "description": "Trigger hot water generation (Boost or standard mode).",
+            "fields": {
+                "acknowledge_risk": {
+                    "description": "I accept the risks.",
+                    "name": "Confirmation"
+                },
+                "hot_water_trigger_gen": {
+                    "description": "The hot water generation mode to trigger: Boost (higher target temp)  or standard.",
+                    "example": "boost_generation",
+                    "name": "Hot water generation mode"
+                }
+            },
+            "name": "Activate hot water generation"
         },
         "set_max_flowpump_power": {
             "description": "Set the maximum flow pump power of the heat pump (in percent, 32-100%).",
