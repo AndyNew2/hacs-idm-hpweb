@@ -116,3 +116,20 @@ set_hot_water_legionella_days:
         constant:
           value: true
           translation_key: acknowledge_set_value
+set_hot_water_trigger_generation:
+  fields:
+    hot_water_trigger_gen:
+      required: true
+      selector:
+        select:
+          translation_key: hot_water_trigger_options
+          options:
+            - "standard_generation"
+            - "boost_generation"
+      example: "standard_generation"
+      default: "standard_generation"
+    acknowledge_risk:
+      selector:
+        constant:
+          value: true
+          translation_key: acknowledge_set_value
