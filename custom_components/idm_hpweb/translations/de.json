@@ -429,6 +429,12 @@
                 "standby": "Standby"
             }
         },
+        "hot_water_trigger_options": {
+            "options": {
+                "boost_generation": "Boost (benutzt Boost Temperatur)",
+                "standard_generation": "Standard Erzeugung"
+            }
+        },
         "legionella_function_options": {
             "options": {
                 "off": "Aus",
@@ -541,6 +547,21 @@
                 }
             },
             "name": "Setze Legionellenintervall"
+        },
+        "set_hot_water_trigger_generation": {
+            "description": "Aktiviere einmalige Warmwassererzeugung (Boost oder Standardmodus).",
+            "fields": {
+                "acknowledge_risk": {
+                    "description": "Ich akzeptiere die Risiken.",
+                    "name": "Risikobestätigung!"
+                },
+                "hot_water_trigger_gen": {
+                    "description": "Die Warmwassererzeugungsmethode auswählen: Boost (höhere Zieltemperatur) oder Standard.",
+                    "example": "boost_generation",
+                    "name": "Warmwassererzeugungsmethode"
+                }
+            },
+            "name": "Aktiviere einmalige Warmwassererzeugung"
         },
         "set_max_heating_power": {
             "description": "Definiert die maximale Heizleistung der Wärmepumpe (in Prozent, 25-100%).",
