@@ -53,6 +53,7 @@ from .const import (
     SERVICE_SET_HOT_WATER_LEGIONELLA_FCT,
     SERVICE_SET_HOT_WATER_LEGIONELLA_TEMP,
     SERVICE_SET_HOT_WATER_LEGIONELLA_DAYS,
+    SERVICE_SET_HOT_WATER_TRIGGER_GENERATION,
 )
 from .idmHeatpumpWeb import (
     idmHeatpumpWeb,
@@ -170,6 +171,20 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
         if not result:
             raise HomeAssistantError( f"Failed to set hot water legionella days interval to {days} days", translation_domain=DOMAIN )
     hass.services.async_register(domain=DOMAIN, service=SERVICE_SET_HOT_WATER_LEGIONELLA_DAYS, service_func=handle_set_hot_water_legionella_days)
+
+    async def handle_set_hot_water_trigger_generation(call: ServiceCall):
+        """Handle the service call to trigger hot water generation."""
+        generation_mode: str = call.data.get("hot_water_trigger_gen", "not defined")
+
+        acknowledge = call.data.get("acknowledge_risk")
+        if acknowledge is not True:
+            raise HomeAssistantError( f"Must acknowledge risk to call {SERVICE_SET_HOT_WATER_TRIGGER_GENERATION}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged")
+
+        result = await idmObj.async_set_hot_water_trigger_generation(generation_mode)
+        if not result:
+            raise HomeAssistantError( f"Failed to trigger hot water generation with mode {generation_mode}", translation_domain=DOMAIN )
+    hass.services.async_register( domain=DOMAIN, service=SERVICE_SET_HOT_WATER_TRIGGER_GENERATION, service_func=handle_set_hot_water_trigger_generation )
+
 
 class IDM_Coordinator(DataUpdateCoordinator):
     """My custom coordinator."""
