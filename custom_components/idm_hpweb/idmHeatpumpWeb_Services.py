@@ -29,6 +29,8 @@ idm_HP_SET_HOT_WATER_LEGIONELLA_FCT_1 = '{"edesc":"_LEGIONELLA_FUNCTION","id":"H
 idm_HP_SET_HOT_WATER_LEGIONELLA_FCT_2 = '","vis":1}'
 idm_HP_SET_HOT_WATER_LEGIONELLA_TEMP = '{"def":67,"edesc":"_LEGIONELLA_FUNCTION_TEMPERATURE","id":"HPFW045","increment":"1","index":12,"max":67,"min":60,"name":"Legionellenfunktion - Temperatur","param":"FW045","ptype":0,"type":"int","unit":" °C","value":'
 idm_HP_SET_HOT_WATER_LEGIONELLA_DAYS = '{"def":7,"edesc":"_LEGIONELLA_FUNCTION_TIMEINTERVALL","id":"HPFW046","increment":"1","index":13,"max":7,"min":0,"name":"Legionellenfunktion - Zeitintervall","param":"FW046","ptype":0,"type":"int","unit":" Tag(e)","value":'
+idm_HP_HOT_WATER_TRIGGER_GENERATION = '{"freshwater":{"mode":2}}'
+idm_HP_HOT_WATER_TRIGGER_BOOSTGEN = '{"freshwater":{"mode":3}}'
 
 idM_HP_Std_SET_PARAM_ENDING = ',"vis":1,"fractionSize":0}'
 
@@ -220,4 +222,31 @@ class idmHeatpumpWebService(idmHeatpumpWeb):
             return result
         except Exception as ex:
             _LOGGER.error("Error in set_hot_water_legionella_days: %s", ex)
+            return False
+
+    async def async_set_hot_water_trigger(self, trigger: str) -> bool:
+        """Set Hot Water Trigger async. allowed values: 'standard_generation', 'boost_generation'"""
+        return await self.hass.async_add_executor_job(self.set_hot_water_trigger, trigger)
+    def set_hot_water_trigger(self, trigger: str) -> bool:
+        """Set Hot Water Trigger."""
+        try:
+            result = False
+            if trigger not in ['standard_generation', 'boost_generation']:
+                _LOGGER.error("Error in set_hot_water_trigger: Trigger must be either 'standard_generation' or 'boost_generation'.")
+                return False
+            postIDMHeader = { "Content-Type": "application/json;charset=utf-8", "CSRF-Token": self.csrf_token }
+            if trigger == 'standard_generation': setTriggerData = idm_HP_HOT_WATER_TRIGGER_GENERATION
+            else: setTriggerData = idm_HP_HOT_WATER_TRIGGER_BOOSTGEN
+            htPut = self.session.put(self.idmDataUrl, setTriggerData, headers=postIDMHeader, timeout=self._timeout)
+            if htPut.status_code != 200:
+                _LOGGER.warning(".. SetHotWaterTrigger received unexpected response code, did not work! Code: "+str(htPut.status_code))
+            else:
+                if htPut.text != setTriggerData: # in success state, heatpump returns the same json as sent
+                    _LOGGER.warning(".. SetHotWaterTrigger received unexpected answer, may not work: Answer: "+htPut.text)
+                else:
+                    result = True
+                    _LOGGER.info("Setting HotWaterTrigger for %s was successful.", trigger)
+            return result
+        except Exception as ex:
+            _LOGGER.error("Error in set_hot_water_trigger: %s", ex)
             return False
