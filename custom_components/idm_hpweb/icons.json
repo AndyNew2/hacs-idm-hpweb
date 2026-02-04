@@ -20,6 +20,9 @@
     },
     "set_hot_water_legionella_days": {
       "service": "mdi:calendar-check"
+    },
+    "set_hot_water_trigger_generation": {
+      "service": "mdi:thermometer-water"
     }
   }
 }
