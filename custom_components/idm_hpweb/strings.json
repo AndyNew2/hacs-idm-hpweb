@@ -135,6 +135,21 @@
         }
       }
     },
+    "set_hot_water_trigger_generation": {
+      "name": "Activate hot water generation",
+      "description": "Trigger hot water generation (Boost or standard mode).",
+      "fields": {
+        "hot_water_trigger_gen": {
+          "name": "Hot water generation mode",
+          "description": "The hot water generation mode to trigger: Boost (higher target temp)  or standard.",
+          "example": "boost_generation"
+        },
+        "acknowledge_risk": {
+          "name": "Confirmation",
+          "description": "I accept the risks."
+        }
+      }
+    },
     "set_max_heating_power": {
       "name": "Set maximum heating power",
       "description": "Set the maximum heating power of the heat pump (in percent, 25-100%).",
@@ -246,6 +261,12 @@
       "options": {
         "off": "Off",
         "second_heat": "Second Heat Source"
+      }
+    },
+    "hot_water_trigger_options": {
+      "options": {
+        "standard_generation": "Standard Generation",
+        "boost_generation": "Boost Generation (using Boost Temp)"
       }
     },
     "acknowledge_set_value": {
