@@ -224,10 +224,10 @@ class idmHeatpumpWebService(idmHeatpumpWeb):
             _LOGGER.error("Error in set_hot_water_legionella_days: %s", ex)
             return False
 
-    async def async_set_hot_water_trigger(self, trigger: str) -> bool:
+    async def async_set_hot_water_trigger_generation(self, trigger: str) -> bool:
         """Set Hot Water Trigger async. allowed values: 'standard_generation', 'boost_generation'"""
-        return await self.hass.async_add_executor_job(self.set_hot_water_trigger, trigger)
-    def set_hot_water_trigger(self, trigger: str) -> bool:
+        return await self.hass.async_add_executor_job(self.set_hot_water_trigger_generation, trigger)
+    def set_hot_water_trigger_generation(self, trigger: str) -> bool:
         """Set Hot Water Trigger."""
         try:
             result = False
@@ -237,7 +237,7 @@ class idmHeatpumpWebService(idmHeatpumpWeb):
             postIDMHeader = { "Content-Type": "application/json;charset=utf-8", "CSRF-Token": self.csrf_token }
             if trigger == 'standard_generation': setTriggerData = idm_HP_HOT_WATER_TRIGGER_GENERATION
             else: setTriggerData = idm_HP_HOT_WATER_TRIGGER_BOOSTGEN
-            htPut = self.session.put(self.idmDataUrl, setTriggerData, headers=postIDMHeader, timeout=self._timeout)
+            htPut = self.session.put(self.idmHeatpumpUrl, setTriggerData, headers=postIDMHeader, timeout=self._timeout)
             if htPut.status_code != 200:
                 _LOGGER.warning(".. SetHotWaterTrigger received unexpected response code, did not work! Code: "+str(htPut.status_code))
             else:
