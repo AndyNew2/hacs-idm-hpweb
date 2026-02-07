@@ -1,6 +1,7 @@
 # hacs-idm-hpweb
 HACS integration for IDM heat pumps by using just the WEB interface
-Keyword: Home Assistant HA - iDM iDM Wärmepumpe iDM Heatpump
+
+Keywords: Home Assistant HA - iDM iDM Wärmepumpe iDM Heatpump
 
 > [!IMPORTANT]
 > **This integration is not affiliated with iDM Energiesysteme GmbH and is provided as-is and without warranty.**
