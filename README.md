@@ -15,7 +15,7 @@ Keywords: Home Assistant HA - iDM iDM Wärmepumpe iDM Heatpump
 _Component to integrate with [IDM heat pumps][https://www.idm-energie.at/]._
 
 > [!NOTE]
-> Your heat pump needs to have the **Navigator 2.0** control unit.
+> Your heat pump needs to have the **Navigator 2.0** control unit. Currently it will **not work(!) with Navigator 10**. Contributer are welcome to add Navigator 10 support.
 > Other versions of the control unit will not work at all. A try is not recommended.
 
 **This component will set up the following platforms.**
@@ -28,11 +28,11 @@ Platform | Description
 
 ### What is IDM heat pump web integration
 
-1. This integration uses the **local HTTP Web** server, which comes now with all iDM heat pumps with **Navigator 2.0**.
+1. This integration uses the **local HTTP Web** server, which comes now with all iDM heat pumps with **Navigator 2.0**. Navigator 10 is currently not supported.
 2. It do not use the iDM Web service nor is dependent on any iDM regsitration or **internet or cloud service**. All data is still collected **local in your network**.
 3. To make this integration work, your iDM heat pump need to have a **static IP** address or configure your network router in a way, it always assigns the same **ip address**. Use the **IP address as the host** name for this integration.
 4. This integration needs the **PIN code** from your iDM heat pump to open the HTTP connection. If no PIN code is assigned, the local HTTP server on the heat pump is disabled. Activate a PIN on the iDM heatpump display, otherwise the integration will not work.
-5. This integration do not provide all entities iDM heat pump can provide. However, the provided entities enriches other integrations.
+5. This integration do not provide all entities iDM heat pump can provide (but quite a lot). However, the provided entities enriches other integrations.
 6. This integration is designed **as a compantion** to **work together** with the popular **Kodebach iDM Integration** see https://github.com/kodebach/hacs-idm-heatpump . However, it still can run standalone.
 7. This integration will run without enabling ModbusTCP protocol by your iDM service team. However, I recommend to do so, to be able to run this integration together with the Kodebach integration.
 8. See this Wiki for a picture, what you could see using this integration: https://github.com/AndyNew2/hacs-idm-hpweb/wiki.
