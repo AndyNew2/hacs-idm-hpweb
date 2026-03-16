@@ -17,8 +17,8 @@ _PLATFORMS: list[Platform] = [Platform.SENSOR]
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up iDM Heatpump Web from a config entry."""
 
-    displayname = entry.data.get(CONF_DISPLAY_NAME)
-    hostname = entry.data.get(CONF_HOST)
+    displayname = entry.data.get(CONF_DISPLAY_NAME,"")
+    hostname = entry.data.get(CONF_HOST,"")
     pin = entry.data.get(CONF_PIN, DEF_IDM_PIN)
     timeout = entry.data.get(CONF_TIMEOUT, 3)
     cycle_time = entry.data.get(CONF_CYCLE_TIME, DEF_TIME_BETWEEN_UPDATES.total_seconds())
