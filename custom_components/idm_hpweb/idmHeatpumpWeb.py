@@ -274,6 +274,10 @@ class idmHeatpumpWeb:
             blocking_idm_get_data_function, self
         )
 
+    def get_host(self) -> str:
+        """Get the host of the heatpump web interface."""
+        return self._host
+
     # return str: "success" or "cannot_connect" or "invalid_pin" or "unknown"
     def idm_login(self) -> str:
         """Log in to the heatpump web interface."""
@@ -439,7 +443,8 @@ class idmHeatpumpWeb:
                 response = self.session.get(self.idmHeatpumpUrl, headers=addHeader, timeout=self._timeout)
                 if response.status_code == 200:
                     txt = response.text
-                    startPos = txt.find('{"flow":{')
+                    afterPos = 200  # default afterpos in case flow is not found. (Ususally response is much bigger)
+                    startPos = txt.find('"flow":{')
                     while startPos != -1:
                         hc_mode = ""  # default for not found
                         afterPos = txt.find('"hcmode":', startPos, startPos + idmReadAheadBlock)
