@@ -154,8 +154,28 @@ class idmWebConfigFlow(ConfigFlow, domain=DOMAIN):
                         data_updates=user_input,
                     )
 
+        displayname_configured = self._get_reconfigure_entry().data.get(CONF_DISPLAY_NAME, "iDM_Web")
+        host_configured = self._get_reconfigure_entry().data.get(CONF_HOST, "")
+        pin_configured = self._get_reconfigure_entry().data.get(CONF_PIN, DEF_IDM_PIN)
+        timeout_configured = self._get_reconfigure_entry().data.get(CONF_TIMEOUT, 3)
+        cycle_time_configured = self._get_reconfigure_entry().data.get(CONF_CYCLE_TIME, DEF_TIME_BETWEEN_UPDATES.total_seconds())
+        stat_div_configured = self._get_reconfigure_entry().data.get(CONF_STAT_DIV, 0)
+        clk_set_configured = self._get_reconfigure_entry().data.get(CONF_CLK_SET, 0)
+        clk_hour_configured = self._get_reconfigure_entry().data.get(CONF_CLK_HOUR, CONF_CLK_HOUR_DEFAULT)
+
         return self.async_show_form(
             step_id="reconfigure",
-            data_schema=STEP_USER_DATA_SCHEMA,
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_DISPLAY_NAME, default=displayname_configured): cv.string,
+                    vol.Required(CONF_HOST, default=host_configured): cv.string,
+                    vol.Required(CONF_PIN, default=pin_configured): cv.string,
+                    vol.Required(CONF_TIMEOUT, default=timeout_configured): int,
+                    vol.Required(CONF_CYCLE_TIME, default=cycle_time_configured): int,
+                    vol.Optional(CONF_STAT_DIV, default=stat_div_configured): int,
+                    vol.Optional(CONF_CLK_SET, default=clk_set_configured): int,
+                    vol.Optional(CONF_CLK_HOUR, default=clk_hour_configured): int,
+                }
+            ),
             errors=errors,
         )
