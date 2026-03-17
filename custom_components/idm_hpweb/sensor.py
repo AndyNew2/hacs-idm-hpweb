@@ -54,13 +54,6 @@ from .const import (
     SERVICE_SET_HOT_WATER_LEGIONELLA_TEMP,
     SERVICE_SET_HOT_WATER_LEGIONELLA_DAYS,
     SERVICE_SET_HOT_WATER_TRIGGER_GENERATION,
-    SERVICE_SET_MAX_HEATING_POWER,
-    SERVICE_SET_MIN_HEATING_POWER,
-    SERVICE_SET_MAX_HOT_WATER_POWER,
-    SERVICE_SET_DEFROST_POWER,
-    SERVICE_SET_MAX_FLOWPUMP_POWER,
-    SERVICE_SET_MIN_FLOWPUMP_POWER,
-    SERVICE_SET_HOT_WATER_BIVALENCE_SWITCHTEMP,
 )
 from .idmHeatpumpWeb import (
     idmHeatpumpWeb,
@@ -191,120 +184,6 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
         if not result:
             raise HomeAssistantError( f"Failed to trigger hot water generation with mode {generation_mode}", translation_domain=DOMAIN )
     hass.services.async_register( domain=DOMAIN, service=SERVICE_SET_HOT_WATER_TRIGGER_GENERATION, service_func=handle_set_hot_water_trigger_generation )
-
-    ### Advanced Services ###
-    async def handle_set_max_heating_power(call: ServiceCall):
-        """Handle the service call to set max heating power."""
-        max_power: int = call.data.get("max_heating_power", 65)
-
-        acknowledge = call.data.get("acknowledge_risk")
-        if acknowledge is not True:
-            raise HomeAssistantError( f"Must acknowledge risk to call {SERVICE_SET_MAX_HEATING_POWER}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged" )
-        acknowledge_adv = call.data.get("acknowledge_risk_advanced")
-        if acknowledge_adv is not True:
-            raise HomeAssistantError( f"Must acknowledge advanced risk to call {SERVICE_SET_MAX_HEATING_POWER}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged_advanced" )
-
-        result = await idmObj.async_set_max_heating_power(max_power)
-        if not result:
-            raise HomeAssistantError( f"Failed to set max heating power to {max_power}%", translation_domain=DOMAIN)
-    hass.services.async_register(domain=DOMAIN, service=SERVICE_SET_MAX_HEATING_POWER, service_func=handle_set_max_heating_power)
-
-    async def handle_set_min_heating_power(call: ServiceCall):
-        """Handle the service call to set min heating power."""
-        min_power: int = call.data.get("min_heating_power", 30)
-
-        acknowledge = call.data.get("acknowledge_risk")
-        if acknowledge is not True:
-            raise HomeAssistantError( f"Must acknowledge risk to call {SERVICE_SET_MIN_HEATING_POWER}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged" )
-        acknowledge_adv = call.data.get("acknowledge_risk_advanced")
-        if acknowledge_adv is not True:
-            raise HomeAssistantError( f"Must acknowledge advanced risk to call {SERVICE_SET_MIN_HEATING_POWER}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged_advanced" )
-
-        result = await idmObj.async_set_min_heating_power(min_power)
-        if not result:
-            raise HomeAssistantError( f"Failed to set min heating power to {min_power}%", translation_domain=DOMAIN)
-    hass.services.async_register(domain=DOMAIN, service=SERVICE_SET_MIN_HEATING_POWER, service_func=handle_set_min_heating_power)
-
-    async def handle_set_max_hot_water_power(call: ServiceCall):
-        """Handle the service call to set max hot water power."""
-        max_power: int = call.data.get("max_hot_water_power", 65)
-
-        acknowledge = call.data.get("acknowledge_risk")
-        if acknowledge is not True:
-            raise HomeAssistantError(
-                f"Must acknowledge risk to call {SERVICE_SET_MAX_HOT_WATER_POWER}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged" )
-        acknowledge_adv = call.data.get("acknowledge_risk_advanced")
-        if acknowledge_adv is not True:
-            raise HomeAssistantError( f"Must acknowledge advanced risk to call {SERVICE_SET_MAX_HOT_WATER_POWER}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged_advanced" )
-
-        result = await idmObj.async_set_max_hot_water_power(max_power)
-        if not result:
-            raise HomeAssistantError( f"Failed to set max hot water power to {max_power}%", translation_domain=DOMAIN )
-    hass.services.async_register(domain=DOMAIN, service=SERVICE_SET_MAX_HOT_WATER_POWER, service_func=handle_set_max_hot_water_power)
-
-    async def handle_set_defrost_power(call: ServiceCall):
-        """Handle the service call to set defrost power."""
-        power: int = call.data.get("defrost_power", 65)
-
-        acknowledge = call.data.get("acknowledge_risk")
-        if acknowledge is not True:
-            raise HomeAssistantError( f"Must acknowledge risk to call {SERVICE_SET_DEFROST_POWER}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged" )
-        acknowledge_adv = call.data.get("acknowledge_risk_advanced")
-        if acknowledge_adv is not True:
-            raise HomeAssistantError( f"Must acknowledge advanced risk to call {SERVICE_SET_DEFROST_POWER}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged_advanced" )
-
-        result = await idmObj.async_set_defrost_power(power)
-        if not result:
-            raise HomeAssistantError( f"Failed to set defrost power to {power}%", translation_domain=DOMAIN )
-    hass.services.async_register(domain=DOMAIN, service=SERVICE_SET_DEFROST_POWER, service_func=handle_set_defrost_power)
-
-    async def handle_set_max_flowpump_power(call: ServiceCall):
-        """Handle the service call to set max flowpump power."""
-        max_power: int = call.data.get("max_flowpump_power", 80)
-
-        acknowledge = call.data.get("acknowledge_risk")
-        if acknowledge is not True:
-            raise HomeAssistantError( f"Must acknowledge risk to call {SERVICE_SET_MAX_FLOWPUMP_POWER}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged" )
-        acknowledge_adv = call.data.get("acknowledge_risk_advanced")
-        if acknowledge_adv is not True:
-            raise HomeAssistantError( f"Must acknowledge advanced risk to call {SERVICE_SET_MAX_FLOWPUMP_POWER}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged_advanced" )
-
-        result = await idmObj.async_set_max_flowpump_power(max_power)
-        if not result:
-            raise HomeAssistantError( f"Failed to set max flowpump power to {max_power}%", translation_domain=DOMAIN )
-    hass.services.async_register(domain=DOMAIN, service=SERVICE_SET_MAX_FLOWPUMP_POWER, service_func=handle_set_max_flowpump_power)
-
-    async def handle_set_min_flowpump_power(call: ServiceCall):
-        """Handle the service call to set min flowpump power."""
-        min_power: int = call.data.get("min_flowpump_power", 60)
-
-        acknowledge = call.data.get("acknowledge_risk")
-        if acknowledge is not True:
-            raise HomeAssistantError( f"Must acknowledge risk to call {SERVICE_SET_MIN_FLOWPUMP_POWER}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged" )
-        acknowledge_adv = call.data.get("acknowledge_risk_advanced")
-        if acknowledge_adv is not True:
-            raise HomeAssistantError( f"Must acknowledge advanced risk to call {SERVICE_SET_MIN_FLOWPUMP_POWER}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged_advanced" )
-
-        result = await idmObj.async_set_min_flowpump_power(min_power)
-        if not result:
-            raise HomeAssistantError( f"Failed to set min flowpump power to {min_power}%", translation_domain=DOMAIN )
-    hass.services.async_register(domain=DOMAIN, service=SERVICE_SET_MIN_FLOWPUMP_POWER, service_func=handle_set_min_flowpump_power)
-
-    async def handle_set_hot_water_bivalence_switchtemp(call: ServiceCall):
-        """Handle the service call to set hot water bivalence switch temperature."""
-        temp: int = call.data.get("bivalence_switch_temp", 50)
-
-        acknowledge = call.data.get("acknowledge_risk")
-        if acknowledge is not True:
-            raise HomeAssistantError( f"Must acknowledge risk to call {SERVICE_SET_HOT_WATER_BIVALENCE_SWITCHTEMP}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged" )
-        acknowledge_adv = call.data.get("acknowledge_risk_advanced")
-        if acknowledge_adv is not True:
-            raise HomeAssistantError( f"Must acknowledge advanced risk to call {SERVICE_SET_HOT_WATER_BIVALENCE_SWITCHTEMP}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged_advanced" )
-
-        result = await idmObj.async_set_hot_water_bivalence_switchtemp(temp)
-        if not result:
-            raise HomeAssistantError( f"Failed to set hot water bivalence switch temperature to {temp}°C", translation_domain=DOMAIN )
-    hass.services.async_register(domain=DOMAIN, service=SERVICE_SET_HOT_WATER_BIVALENCE_SWITCHTEMP, service_func=handle_set_hot_water_bivalence_switchtemp)
 
 class IDM_Coordinator(DataUpdateCoordinator):
     """My custom coordinator."""
