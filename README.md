@@ -15,7 +15,7 @@ Keywords: Home Assistant HA - iDM iDM Wärmepumpe iDM Heatpump
 _Component to integrate with [IDM heat pumps][https://www.idm-energie.at/]._
 
 > [!NOTE]
-> Your heat pump needs to have the **Navigator 2.0** control unit. Currently it will **not work(!) with Navigator 10**. Contributer are welcome to add Navigator 10 support.
+> Your heat pump needs to have the **Navigator 2.0** control unit. Currently will **not work(!) with Navigator 10**. Contributer are welcome to add Navigator 10 support.
 > Other versions of the control unit will not work at all. A try is not recommended.
 
 **This component will set up the following platforms.**
@@ -98,6 +98,17 @@ Done the integration should check the access and start after that automatically 
 1. Install both integrations and use the Kodebach integration on 1 minute update rate or even slower to relax both HA and the iDM heat pump controller. In this integration use the standard update rate of 10 seconds or around to have a faster update on signals, needing the higher update rate.
 2. Disable all entities in this integration, you do not need faster update rate and(!) having the entity anyway in the Kodebach integration. Good examples are flow temperature and return temperature. By disabling them in this integration, you greatly safe resources on the Home Assistant world, mainly the recorder.
 3. Disable all entities in the Kodebach integration, you plan to use from this integration, in case you need the higher update rate. That prevents having the same information recorded twice in Home Assistant.
+
+## Troubleshooting
+
+In case you cannot access the local Webpage from your IDM heatpump, you may not have activated the local network access. To activate do following steps:
+
+1. You need to go in front of your heatpump on the user display, and navigate through the menu:
+"Einstellungen" -
+"Allgemeine Einstellungen" -
+"Netzwerkeinstellungen" -
+"Code lokales Netzwerk"
+2. In the setting "Code lokales Netzwerk" you need to enter a valid PIN. An empty field or "0" disables the local access. Therefore make sure you have an valid code entered.
 
 ***
 
