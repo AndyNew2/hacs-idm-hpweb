@@ -12,9 +12,24 @@
             "invalid_pin": "Entered PIN is invalid",
             "stat_div_too_small": "Divider must be either 0 (disabled) or at least 3",
             "timeout_too_small": "Timeout value to low, must be at least 1 second.",
-            "unknown": "Unexpected error"
+            "unknown": "Unexpected error",
+            "unknown_response": "Unknown respone: Either wrong IP address (not from iDM) or Navigator10 (see documentation)"
         },
         "step": {
+            "reconfigure": {
+                "data": {
+                    "CLOCK_SET_DEVIATION": "Max. iDM clock deviation (seconds), if bigger time is corrected automatically (0 = disabled)",
+                    "CLOCK_SET_HOUR": "Clock correction is executed at begin of this hour, when activated",
+                    "CYCLE_TIME": "Cycle time between updates (in seconds)",
+                    "STATISTICS_DIV": "Divider for statistics (0 = disabled)",
+                    "display_name": "Display name for the device (no spaces allowed)",
+                    "host": "Host",
+                    "pin": "PIN code",
+                    "timeout": "Timeout value"
+                },
+                "description": "The device can be reconfigured. Previous data is seen in dialog.",
+                "title": "Reconfiguration dialog"
+            },
             "user": {
                 "data": {
                     "CLOCK_SET_DEVIATION": "Max. iDM clock deviation (seconds), if bigger time is corrected automatically (0 = disabled)",
@@ -413,10 +428,16 @@
     },
     "selector": {
         "acknowledge_set_value": {
-            "value": "I have read IDM's documentation, I know what effect setting this value has and I accept the risks in case of misuse or problems."
+            "options": {
+                "false": "",
+                "true": "I have read IDM's documentation, I know what effect setting this value has and I accept the risks in case of misuse or problems."
+            }
         },
         "acknowledge_set_value_advanced": {
-            "value": "I am an advanced user, I have read IDM's documentation in detail, I know what effect setting this value has and I accept the additional risks in case of misuse or problems."
+            "options": {
+                "false": "",
+                "true": "I am an advanced user, I have read IDM's documentation in detail, I know what effect setting this value has and I accept the additional risks in case of misuse or problems."
+            }
         },
         "heatpump_operation_modes": {
             "options": {
@@ -656,6 +677,58 @@
                 }
             },
             "name": "Set maximum hot water power"
+        },
+        "set_min_flowpump_power": {
+            "description": "Set the minimum flow pump power of the heat pump (in percent, 30-82%).",
+            "fields": {
+                "acknowledge_risk": {
+                    "description": "I accept the risks.",
+                    "name": "Confirmation"
+                },
+                "acknowledge_risk_advanced": {
+                    "description": "I accept the additional risk of advanced settings.",
+                    "name": "Advanced Risk Confirmation"
+                },
+                "min_flowpump_power": {
+                    "description": "The minimum flow pump power to set in percent (30-82%).",
+                    "example": "35",
+                    "name": "Minimum Flow Pump Power"
+                }
+            },
+            "name": "Set minimum flow pump power"
+        },
+        "set_min_heating_power": {
+            "description": "Set the minimum heating power of the heat pump (in percent, 20-58%).",
+            "fields": {
+                "acknowledge_risk": {
+                    "description": "I accept the risks.",
+                    "name": "Confirmation"
+                },
+                "acknowledge_risk_advanced": {
+                    "description": "I accept the additional risk of advanced settings.",
+                    "name": "Advanced Risk Confirmation"
+                },
+                "min_heating_power": {
+                    "description": "The minimum heating power to set in percent (20-58%).",
+                    "example": "25",
+                    "name": "Minimum Heating Power"
+                }
+            },
+            "name": "Set minimum heating power"
+        },
+        "set_trigger_defrost_once": {
+            "description": "Trigger defrosting once (if defrost conditions are met).",
+            "fields": {
+                "acknowledge_risk": {
+                    "description": "I accept the risks.",
+                    "name": "Confirmation"
+                },
+                "acknowledge_risk_advanced": {
+                    "description": "I accept the additional risk of advanced settings.",
+                    "name": "Advanced Risk Confirmation"
+                }
+            },
+            "name": "Trigger defrost once"
         }
     }
 }
