@@ -12,6 +12,20 @@
           "CLOCK_SET_DEVIATION": "Max. iDM clock deviation (seconds), if bigger time is corrected automatically (0 = disabled)",
           "CLOCK_SET_HOUR": "Clock correction is executed at begin of this hour, when activated"
         }
+      },
+      "reconfigure": {
+        "description": "The device can be reconfigured. Previous data is seen in dialog.",
+        "title": "Reconfiguration dialog",
+        "data": {
+          "display_name": "Display name for the device (no spaces allowed)",
+          "host": "[%key:common::config_flow::data::host%]",
+          "pin": "[%key:common::config_flow::data::pin%]",
+          "timeout": "Timeout value",
+          "CYCLE_TIME": "Cycle time between updates (in seconds)",
+          "STATISTICS_DIV": "Divider for statistics (0 = disabled)",
+          "CLOCK_SET_DEVIATION": "Max. iDM clock deviation (seconds), if bigger time is corrected automatically (0 = disabled)",
+          "CLOCK_SET_HOUR": "Clock correction is executed at begin of this hour, when activated"
+        }
       }
     },
     "error": {
@@ -23,7 +37,8 @@
       "stat_div_too_small": "Divider must be either 0 (disabled) or at least 3",
       "clock_set_deviation_too_small": "Accepted clock deviation value too small, must be 0 (disabled) or at least 3",
       "clock_set_hour_wrong": "Given hour is wrong, must be between 0 and 23",
-      "unknown": "[%key:common::config_flow::error::unknown%]"
+      "unknown": "[%key:common::config_flow::error::unknown%]",
+      "unknown_response": "Unknown respone: Either wrong IP address (not from iDM) or Navigator10 (see documentation)"
     },
     "abort": {
       "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
@@ -169,6 +184,25 @@
         }
       }
     },
+    "set_min_heating_power": {
+      "name": "Set minimum heating power",
+      "description": "Set the minimum heating power of the heat pump (in percent, 20-58%).",
+      "fields": {
+        "min_heating_power": {
+          "name": "Minimum Heating Power",
+          "description": "The minimum heating power to set in percent (20-58%).",
+          "example": "25"
+        },
+        "acknowledge_risk": {
+          "name": "Confirmation",
+          "description": "I accept the risks."
+        },
+        "acknowledge_risk_advanced": {
+          "name": "Advanced Risk Confirmation",
+          "description": "I accept the additional risk of advanced settings."
+        }
+      }
+    },
     "set_max_hot_water_power": {
       "name": "Set maximum hot water power",
       "description": "Set the maximum hot water power of the heat pump (in percent, 35-90%).",
@@ -226,6 +260,25 @@
         }
       }
     },
+    "set_min_flowpump_power": {
+      "name": "Set minimum flow pump power",
+      "description": "Set the minimum flow pump power of the heat pump (in percent, 30-82%).",
+      "fields": {
+        "min_flowpump_power": {
+          "name": "Minimum Flow Pump Power",
+          "description": "The minimum flow pump power to set in percent (30-82%).",
+          "example": "35"
+        },
+        "acknowledge_risk": {
+          "name": "Confirmation",
+          "description": "I accept the risks."
+        },
+        "acknowledge_risk_advanced": {
+          "name": "Advanced Risk Confirmation",
+          "description": "I accept the additional risk of advanced settings."
+        }
+      }
+    },
     "set_hot_water_bivalence_switchtemp": {
       "name": "Set hot water bivalence switch temperature",
       "description": "Set the bivalence switch temperature for hot water generation, valid for boost or anti-legionella (30-55°C).",
@@ -235,6 +288,20 @@
           "description": "The bivalence switch temperature to set in degrees Celsius (30-55°C).",
           "example": "45"
         },
+        "acknowledge_risk": {
+          "name": "Confirmation",
+          "description": "I accept the risks."
+        },
+        "acknowledge_risk_advanced": {
+          "name": "Advanced Risk Confirmation",
+          "description": "I accept the additional risk of advanced settings."
+        }
+      }
+    },
+    "set_trigger_defrost_once": {
+      "name": "Trigger defrost once",
+      "description": "Trigger defrosting once (if defrost conditions are met).",
+      "fields": {
         "acknowledge_risk": {
           "name": "Confirmation",
           "description": "I accept the risks."
@@ -270,10 +337,16 @@
       }
     },
     "acknowledge_set_value": {
-      "value": "I have read IDM's documentation, I know what effect setting this value has and I accept the risks in case of misuse or problems."
+        "options": {
+          "true": "I have read IDM's documentation, I know what effect setting this value has and I accept the risks in case of misuse or problems.",
+          "false": ""
+        }
     },
     "acknowledge_set_value_advanced": {
-      "value": "I am an advanced user, I have read IDM's documentation in detail, I know what effect setting this value has and I accept the additional risks in case of misuse or problems."
+        "options": {
+          "true": "I am an advanced user, I have read IDM's documentation in detail, I know what effect setting this value has and I accept the additional risks in case of misuse or problems.",
+          "false": ""
+        }
     }
   },
   "exceptions": {
