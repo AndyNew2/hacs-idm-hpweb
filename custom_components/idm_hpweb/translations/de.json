@@ -12,10 +12,25 @@
             "clock_set_hour_wrong": "Angebene Stunde ist falsch, muss zwischen 0 und 23 sein",
             "display_name_no_spaces": "Anzeigename darf keine Leerzeichen enthalten",
             "invalid_pin": "Eingegebene PIN ist falsch",
-            "unknown": "Unbekannter Fehler"
+            "unknown": "Unbekannter Fehler",
+            "unknown_response": "Unerwartete Antwort! Entweder vertauschte IP-Adresse (keine von iDM) oder Navigator10 (siehe Doku)"
         },
         "step": {
             "user": {
+                "data": {
+                    "CYCLE_TIME": "Zykluszeit zwischen Updates (in Sekunden)",
+                    "CLOCK_SET_DEVIATION": "Maximale iDM Uhrabweichung (in Sekunden), wenn größer wird die Zeit automatisch korrigiert (0 = deaktiviert)",
+                    "CLOCK_SET_HOUR": "Zum Start dieser Stunde wird die iDM Uhrprüfung und Korrektur durchgeführt, falls aktiviert",
+                    "STATISTICS_DIV": "Teiler für Statistiken (0 = ausgeschaltet)",
+                    "display_name": "Anzeigename für diese Wäremepumpe (keine Leerzeichen)",
+                    "host": "Host - IP Adresse",
+                    "pin": "PIN Code",
+                    "timeout": "Timeout Wert für Webanfragen"
+                }
+            },
+            "reconfigure": {
+                "description": "Das Gerät kann neu konfiguriert werden. Vorherige Daten sind im Dialog sichtbar.",
+                "title": "Rekonfiguration",
                 "data": {
                     "CYCLE_TIME": "Zykluszeit zwischen Updates (in Sekunden)",
                     "CLOCK_SET_DEVIATION": "Maximale iDM Uhrabweichung (in Sekunden), wenn größer wird die Zeit automatisch korrigiert (0 = deaktiviert)",
@@ -413,6 +428,7 @@
     },
     "selector": {
         "acknowledge_set_value": {
+            "name": "Risikobestätigung",
             "value": "Ich habe die IDM Dokumentation gelesen, ich weiß, welchen Effekt das Setzen dieses Wertes hat, und ich akzeptiere die Risiken im Falle eines Missbrauchs oder Fehlers."
         },
         "acknowledge_set_value_advanced": {
@@ -582,6 +598,25 @@
             },
             "name": "Setze maximale Heizleistung"
         },
+        "set_min_heating_power": {
+            "description": "Definiert die minimale Heizleistung der Wärmepumpe (in Prozent, 20-58%).",
+            "fields": {
+                "acknowledge_risk": {
+                    "description": "Ich akzeptiere die Risiken.",
+                    "name": "Risikobestätigung!"
+                },
+                "acknowledge_risk_advanced": {
+                    "description": "Ich akzeptiere die zusätzlichen Risiken.",
+                    "name": "Erweiterte Risikobestätigung!"
+                },
+                "min_heating_power": {
+                    "description": "Die minimale Heizleistung in Prozent (20-58%).",
+                    "example": "25",
+                    "name": "Minimale Heizleistung"
+                }
+            },
+            "name": "Setze minimale Heizleistung"
+        },
         "set_max_hot_water_power": {
             "description": "Definiert die maximale Warmwasserleistung der Wärmepumpe (in Prozent, 35-90%).",
             "fields": {
@@ -639,6 +674,25 @@
             },
             "name": "Setze maximale Ladepumpenleistung"
         },
+        "set_min_flowpump_power": {
+            "description": "Definiert die minimale Ladepumpenleistung der Wärmepumpe (in Prozent, 30-82%).",
+            "fields": {
+                "acknowledge_risk": {
+                    "description": "Ich akzeptiere die Risiken.",
+                    "name": "Risikobestätigung!"
+                },
+                "acknowledge_risk_advanced": {
+                    "description": "Ich akzeptiere die zusätzlichen Risiken.",
+                    "name": "Erweiterte Risikobestätigung!"
+                },
+                "min_flowpump_power": {
+                    "description": "Die minimale Ladepumpenleistung in Prozent (30-82%).",
+                    "example": "35",
+                    "name": "Minimale Ladepumpenleistung"
+                }
+            },
+            "name": "Setze minimale Ladepumpenleistung"
+        },
         "set_hot_water_bivalence_switchtemp": {
             "description": "Setzt die Bivalenz Umschalttemperatur für die Warmwassererzeugung (35-55°C). Diese ist für die Boost und Legionellenfunktion relevant.",
             "fields": {
@@ -657,6 +711,20 @@
                 }
             },
             "name": "Setze Bivalenz Umschalttemperatur"
+        },
+        "set_trigger_defrost_once": {
+            "description": "Einmaliges Abtauen auslösen (wenn Abtaubedingungen erfüllt sind).",
+            "fields": {
+                "acknowledge_risk": {
+                    "description": "Ich akzeptiere die Risiken.",
+                    "name": "Risikobestätigung!"
+                },
+                "acknowledge_risk_advanced": {
+                    "description": "Ich akzeptiere die zusätzlichen Risiken.",
+                    "name": "Erweiterte Risikobestätigung!"
+                }
+            },
+            "name": "Löse einmaliges Abtauen aus"
         }
     }
 }
