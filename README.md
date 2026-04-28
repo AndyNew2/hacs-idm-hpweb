@@ -15,7 +15,7 @@ Keywords: Home Assistant HA - iDM iDM Wärmepumpe iDM Heatpump
 _Component to integrate with [IDM heat pumps][https://www.idm-energie.at/]._
 
 > [!NOTE]
-> Your heat pump needs to have the **Navigator 2.0** control unit. Currently will **not work(!) with Navigator 10**. Contributer are welcome to add Navigator 10 support.
+> Your heat pump needs to have the **Navigator 2.0** or **Navigator 10** control unit. Contributer are welcome to extend Navigator 10 support.
 > Other versions of the control unit will not work at all. A try is not recommended.
 
 **This component will set up the following platforms.**
@@ -28,7 +28,7 @@ Platform | Description
 
 ### What is IDM heat pump web integration
 
-1. This integration uses the **local HTTP Web** server, which comes now with all iDM heat pumps with **Navigator 2.0**. Navigator 10 is currently not supported.
+1. This integration uses the **local HTTP Web** server, which comes now with all iDM heat pumps with **Navigator 2.0**. **Navigator 10** is now on a basic level supported. Further testers and contributers are welcome.
 2. It do not use the iDM Web service nor is dependent on any iDM regsitration or **internet or cloud service**. All data is still collected **local in your network**.
 3. To make this integration work, your iDM heat pump need to have a **static IP** address or configure your network router in a way, it always assigns the same **ip address**. Use the **IP address as the host** name for this integration.
 4. This integration needs the **PIN code** from your iDM heat pump to open the HTTP connection. If no PIN code is assigned, the local HTTP server on the heat pump is disabled. Activate a PIN on the iDM heatpump display, otherwise the integration will not work.
