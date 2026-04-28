@@ -10,36 +10,57 @@
             "cycle_time_too_low": "Cycle time is too low, must be at least 2 seconds",
             "display_name_no_spaces": "Display name must not contain spaces",
             "invalid_pin": "Entered PIN is invalid",
+            "login_failed": "Login failed. Unknown reason",
             "stat_div_too_small": "Divider must be either 0 (disabled) or at least 3",
             "timeout_too_small": "Timeout value to low, must be at least 1 second.",
             "unknown": "Unexpected error",
-            "unknown_response": "Unknown respone: Either wrong IP address (not from iDM) or Navigator10 (see documentation)"
+            "unknown_response": "Unknown respone: Wrong IP address (not from iDM) configured?"
         },
         "step": {
             "reconfigure": {
                 "data": {
-                    "CLOCK_SET_DEVIATION": "Max. iDM clock deviation (seconds), if bigger time is corrected automatically (0 = disabled)",
-                    "CLOCK_SET_HOUR": "Clock correction is executed at begin of this hour, when activated",
-                    "CYCLE_TIME": "Cycle time between updates (in seconds)",
-                    "STATISTICS_DIV": "Divider for statistics (0 = disabled)",
-                    "display_name": "Display name for the device (no spaces allowed)",
+                    "CLOCK_SET_DEVIATION": "clock correction",
+                    "CLOCK_SET_HOUR": "clock correction hour",
+                    "CYCLE_TIME": "Cycle time",
+                    "NAV10_INTERFACE": "Navigator2.0 - 10",
+                    "STATISTICS_DIV": "Statistics divider",
+                    "display_name": "Display name",
                     "host": "Host",
                     "pin": "PIN code",
                     "timeout": "Timeout value"
+                },
+                "data_description": {
+                    "CLOCK_SET_DEVIATION": "Max. iDM clock deviation (seconds), if bigger time is corrected automatically (0 = disabled)",
+                    "CLOCK_SET_HOUR": "Clock correction is executed at begin of this hour, when activated",
+                    "CYCLE_TIME": "Cycle time between updates (in seconds)",
+                    "NAV10_INTERFACE": "Use Navigator 10 Web Interface (instead of Navigator 2.0 Web) - only needed if autodetection fails",
+                    "STATISTICS_DIV": "Divider for statistics (0 = disabled)",
+                    "display_name": "Display name for the device (no spaces allowed)",
+                    "timeout": "Recommended value is between 2-10 seconds."
                 },
                 "description": "The device can be reconfigured. Previous data is seen in dialog.",
                 "title": "Reconfiguration dialog"
             },
             "user": {
                 "data": {
-                    "CLOCK_SET_DEVIATION": "Max. iDM clock deviation (seconds), if bigger time is corrected automatically (0 = disabled)",
-                    "CLOCK_SET_HOUR": "Clock correction is executed at begin of this hour, when activated",
-                    "CYCLE_TIME": "Cycle time between updates (in seconds)",
-                    "STATISTICS_DIV": "Divider for statistics (0 = disabled)",
-                    "display_name": "Display name for the device (no spaces allowed)",
+                    "CLOCK_SET_DEVIATION": "clock correction",
+                    "CLOCK_SET_HOUR": "clock correction hour",
+                    "CYCLE_TIME": "Cycle time",
+                    "NAV10_INTERFACE": "Navigator2.0 - 10",
+                    "STATISTICS_DIV": "Statistics divider",
+                    "display_name": "Display name",
                     "host": "Host",
                     "pin": "PIN code",
                     "timeout": "Timeout value"
+                },
+                "data_description": {
+                    "CLOCK_SET_DEVIATION": "Max. iDM clock deviation (seconds), if bigger time is corrected automatically (0 = disabled)",
+                    "CLOCK_SET_HOUR": "Clock correction is executed at begin of this hour, when activated",
+                    "CYCLE_TIME": "Cycle time between updates (in seconds)",
+                    "NAV10_INTERFACE": "Use Navigator 10 Web Interface (instead of Navigator 2.0 Web) - only needed if autodetection fails",
+                    "STATISTICS_DIV": "Divider for statistics (0 = disabled)",
+                    "display_name": "Display name for the device (no spaces allowed)",
+                    "timeout": "Recommended value is between 2-10 seconds."
                 }
             }
         }
@@ -72,6 +93,9 @@
             },
             "board_temperature": {
                 "name": "B P Heatpump mainboard temp"
+            },
+            "compressor_heating": {
+                "name": "E B Heatpump compressor heating"
             },
             "condense_pressure": {
                 "name": "B I Condense pressure"
@@ -133,6 +157,9 @@
             "flow_pumpe_speed": {
                 "name": "C A Flow pump speed"
             },
+            "flow_temp_heatcircuit_a": {
+                "name": "B D Flow temp heatcircuit A"
+            },
             "flow_temp_heatcircuit_c": {
                 "name": "B D Flow temp heatcircuit C"
             },
@@ -169,6 +196,9 @@
             "flowpump_circuit_c": {
                 "name": "E E Flow pump act heatcircuit C"
             },
+            "heat_generator_2nd": {
+                "name": "E B Heatpump 2nd generator"
+            },
             "heatpump_compressor": {
                 "name": "I E Compressor state",
                 "state": {
@@ -197,6 +227,12 @@
             },
             "liquid_temperature": {
                 "name": "B F Heatpump liquid temp"
+            },
+            "loading_temperature": {
+                "name": "B C Loading temp"
+            },
+            "mixer_circuit_a": {
+                "name": "E F Mixer heatcircuit A"
             },
             "mixer_circuit_c": {
                 "name": "E F Mixer heatcircuit C"
