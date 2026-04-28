@@ -303,6 +303,10 @@ class idmHeatpumpWeb:
         """Get the host of the heatpump web interface."""
         return self._host
 
+    def get_navigatorName(self) -> str:
+        """Get the navigator name of the heatpump web interface."""
+        return "Navigator 2.0 Web"
+
     # return str: "success" or "cannot_connect" or "invalid_pin" or "unknown"
     def idm_login(self) -> str:
         """Log in to the heatpump web interface."""
@@ -414,10 +418,7 @@ class idmHeatpumpWeb:
                         # _LOGGER.debug("Extracting extra key: afterPos=%d key=%s value=%s",afterPos,key,valStr,
                     else:
                         _LOGGER.debug(
-                            "Extra Key %s not found in response for sensor",
-                            key,
-                            sensorKey,
-                        )
+                            "Extra Key %s not found in response for sensor %s. Will be ignored.", key, sensorKey)
 
                 afterPos = txt.find('"edesc":"_INPUTS_OUTPUTS_INFO"', startPos)
                 if afterPos == -1:
