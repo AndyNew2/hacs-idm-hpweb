@@ -12,34 +12,55 @@
             "clock_set_hour_wrong": "Angebene Stunde ist falsch, muss zwischen 0 und 23 sein",
             "display_name_no_spaces": "Anzeigename darf keine Leerzeichen enthalten",
             "invalid_pin": "Eingegebene PIN ist falsch",
+            "login_failed": "Login fehlgeschlagen. Unbekannter Grund",
             "unknown": "Unbekannter Fehler",
-            "unknown_response": "Unerwartete Antwort! Entweder vertauschte IP-Adresse (keine von iDM) oder Navigator10 (siehe Doku)"
+            "unknown_response": "Unerwartete Antwort! Vertauschte IP-Adresse (keine von iDM)?"
         },
         "step": {
             "user": {
                 "data": {
+                    "CYCLE_TIME": "Zykluszeit",
+                    "CLOCK_SET_DEVIATION": "Uhrabweichung",
+                    "CLOCK_SET_HOUR": "Uhrkorrektur Stunde",
+                    "STATISTICS_DIV": "Statistik Teiler",
+                    "display_name": "Anzeigename",
+                    "host": "Host - IP Adresse",
+                    "pin": "PIN Code",
+                    "timeout": "Timeout Wert",
+                    "NAV10_INTERFACE": "Navigator2.0 - 10"
+                },
+                "data_description": {
                     "CYCLE_TIME": "Zykluszeit zwischen Updates (in Sekunden)",
                     "CLOCK_SET_DEVIATION": "Maximale iDM Uhrabweichung (in Sekunden), wenn größer wird die Zeit automatisch korrigiert (0 = deaktiviert)",
                     "CLOCK_SET_HOUR": "Zum Start dieser Stunde wird die iDM Uhrprüfung und Korrektur durchgeführt, falls aktiviert",
                     "STATISTICS_DIV": "Teiler für Statistiken (0 = ausgeschaltet)",
                     "display_name": "Anzeigename für diese Wäremepumpe (keine Leerzeichen)",
-                    "host": "Host - IP Adresse",
-                    "pin": "PIN Code",
-                    "timeout": "Timeout Wert für Webanfragen"
+                    "timeout": "Timeout Wert für Webanfragen. Typisch zwischen 2 und 10 Sekunden.",
+                    "NAV10_INTERFACE": "Nutze neues Navigator 10 Web Interface. - Nur wenn die Autodetektion fehlschlägt."
                 }
             },
             "reconfigure": {
                 "description": "Das Gerät kann neu konfiguriert werden. Vorherige Daten sind im Dialog sichtbar.",
                 "title": "Rekonfiguration",
                 "data": {
+                    "CYCLE_TIME": "Zykluszeit",
+                    "CLOCK_SET_DEVIATION": "Uhrabweichung",
+                    "CLOCK_SET_HOUR": "Uhrkorrektur Stunde",
+                    "STATISTICS_DIV": "Statistik Teiler",
+                    "display_name": "Anzeigename",
+                    "host": "Host - IP Adresse",
+                    "pin": "PIN Code",
+                    "timeout": "Timeout Wert",
+                    "NAV10_INTERFACE": "Navigator2.0 - 10"
+                },
+                "data_description": {
                     "CYCLE_TIME": "Zykluszeit zwischen Updates (in Sekunden)",
                     "CLOCK_SET_DEVIATION": "Maximale iDM Uhrabweichung (in Sekunden), wenn größer wird die Zeit automatisch korrigiert (0 = deaktiviert)",
                     "CLOCK_SET_HOUR": "Zum Start dieser Stunde wird die iDM Uhrprüfung und Korrektur durchgeführt, falls aktiviert",
                     "STATISTICS_DIV": "Teiler für Statistiken (0 = ausgeschaltet)",
                     "display_name": "Anzeigename für diese Wäremepumpe (keine Leerzeichen)",
-                    "host": "Host - IP Adresse",
-                    "pin": "PIN Code",
-                    "timeout": "Timeout Wert für Webanfragen"
+                    "timeout": "Timeout Wert für Webanfragen. Typisch zwischen 2 und 10 Sekunden.",
+                    "NAV10_INTERFACE": "Nutze neues Navigator 10 Web Interface. - Nur wenn die Autodetektion fehlschlägt."
                 }
             }
         }
@@ -115,6 +136,12 @@
             "flow_pumpe_speed": {
                 "name": "C A Ladepumpe Leistung"
             },
+            "loading_temperature": {
+                "name": "B C Ladetemperatur"
+            },
+            "flow_temp_heatcircuit_a": {
+                "name": "B D Vorlauftemp HK A"
+            },
             "flow_temp_heatcircuit_c": {
                 "name": "B D Vorlauftemp HK C"
             },
@@ -138,6 +165,9 @@
             },
             "liquid_temperature": {
                 "name": "B F Flüssigkeitsleit. Temp"
+            },
+            "mixer_circuit_a": {
+                "name": "E F Mischer HK A"
             },
             "mixer_circuit_c": {
                 "name": "E F Mischer HK C"
@@ -180,6 +210,12 @@
             },
             "siphon_heating": {
                 "name": "E B WP Siphonheizung"
+            },
+            "heat_generator_2nd": {
+                "name": "E B WP 2. Wärmeerzeuger"
+            },
+            "compressor_heating": {
+                "name": "E B WP Verdicherheizung"
             },
             "software_version": {
                 "name": "A A iDM Software Version"
