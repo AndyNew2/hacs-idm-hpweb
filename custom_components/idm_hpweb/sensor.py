@@ -43,9 +43,15 @@ from homeassistant.const import CONF_HOST, CONF_PIN, CONF_TIMEOUT
 from homeassistant.util.unit_conversion import UnitOfElectricPotential
 from .const import DEF_TIME_BETWEEN_UPDATES, DOMAIN
 from .const import (
-    DEF_IDM_PIN, CONF_DISPLAY_NAME, CONF_CYCLE_TIME,
-    DEF_DEVICE_NAME, CONF_STAT_DIV, CONF_CLK_SET,
-    CONF_CLK_HOUR, CONF_CLK_HOUR_DEFAULT,
+    DEF_IDM_PIN,
+    CONF_DISPLAY_NAME,
+    CONF_CYCLE_TIME,
+    DEF_DEVICE_NAME,
+    CONF_STAT_DIV,
+    CONF_CLK_SET,
+    CONF_CLK_HOUR,
+    CONF_CLK_HOUR_DEFAULT,
+    CONF_NAV10,
     SERVICE_SET_HEATPUMP_OPERATION_MODE,
     SERVICE_SET_HOT_WATER_MIN_TEMP,
     SERVICE_SET_HOT_WATER_MAX_TEMP,
@@ -62,27 +68,54 @@ from .idmHeatpumpWeb import (
 
 from .idmHeatpumpWeb_Services import idmHeatpumpWebService
 
+from .idmHeatpumpWebNav10 import idmHpWebNav10
+
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
+async def async_setup_entry(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
     """Set up the idM coordinator."""
 
-    stat_divider = config_entry.data.get(CONF_STAT_DIV, 0)  # we added this parameter later, therefore needs proper default
-    clk_set = config_entry.data.get(CONF_CLK_SET, 0)  # this is a further added parameter, therfore a default needs to be defined here.
-    clk_set_hour = config_entry.data.get(CONF_CLK_HOUR, CONF_CLK_HOUR_DEFAULT)  # default defined in const, but logic is same as above
+    stat_divider = config_entry.data.get(
+        CONF_STAT_DIV, 0
+    )  # we added this parameter later, therefore needs proper default
+    clk_set = config_entry.data.get(
+        CONF_CLK_SET, 0
+    )  # this is a further added parameter, therfore a default needs to be defined here.
+    clk_set_hour = config_entry.data.get(
+        CONF_CLK_HOUR, CONF_CLK_HOUR_DEFAULT
+    )  # default defined in const, but logic is same as above
+    nav10 = config_entry.data.get(CONF_NAV10, False)
+    if nav10 or False:  # ### for testing purposes only, remove True in production
+        idmObj = idmHpWebNav10(
+            config_entry.data[CONF_HOST],
+            config_entry.data[CONF_PIN],
+            config_entry.data[CONF_TIMEOUT],
+            stat_divider,
+            clk_set,
+            clk_set_hour,
+        )
+    else:
+        idmObj = idmHeatpumpWebService(
+            hass,
+            config_entry.data[CONF_HOST],
+            config_entry.data[CONF_PIN],
+            config_entry.data[CONF_TIMEOUT],
+            stat_divider,
+            clk_set,
+            clk_set_hour,
+        )
 
-    idmObj = idmHeatpumpWebService(
-        hass,
-        config_entry.data[CONF_HOST],
-        config_entry.data[CONF_PIN],
-        config_entry.data[CONF_TIMEOUT],
-        stat_divider, clk_set, clk_set_hour,
-    )
     coordinator = IDM_Coordinator(
-        hass, config_entry,
+        hass,
+        config_entry,
         timedelta(seconds=config_entry.data[CONF_CYCLE_TIME]),
-        idmObj, async_add_entities,
+        idmObj,
+        async_add_entities,
     )
     hass.data[DOMAIN] = coordinator  # probably not needed, but we keep it for now
     await coordinator.async_config_entry_first_refresh()
@@ -93,12 +126,25 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
 
         acknowledge = call.data.get("acknowledge_risk")
         if acknowledge is not True:
-            raise HomeAssistantError( f"Must acknowledge risk to call {SERVICE_SET_HEATPUMP_OPERATION_MODE}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged" )
+            raise HomeAssistantError(
+                f"Must acknowledge risk to call {SERVICE_SET_HEATPUMP_OPERATION_MODE}",
+                translation_domain=DOMAIN,
+                translation_key="risk_not_acknowledged",
+            )
 
         result = await idmObj.async_set_heatpump_operation_mode(mode)
         if not result:
-            raise HomeAssistantError( f"Failed to set heatpump operation mode to {mode}", translation_domain=DOMAIN, translation_key="set_heatpump_operation_mode_failed" )
-    hass.services.async_register( domain=DOMAIN, service=SERVICE_SET_HEATPUMP_OPERATION_MODE, service_func=handle_set_heatpump_operation_mode )
+            raise HomeAssistantError(
+                f"Failed to set heatpump operation mode to {mode}",
+                translation_domain=DOMAIN,
+                translation_key="set_heatpump_operation_mode_failed",
+            )
+
+    hass.services.async_register(
+        domain=DOMAIN,
+        service=SERVICE_SET_HEATPUMP_OPERATION_MODE,
+        service_func=handle_set_heatpump_operation_mode,
+    )
 
     async def handle_set_hot_water_min_temp(call: ServiceCall):
         """Handle the service call to set hot water minimum temperature."""
@@ -106,11 +152,23 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
 
         acknowledge = call.data.get("acknowledge_risk")
         if acknowledge is not True:
-            raise HomeAssistantError( f"Must acknowledge risk to call {SERVICE_SET_HOT_WATER_MIN_TEMP}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged")
+            raise HomeAssistantError(
+                f"Must acknowledge risk to call {SERVICE_SET_HOT_WATER_MIN_TEMP}",
+                translation_domain=DOMAIN,
+                translation_key="risk_not_acknowledged",
+            )
         result = await idmObj.async_set_hot_water_min_temp(temp)
         if not result:
-            raise HomeAssistantError( f"Failed to set hot water minimum temperature to {temp}°C", translation_domain=DOMAIN )
-    hass.services.async_register(domain=DOMAIN, service=SERVICE_SET_HOT_WATER_MIN_TEMP, service_func=handle_set_hot_water_min_temp)
+            raise HomeAssistantError(
+                f"Failed to set hot water minimum temperature to {temp}°C",
+                translation_domain=DOMAIN,
+            )
+
+    hass.services.async_register(
+        domain=DOMAIN,
+        service=SERVICE_SET_HOT_WATER_MIN_TEMP,
+        service_func=handle_set_hot_water_min_temp,
+    )
 
     async def handle_set_hot_water_max_temp(call: ServiceCall):
         """Handle the service call to set hot water maximum temperature."""
@@ -118,11 +176,23 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
 
         acknowledge = call.data.get("acknowledge_risk")
         if acknowledge is not True:
-            raise HomeAssistantError( f"Must acknowledge risk to call {SERVICE_SET_HOT_WATER_MAX_TEMP}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged")
+            raise HomeAssistantError(
+                f"Must acknowledge risk to call {SERVICE_SET_HOT_WATER_MAX_TEMP}",
+                translation_domain=DOMAIN,
+                translation_key="risk_not_acknowledged",
+            )
         result = await idmObj.async_set_hot_water_max_temp(temp)
         if not result:
-            raise HomeAssistantError( f"Failed to set hot water maximum temperature to {temp}°C", translation_domain=DOMAIN )
-    hass.services.async_register(domain=DOMAIN, service=SERVICE_SET_HOT_WATER_MAX_TEMP, service_func=handle_set_hot_water_max_temp)
+            raise HomeAssistantError(
+                f"Failed to set hot water maximum temperature to {temp}°C",
+                translation_domain=DOMAIN,
+            )
+
+    hass.services.async_register(
+        domain=DOMAIN,
+        service=SERVICE_SET_HOT_WATER_MAX_TEMP,
+        service_func=handle_set_hot_water_max_temp,
+    )
 
     async def handle_set_hot_water_boost_temp(call: ServiceCall):
         """Handle the service call to set hot water boost temperature."""
@@ -130,11 +200,23 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
 
         acknowledge = call.data.get("acknowledge_risk")
         if acknowledge is not True:
-            raise HomeAssistantError( f"Must acknowledge risk to call {SERVICE_SET_HOT_WATER_BOOST_TEMP}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged")
+            raise HomeAssistantError(
+                f"Must acknowledge risk to call {SERVICE_SET_HOT_WATER_BOOST_TEMP}",
+                translation_domain=DOMAIN,
+                translation_key="risk_not_acknowledged",
+            )
         result = await idmObj.async_set_hot_water_boost_temp(temp)
         if not result:
-            raise HomeAssistantError( f"Failed to set hot water boost temperature to {temp}°C", translation_domain=DOMAIN )
-    hass.services.async_register(domain=DOMAIN, service=SERVICE_SET_HOT_WATER_BOOST_TEMP, service_func=handle_set_hot_water_boost_temp)
+            raise HomeAssistantError(
+                f"Failed to set hot water boost temperature to {temp}°C",
+                translation_domain=DOMAIN,
+            )
+
+    hass.services.async_register(
+        domain=DOMAIN,
+        service=SERVICE_SET_HOT_WATER_BOOST_TEMP,
+        service_func=handle_set_hot_water_boost_temp,
+    )
 
     async def handle_set_hot_water_legionella_fct(call: ServiceCall):
         """Handle the service call to set hot water legionella function."""
@@ -142,11 +224,23 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
 
         acknowledge = call.data.get("acknowledge_risk")
         if acknowledge is not True:
-            raise HomeAssistantError( f"Must acknowledge risk to call {SERVICE_SET_HOT_WATER_LEGIONELLA_FCT}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged")
+            raise HomeAssistantError(
+                f"Must acknowledge risk to call {SERVICE_SET_HOT_WATER_LEGIONELLA_FCT}",
+                translation_domain=DOMAIN,
+                translation_key="risk_not_acknowledged",
+            )
         result = await idmObj.async_set_hot_water_legionella_fct(legio_fct)
         if not result:
-            raise HomeAssistantError( f"Failed to set hot water legionella function to {legio_fct}", translation_domain=DOMAIN )
-    hass.services.async_register(domain=DOMAIN, service=SERVICE_SET_HOT_WATER_LEGIONELLA_FCT, service_func=handle_set_hot_water_legionella_fct)
+            raise HomeAssistantError(
+                f"Failed to set hot water legionella function to {legio_fct}",
+                translation_domain=DOMAIN,
+            )
+
+    hass.services.async_register(
+        domain=DOMAIN,
+        service=SERVICE_SET_HOT_WATER_LEGIONELLA_FCT,
+        service_func=handle_set_hot_water_legionella_fct,
+    )
 
     async def handle_set_hot_water_legionella_temp(call: ServiceCall):
         """Handle the service call to set hot water legionella temperature."""
@@ -154,11 +248,23 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
 
         acknowledge = call.data.get("acknowledge_risk")
         if acknowledge is not True:
-            raise HomeAssistantError( f"Must acknowledge risk to call {SERVICE_SET_HOT_WATER_LEGIONELLA_TEMP}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged")
+            raise HomeAssistantError(
+                f"Must acknowledge risk to call {SERVICE_SET_HOT_WATER_LEGIONELLA_TEMP}",
+                translation_domain=DOMAIN,
+                translation_key="risk_not_acknowledged",
+            )
         result = await idmObj.async_set_hot_water_legionella_temp(temp)
         if not result:
-            raise HomeAssistantError( f"Failed to set hot water legionella temperature to {temp}°C", translation_domain=DOMAIN )
-    hass.services.async_register(domain=DOMAIN, service=SERVICE_SET_HOT_WATER_LEGIONELLA_TEMP, service_func=handle_set_hot_water_legionella_temp)
+            raise HomeAssistantError(
+                f"Failed to set hot water legionella temperature to {temp}°C",
+                translation_domain=DOMAIN,
+            )
+
+    hass.services.async_register(
+        domain=DOMAIN,
+        service=SERVICE_SET_HOT_WATER_LEGIONELLA_TEMP,
+        service_func=handle_set_hot_water_legionella_temp,
+    )
 
     async def handle_set_hot_water_legionella_days(call: ServiceCall):
         """Handle the service call to set hot water legionella days interval."""
@@ -166,11 +272,23 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
 
         acknowledge = call.data.get("acknowledge_risk")
         if acknowledge is not True:
-            raise HomeAssistantError( f"Must acknowledge risk to call {SERVICE_SET_HOT_WATER_LEGIONELLA_DAYS}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged")
+            raise HomeAssistantError(
+                f"Must acknowledge risk to call {SERVICE_SET_HOT_WATER_LEGIONELLA_DAYS}",
+                translation_domain=DOMAIN,
+                translation_key="risk_not_acknowledged",
+            )
         result = await idmObj.async_set_hot_water_legionella_days(days)
         if not result:
-            raise HomeAssistantError( f"Failed to set hot water legionella days interval to {days} days", translation_domain=DOMAIN )
-    hass.services.async_register(domain=DOMAIN, service=SERVICE_SET_HOT_WATER_LEGIONELLA_DAYS, service_func=handle_set_hot_water_legionella_days)
+            raise HomeAssistantError(
+                f"Failed to set hot water legionella days interval to {days} days",
+                translation_domain=DOMAIN,
+            )
+
+    hass.services.async_register(
+        domain=DOMAIN,
+        service=SERVICE_SET_HOT_WATER_LEGIONELLA_DAYS,
+        service_func=handle_set_hot_water_legionella_days,
+    )
 
     async def handle_set_hot_water_trigger_generation(call: ServiceCall):
         """Handle the service call to trigger hot water generation."""
@@ -178,12 +296,25 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
 
         acknowledge = call.data.get("acknowledge_risk")
         if acknowledge is not True:
-            raise HomeAssistantError( f"Must acknowledge risk to call {SERVICE_SET_HOT_WATER_TRIGGER_GENERATION}", translation_domain=DOMAIN, translation_key="risk_not_acknowledged")
+            raise HomeAssistantError(
+                f"Must acknowledge risk to call {SERVICE_SET_HOT_WATER_TRIGGER_GENERATION}",
+                translation_domain=DOMAIN,
+                translation_key="risk_not_acknowledged",
+            )
 
         result = await idmObj.async_set_hot_water_trigger_generation(generation_mode)
         if not result:
-            raise HomeAssistantError( f"Failed to trigger hot water generation with mode {generation_mode}", translation_domain=DOMAIN )
-    hass.services.async_register( domain=DOMAIN, service=SERVICE_SET_HOT_WATER_TRIGGER_GENERATION, service_func=handle_set_hot_water_trigger_generation )
+            raise HomeAssistantError(
+                f"Failed to trigger hot water generation with mode {generation_mode}",
+                translation_domain=DOMAIN,
+            )
+
+    hass.services.async_register(
+        domain=DOMAIN,
+        service=SERVICE_SET_HOT_WATER_TRIGGER_GENERATION,
+        service_func=handle_set_hot_water_trigger_generation,
+    )
+
 
 class IDM_Coordinator(DataUpdateCoordinator):
     """My custom coordinator."""
@@ -245,7 +376,9 @@ class IDM_Coordinator(DataUpdateCoordinator):
         try:
             # Note: asyncio.TimeoutError and aiohttp.ClientError are already
             # handled by the data update coordinator.
-            async with async_timeout.timeout(self.config_entry.data[CONF_TIMEOUT]+2):  # add 2 seconds for additional data frames which might be needed
+            async with async_timeout.timeout(
+                self.config_entry.data[CONF_TIMEOUT] + 2
+            ):  # add 2 seconds for additional data frames which might be needed
                 data: IdmResponseData = await self.my_api.async_idm_async_get_data()
 
                 for i in range(data.lenResp()):
@@ -254,11 +387,16 @@ class IDM_Coordinator(DataUpdateCoordinator):
                     if key not in self._mySensors:
                         entity_description = SENSORS.get(key)
                         if entity_description:
-                            self._mySensors[key] = IDM_Entity(self, key, entity_description)
+                            self._mySensors[key] = IDM_Entity(
+                                self, key, entity_description
+                            )
                             self.async_add_entities([self._mySensors[key]])
                             _LOGGER.debug("Added new sensor for key %s", key)
                         else:
-                            _LOGGER.warning("Small warning! No sensor description found for key %s",key)
+                            _LOGGER.warning(
+                                "Small warning! No sensor description found for key %s",
+                                key,
+                            )
 
                     sensor = self._mySensors.get(key)
                     if sensor:
@@ -266,11 +404,15 @@ class IDM_Coordinator(DataUpdateCoordinator):
                             sensor.setValue(answer)
                             sensor.async_write_ha_state()  # even value not changed, we need to inform HA to avoid stale data
 
-                if data.lenResp() == 0: _LOGGER.warning("No data received from iDM Heatpump")
+                if data.lenResp() == 0:
+                    _LOGGER.warning("No data received from iDM Heatpump")
 
-                _LOGGER.debug("IDM Data update complete. Found: %d items", data.lenResp())
+                _LOGGER.debug(
+                    "IDM Data update complete. Found: %d items", data.lenResp()
+                )
                 return ""
         except Exception as err:
+            _LOGGER.error(f"IDM_Coordinator: Error fetching data heatpump: {err}")
             raise UpdateFailed(f"Error communicating with API: {err}") from err
 
 
@@ -384,6 +526,22 @@ SENSOR_TYPES: tuple[SensorEntityDescription, ...] = (
     SensorEntityDescription(
         key="B41",
         translation_key="water_temp_bottom",
+        state_class=SensorStateClass.MEASUREMENT,
+        device_class=SensorDeviceClass.TEMPERATURE,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        suggested_display_precision=1,
+    ),
+    SensorEntityDescription(
+        key="B45",
+        translation_key="loading_temperature",
+        state_class=SensorStateClass.MEASUREMENT,
+        device_class=SensorDeviceClass.TEMPERATURE,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        suggested_display_precision=1,
+    ),
+    SensorEntityDescription(
+        key="B51",
+        translation_key="flow_temp_heatcircuit_a",
         state_class=SensorStateClass.MEASUREMENT,
         device_class=SensorDeviceClass.TEMPERATURE,
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
@@ -577,19 +735,22 @@ SENSOR_TYPES: tuple[SensorEntityDescription, ...] = (
         suggested_display_precision=2,
     ),
     # Digital Outputs
-    SensorEntityDescription( key="M73#3", translation_key="flow_pumpe_actstate" ),
-    SensorEntityDescription( key="M51", translation_key="4_way_valve_circut1" ),
-    SensorEntityDescription( key="M31", translation_key="flowpump_circuit_a" ),
-    SensorEntityDescription( key="M33", translation_key="flowpump_circuit_c" ),
-    SensorEntityDescription( key="M43", translation_key="mixer_circuit_c" ),
-    SensorEntityDescription( key="M64", translation_key="hotwater_circulation_pump" ),
-    SensorEntityDescription( key="E31", translation_key="siphon_heating" ),
-    SensorEntityDescription( key="e_heater_1kw_on", translation_key="e_heater_1kw_on" ),
-    SensorEntityDescription( key="e_heater_2kw_on", translation_key="e_heater_2kw_on" ),
-    SensorEntityDescription( key="e_heater_3kw_on", translation_key="e_heater_3kw_on" ),
-    SensorEntityDescription( key="M61", translation_key="valve_heating_cooling" ),
-    SensorEntityDescription( key="M62", translation_key="valve_warm_cold" ),
-    SensorEntityDescription( key="M63", translation_key="value_heating_hotwater" ),
+    SensorEntityDescription(key="M73#3", translation_key="flow_pumpe_actstate"),
+    SensorEntityDescription(key="M51", translation_key="4_way_valve_circut1"),
+    SensorEntityDescription(key="M31", translation_key="flowpump_circuit_a"),
+    SensorEntityDescription(key="M33", translation_key="flowpump_circuit_c"),
+    SensorEntityDescription(key="M41", translation_key="mixer_circuit_a"),
+    SensorEntityDescription(key="M43", translation_key="mixer_circuit_c"),
+    SensorEntityDescription(key="M64", translation_key="hotwater_circulation_pump"),
+    SensorEntityDescription(key="E31", translation_key="siphon_heating"),
+    SensorEntityDescription(key="compressor_heating", translation_key="compressor_heating"),
+    SensorEntityDescription(key="e_heater_1kw_on", translation_key="e_heater_1kw_on"),
+    SensorEntityDescription(key="e_heater_2kw_on", translation_key="e_heater_2kw_on"),
+    SensorEntityDescription(key="e_heater_3kw_on", translation_key="e_heater_3kw_on"),
+    SensorEntityDescription(key="heat_generator_2nd", translation_key="heat_generator_2nd"),
+    SensorEntityDescription(key="M61", translation_key="valve_heating_cooling"),
+    SensorEntityDescription(key="M62", translation_key="valve_warm_cold"),
+    SensorEntityDescription(key="M63", translation_key="value_heating_hotwater"),
     # idm Service Parameter
     SensorEntityDescription(
         key="super_heating_1",
@@ -922,13 +1083,13 @@ SENSOR_TYPES: tuple[SensorEntityDescription, ...] = (
         native_unit_of_measurement=UnitOfPower.KILO_WATT,
         suggested_display_precision=4,
     ),
-    SensorEntityDescription( key="mode_heatcirc_A", translation_key="mode_heatcirc_a" ),
-    SensorEntityDescription( key="mode_heatcirc_B", translation_key="mode_heatcirc_b" ),
-    SensorEntityDescription( key="mode_heatcirc_C", translation_key="mode_heatcirc_c" ),
-    SensorEntityDescription( key="mode_heatcirc_D", translation_key="mode_heatcirc_d" ),
-    SensorEntityDescription( key="mode_heatcirc_E", translation_key="mode_heatcirc_e" ),
-    SensorEntityDescription( key="mode_heatcirc_F", translation_key="mode_heatcirc_f" ),
-    SensorEntityDescription( key="mode_heatcirc_G", translation_key="mode_heatcirc_g" ),
+    SensorEntityDescription(key="mode_heatcirc_A", translation_key="mode_heatcirc_a"),
+    SensorEntityDescription(key="mode_heatcirc_B", translation_key="mode_heatcirc_b"),
+    SensorEntityDescription(key="mode_heatcirc_C", translation_key="mode_heatcirc_c"),
+    SensorEntityDescription(key="mode_heatcirc_D", translation_key="mode_heatcirc_d"),
+    SensorEntityDescription(key="mode_heatcirc_E", translation_key="mode_heatcirc_e"),
+    SensorEntityDescription(key="mode_heatcirc_F", translation_key="mode_heatcirc_f"),
+    SensorEntityDescription(key="mode_heatcirc_G", translation_key="mode_heatcirc_g"),
     SensorEntityDescription(
         key="cur_heat_power",
         translation_key="cur_heat_power",
@@ -937,8 +1098,12 @@ SENSOR_TYPES: tuple[SensorEntityDescription, ...] = (
         native_unit_of_measurement=UnitOfPower.KILO_WATT,
         suggested_display_precision=1,
     ),
-    SensorEntityDescription( key="heatpump_op_mode", translation_key="heatpump_op_mode" ),
-    SensorEntityDescription( key="heatpump_compressor", translation_key="heatpump_compressor", icon="mdi:play" ),
+    SensorEntityDescription(key="heatpump_op_mode", translation_key="heatpump_op_mode"),
+    SensorEntityDescription(
+        key="heatpump_compressor",
+        translation_key="heatpump_compressor",
+        icon="mdi:play",
+    ),
 )
 
 SENSORS = {desc.key: desc for desc in SENSOR_TYPES}
@@ -964,9 +1129,9 @@ class IDM_SoftwareVersionSensor(CoordinatorEntity, SensorEntity):
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, hostName)},
             manufacturer="iDM",
-            model="Navigator 2.0 Web",
+            model=coordinator.my_api.get_navigatorName(),
             sw_version="",
-            model_id="Host: "+hostName,
+            model_id="Host: " + hostName,
         )
         # self._attr_device_info = DeviceInfo( identifiers={(DOMAIN, devId)}, name=DEF_DEVICE_NAME)
 
@@ -1009,9 +1174,9 @@ class IDM_Entity(CoordinatorEntity, SensorEntity):
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, hostName)},
             manufacturer="iDM",
-            model="Navigator 2.0 Web",
+            model=coordinator.my_api.get_navigatorName(),
             sw_version="",
-            model_id="Host: "+hostName,
+            model_id="Host: " + hostName,
         )
         # self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, devId)}, name=DEF_DEVICE_NAME)
 
