@@ -145,6 +145,9 @@
             "external_trigger": {
                 "name": "D A External trigger"
             },
+            "fan_direction": {
+                "name": "E C Fan direction"
+            },
             "fan_speed": {
                 "name": "C B Air fan speed"
             },
