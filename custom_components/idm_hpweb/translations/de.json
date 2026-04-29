@@ -214,6 +214,9 @@
             "heat_generator_2nd": {
                 "name": "E B WP 2. Wärmeerzeuger"
             },
+            "fan_direction": {
+                "name": "E C Drehrichtung Ventilator"
+            },
             "compressor_heating": {
                 "name": "E B WP Verdicherheizung"
             },
