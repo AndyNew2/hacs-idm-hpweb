@@ -548,6 +548,9 @@
       "heat_generator_2nd": {
         "name": "E B Heatpump 2nd generator"
       },
+      "fan_direction": {
+        "name": "E C Fan direction"
+      },
       "e_heater_1kw_on": {
         "name": "E K E-heater 1kW"
       },
