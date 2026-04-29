@@ -102,7 +102,7 @@ idmSensorDefinitions_de = {
     "M73#1": "flow_pump_on",
     # idm Anlogue Outputs
     "M73#2": "flow_pump_percentage",
-    "M13": "ventilator_voltage",
+    "M13#2": "ventilator_voltage",
     "AInOut 80-81": "ainout_80_81",
     "AInOut 82-83": "ainout_82_83",
     "AInOut 84-85": "ainout_84_85",
@@ -194,7 +194,7 @@ idmSensorDefinitions_en = {
     "M73#1": "flow_pump_on",
     # idm Anlogue Outputs
     "M73#2": "flow_pump_percentage",
-    "M13": "ventilator_voltage",
+    "M13#2": "ventilator_voltage",
     "AInOut 80-81": "ainout_80_81",
     "AInOut 82-83": "ainout_82_83",
     "AInOut 84-85": "ainout_84_85",
@@ -288,6 +288,10 @@ class idmHeatpumpWeb:
         self.clkSet = clkSet
         self.clkSetHour = clk_set_hour
         self.clkCheckSetToday = False
+
+    def __del__(self):
+        """Destructor to close the session"""
+        self.session.close()
 
     async def async_idm_async_login(self) -> str:
         """Async Login to the heatpump web interface."""
