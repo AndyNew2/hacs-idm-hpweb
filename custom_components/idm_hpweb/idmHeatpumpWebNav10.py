@@ -76,7 +76,7 @@ idmSensorDefinitions_de = {
     "M73#1": "flow_pump_on",
     # idm Anlogue Outputs
     "M73#2": "flow_pump_percentage",
-    "M13": "ventilator_voltage",
+    "M13#2": "ventilator_voltage",
     "AInOut 80-81": "ainout_80_81",
     "AInOut 82-83": "ainout_82_83",
     "AInOut 84-85": "ainout_84_85",
@@ -87,12 +87,15 @@ idmSensorDefinitions_de = {
     "M73#3": "flow_pump_activated",
     "M51": "4way_valve_circuit1",
     "Verdichterheizung": "compressor_heating",
+    "E1": "compressor_heating",
     "M31": "pump_heating_circuitA",
     "M33": "pump_heating_circuitC",
     "M41": "mixer_heating_circuitA",
     "M43": "mixer_heating_circuitC",
     "M64": "hotwater_circulation_pump",
     "E31": "siphon_heating",
+    "E32.1": "siphon_heating",
+    "M13#3": "Drehrichtung Ventilator 1",
     "Elektroheizeinsatz 1kW": "e_heater_1kw_on",
     "Elektroheizeinsatz 2kW": "e_heater_2kw_on",
     "Elektroheizeinsatz 3kW": "e_heater_3kw_on",
@@ -178,12 +181,15 @@ idmSensorDefinitions_en = {
     "M73#3": "flow_pump_activated",
     "M51": "4way_valve_circuit1",
     "compressor heating": "compressor_heating",
+    "E1": "compressor_heating",
     "M31": "pump_heating_circuitA",
     "M33": "pump_heating_circuitC",
     "M41": "mixer_heating_circuitA",
     "M43": "mixer_heating_circuitC",
     "M64": "hotwater_circulation_pump",
     "E31": "siphon_heating",
+    "E32.1": "siphon_heating",
+    "M13#3": "ventilator_direction 1",
     "Electric Heater 1kW": "e_heater_1kw_on",
     "Electric Heater 2kW": "e_heater_2kw_on",
     "Electric Heater 3kW": "e_heater_3kw_on",
@@ -210,8 +216,6 @@ idmStatDefinitions_en = {
     '"name":"Domestic Hot Water"': "hotwater",
     '"name":"Defrost"': "defrost",
 }
-
-
 
 
 # Helper classes and functions for parsing responses
@@ -360,7 +364,7 @@ class idmHpWebNav10:
                 return answerData  # return empty data, next fetch will try to reconnect again
                 # ### for testing only, comment in return in production
 
-            # response = idmTestResponse[indexSettings]  # ### for testing only, comment out in production
+            # response = idmTestResponse2[indexSettings]  # ### for testing only, comment out in production
             # _LOGGER.debug(f"Using test response: {response}")  # ### for testing only, comment out in production
 
             afterPos=response.find('"settingDetail":')
