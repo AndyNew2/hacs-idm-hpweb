@@ -1,7 +1,7 @@
 import asyncio
 import websockets
 
-from datetime import datetime, timedelta
+from datetime import time, timedelta
 from homeassistant.util import dt as dt_util
 from .const import CONF_CLK_HOUR_DEFAULT
 import logging
@@ -20,7 +20,6 @@ idmSectionDelimiter = '"edesc":'
 
 iDM_Nav10_InfoRequestStart = '{"controller": "setting", "command": "detail", "data": {"settingId": "'
 iDM_Nav10_InfoRequestEnd = '"}}'
-
 iDM_Nav10_SettingIDs = [
     "4768",  # Sensor values
     "4775",  # Digital Inputs
@@ -28,6 +27,17 @@ iDM_Nav10_SettingIDs = [
     "4789",  # Digital Outputs
     "4754",  # System Information
 ]
+
+
+iDM_Nav10_Stat_Par1 = '{"controller":"statistic","command":"detail","data":{"statisticType":'
+iDM_Nav10_Stat_Par2 = ',"periodType":'
+iDM_Nav10_Stat_Par3 = ',"statisticSubType":null}}'
+
+iDM_Nav10_Stat_TypeRuntime = '0'
+iDM_Nav10_Stat_TypeGenHeat = '6'
+iDM_Nav10_Stat_TypeElCons  = '3'
+iDM_Nav10_Stat_PeriodTypeYear = '6'
+iDM_Nav10_Stat_PeriodTypeAll  = '7'
 
 
 iDMExtraData_de = [
@@ -116,11 +126,11 @@ idmSensorDefinitions_de = {
     "Wärmepumpe Aufnahmeleistung": "cur_el_power",
 }
 
-idmStatDefinitions_de = {
-    '"name":"Heizen"': "heating",
-    '"name":"Kühlen"': "cooling",
-    '"name":"Warmwasser"': "hotwater",
-    '"name":"Abtauung"': "defrost",
+idmStatDefinitions = {
+    '"defrost"': "defrost",
+    '"heating"': "heating",
+    '"cooling"': "cooling",
+    '"priority"': "hotwater",
 }
 
 
@@ -210,12 +220,15 @@ idmSensorDefinitions_en = {
     "Wärmepumpe Aufnahmeleistung": "cur_el_power",
 }
 
-idmStatDefinitions_en = {
-    '"name":"Heating"': "heating",
-    '"name":"Cooling"': "cooling",
-    '"name":"Domestic Hot Water"': "hotwater",
-    '"name":"Defrost"': "defrost",
-}
+
+
+idmTestStatResponseRuntimeAll  = '{"statisticDetail":{"data":{"total":{"defrost":0.85,"heating":142.98,"priority":46.5},"typeDict":{"defrost":"N2_DEFROST","heating":"N2_HEATING","priority":"N2_HOTWATER"}},"name":"N2_RUNTIMEHEATPUMP","type":0}}'
+idmTestStatResponseRuntimeYear = '{"statisticDetail":{"data":{"typeDict":{"defrost":"N2_DEFROST","heating":"N2_HEATING","priority":"N2_HOTWATER"},"yearly":[{"date":"2026-05-04","defrost":0.85,"heating":142.98,"idx":1,"priority":46.5}]},"name":"N2_RUNTIMEHEATPUMP","type":0}}'
+idmTestStatResponseGenHeatAll  = '{"statisticDetail":{"data":{"total":{"heating":628.09,"priority":526.77},"typeDict":{"heating":"N2_HEATING","priority":"N2_HOTWATER"}},"name":"N2_HEATQUANTITIES","type":6}}'
+idmTestStatResponseGenHeatYear = '{"statisticDetail":{"data":{"typeDict":{"heating":"N2_HEATING","priority":"N2_HOTWATER"},"yearly":[{"date":"2026-05-04","heating":628.09,"idx":1,"priority":526.59}]},"name":"N2_HEATQUANTITIES","type":6}}'
+idmTestStatResponseElConsAll   = '{"statisticDetail":{"data":{"total":{"defrost":1.84,"heating":116.66,"priority":131.22},"typeDict":{"defrost":"N2_DEFROST","heating":"N2_HEATING","priority":"N2_HOTWATER"}},"name":"N2_EMHP","type":3}}'
+idmTestStatResponseElConsYear  = '{"statisticDetail":{"data":{"typeDict":{"defrost":"N2_DEFROST","heating":"N2_HEATING","priority":"N2_HOTWATER"},"yearly":[{"date":"2026-05-04","defrost":1.84,"heating":116.66,"idx":1,"priority":131.22}]},"name":"N2_EMHP","type":3}}'
+# ### For testing only, comment out in production
 
 
 # Helper classes and functions for parsing responses
@@ -256,9 +269,8 @@ class idmHpWebNav10:
         #self.idmDataUrl = "http://" + host + idmURL_Settings
         #self.idmHeatpumpUrl = "http://" + host + idmURL_Heatpump
         #self.idmInfoUrl = "http://" + host + idmURL_Info
-        self.idmExtraDefn = iDMExtraData_de  # try first english version
+        self.idmExtraDefn = iDMExtraData_de  # only german version yet
         self.idmSensorDefn = idmSensorDefinitions_de
-        self.idmStatDefn = idmStatDefinitions_de
         # self.idmSettime_HTTP_PUT_Str = iDM_Settime_HTTP_PUT_Str_de
         self.my_counter = 0
         self.statDiv = statDiv
@@ -478,9 +490,95 @@ class idmHpWebNav10:
                 break # system information is quite static, so reduce polling frequency to relax heatpump interface
             await asyncio.sleep(0.3)  # short sleep to avoid overloading the heatpump web interface with requests
 
+        if self.statDiv >= 3:
+            idmRequestStatAll = None
+            idmRequestStatYear = None
+            keyValIntro = ""
+            if (self.my_counter % self.statDiv) == 0:
+                # get statistics for runtime
+                idmRequestStatAll  = iDM_Nav10_Stat_Par1+iDM_Nav10_Stat_TypeRuntime+iDM_Nav10_Stat_Par2+iDM_Nav10_Stat_PeriodTypeAll+iDM_Nav10_Stat_Par3
+                idmRequestStatYear = iDM_Nav10_Stat_Par1+iDM_Nav10_Stat_TypeRuntime+iDM_Nav10_Stat_Par2+iDM_Nav10_Stat_PeriodTypeYear+iDM_Nav10_Stat_Par3
+                keyValIntro = "stat_runtime_"
+                # testResponseAll  = idmTestStatResponseRuntimeAll; testResponseYear = idmTestStatResponseRuntimeYear
+                # ### for testing only, comment out in production
+            elif (self.my_counter % self.statDiv) == 1:
+                # get statistics for generated heat
+                idmRequestStatAll  = iDM_Nav10_Stat_Par1+iDM_Nav10_Stat_TypeGenHeat+iDM_Nav10_Stat_Par2+iDM_Nav10_Stat_PeriodTypeAll+iDM_Nav10_Stat_Par3
+                idmRequestStatYear = iDM_Nav10_Stat_Par1+iDM_Nav10_Stat_TypeGenHeat+iDM_Nav10_Stat_Par2+iDM_Nav10_Stat_PeriodTypeYear+iDM_Nav10_Stat_Par3
+                keyValIntro = "stat_genheat_"
+                # testResponseAll  = idmTestStatResponseGenHeatAll; testResponseYear = idmTestStatResponseGenHeatYear
+                # ### for testing only, comment out in production
+            elif (self.my_counter % self.statDiv) == 2:
+                # get statistics for electrical heat consumption
+                idmRequestStatAll  = iDM_Nav10_Stat_Par1+iDM_Nav10_Stat_TypeElCons+iDM_Nav10_Stat_Par2+iDM_Nav10_Stat_PeriodTypeAll+iDM_Nav10_Stat_Par3
+                idmRequestStatYear = iDM_Nav10_Stat_Par1+iDM_Nav10_Stat_TypeElCons+iDM_Nav10_Stat_Par2+iDM_Nav10_Stat_PeriodTypeYear+iDM_Nav10_Stat_Par3
+                keyValIntro = "stat_elcons_"
+                # testResponseAll  = idmTestStatResponseElConsAll; testResponseYear = idmTestStatResponseElConsYear
+                # ### for testing only, comment out in production
+            if idmRequestStatAll:
+                responseAll = None
+                responseYear = None
+                await asyncio.sleep(1.0)  # relax to avoid idm heatpump web overloads
+                try:
+                    await asyncio.wait_for(self._ws.send(idmRequestStatAll), timeout=self._timeout)
+                    responseAll = str(await asyncio.wait_for(self._ws.recv(), timeout=self._timeout))
+                    _LOGGER.debug(f"Data for stat all response received: {responseAll}")
+                    await asyncio.sleep(0.3) # relax to avoid idm heatpump web overloads
+                    await asyncio.wait_for(self._ws.send(idmRequestStatYear), timeout=self._timeout)
+                    responseYear = str(await asyncio.wait_for(self._ws.recv(), timeout=self._timeout))
+                    _LOGGER.debug(f"Data for stat year response received: {responseYear}")
+                except websockets.exceptions.ConnectionClosedError as e:
+                    _LOGGER.info(f"Connection closed error while stat data: {e}")
+                    await self.async_idm_async_login()   # try to reconnect, next data fetch should work then
+                    return answerData  # return empty data, next fetch will try to reconnect again
+                except asyncio.TimeoutError as e:
+                    _LOGGER.error(f"Timeout error while stat data: {e}")
+                    return answerData  # return empty data, next fetch will hopefully work
+                except Exception as e:
+                    _LOGGER.error(f"Error occurred while stat data: {e}")
+                    return answerData  # return empty data, next fetch will try to reconnect again
+                    # responseAll = testResponseAll; responseYear = testResponseYear   # ### for testing only, comment in return in production
+                    # ### for testing only, comment in return in production
+                if responseAll:
+                    txt = responseAll
+
+                    startPos = txt.find('"total":')
+                    if startPos != -1:
+                        for k, v in idmStatDefinitions.items():
+                            (valStr, afterPos) = extractParameterNumber(
+                                txt,
+                                startPos,
+                                startPos + idmReadAheadBlock,
+                                k,
+                                ':'
+                            )
+                            if afterPos > startPos:  # something found
+                                answerData.addResp(keyValIntro+"total_"+v, valStr)
+                                startPos = afterPos
+                            else:
+                                _LOGGER.debug("StatAllKey %s not found in response", k)
+
+                if responseYear:
+                    txt = responseYear
+                    startPos = txt.find('"yearly":')
+                    if startPos != -1:
+                        for k, v in idmStatDefinitions.items():
+                            (valStr, afterPos) = extractParameterNumber(
+                                txt,
+                                startPos,
+                                startPos + idmReadAheadBlock,
+                                k,
+                                ':'
+                            )
+                            if afterPos > startPos:  # something found
+                                answerData.addResp(keyValIntro+"cur_year_"+v, valStr)
+                                startPos = afterPos
+                            else:
+                                _LOGGER.debug("StatYearKey %s not found in response", k)
+
+
         self.my_counter += 1  # count this loop (for statistics division)
         return answerData
-
 
 
 
@@ -507,6 +605,30 @@ def extractParameterRaw(txt, startPos, endPos, searchStrKey, valueIntro, valueEn
 
     return (txt[newPos:endPosVal], endPosVal + len(valueEnding))
 
+# txt = text to search value for
+# startpos = index where search starts
+# endpos = index where search ends string len if no limit want to be applied
+# searchStrKey = complete string to search for the key for the value
+# valueIntro = key for value intro, after the intro, all number characters are used, until a char is not in 0-9 or '.'
+# return (string, afterPos) a tuple of the valueString and the position in text after that value string
+def extractParameterNumber(txt, startPos, endPos, searchStrKey, valueIntro):
+    startP = txt.find(searchStrKey, startPos, endPos)
+    if startP == -1:
+        return ("SearchStrKey <" + searchStrKey + "> not found", startPos)
+    newPos = startP + len(searchStrKey)
+    startPosVal = txt.find(valueIntro, newPos, endPos)
+    if startPosVal == -1:
+        return ("Value intro not found", startPos)
+    newPos = startPosVal + len(valueIntro)
+    endPosVal = newPos
+    while (txt[endPosVal] >= "0") and (txt[endPosVal] <= "9") or (txt[endPosVal] == "."):
+        endPosVal += 1
+        if (endPosVal >= endPos) or (endPosVal >= len(txt)):
+            break
+    if (endPosVal==newPos):
+        return ("0", endPosVal+1) # no number is treated like a 0
+    return (txt[newPos:endPosVal], endPosVal+1)
+
 
 # txt = text to search value for,
 # startpos = index where to start (to overjump begin of string for performance and avoid ambiguity)
@@ -524,7 +646,6 @@ def extractParameterStr(txt, startPos, pattern, descr=""):
         idmValueIntro,
         idmValueEnding,
     )
-
 
 
 # txt = text to search value for expecting input/output format of idM heatpump web
