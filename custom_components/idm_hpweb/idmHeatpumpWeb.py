@@ -527,22 +527,36 @@ class idmHeatpumpWeb:
                             answerData.addResp(v, valStr)
                         startPos = afterPos
 
-                time.sleep(
-                    0.4
-                )  # relax a little bit to avoid idm heatpump web overloads
-                response = self.session.get(
-                    self.idmHeatpumpUrl, headers=addHeader, timeout=self._timeout
-                )
+                time.sleep(0.4)  # relax a little bit to avoid idm heatpump web overloads
+                response = self.session.get(self.idmHeatpumpUrl, headers=addHeader, timeout=self._timeout)
                 if response.status_code == 200:
                     txt = response.text
+                    startPos = txt.find('"boost":')
+                    _hotWaterBoostMode = False  # by default we assume no hot water boost mode
+                    if (startPos!=-1):
+                        if txt[startPos+8] == "1":
+                            _hotWaterBoostMode = True
+                        elif txt[startPos+8] != "{":
+                            _LOGGER.warning("Unknown value for boost mode found: %s", txt[startPos+8])
+
                     afterPos = 200  # default afterpos in case flow is not found. (Ususally response is much bigger)
-                    startPos = txt.find('"flow":{')
+                    startPos = txt.find('"flow":{',startPos+8)
                     while startPos != -1:
                         hc_mode = ""  # default for not found
-                        afterPos = txt.find(
-                            '"hcmode":', startPos, startPos + idmReadAheadBlock
-                        )
-                        if afterPos > startPos:
+                        heatCircuitLetter = ""  # default for not found
+                        savedAfterPos = -1
+                        afterPos = txt.find('"hk":"', startPos, startPos + idmReadAheadBlock)
+                        if afterPos != -1:
+                            savedAfterPos = afterPos+6
+                            heatCircuitLetter = txt[afterPos + 6]
+                            if (heatCircuitLetter < "A") and (
+                                heatCircuitLetter > "G"
+                            ):
+                                _LOGGER.warning("Heat circuit letter %s found, which is not valid! Will be ignored.", heatCircuitLetter)
+                                heatCircuitLetter = ""  # reset to default for not found/invalid
+
+                        afterPos = txt.find('"hcmode":', startPos, startPos + idmReadAheadBlock)
+                        if (afterPos > startPos) and (afterPos < savedAfterPos):
                             if txt[afterPos + 9] == "0":
                                 hc_mode = "off"
                             elif txt[afterPos + 9] == "1":
@@ -551,38 +565,24 @@ class idmHeatpumpWeb:
                                 hc_mode = "cooling"  # according ModbusTCP documentation, this should be correct
                             else:
                                 hc_mode = txt[afterPos + 9]
-
-                        (valStr, afterPos) = extractParameterRaw(
-                            txt,
-                            startPos,
-                            startPos + idmReadAheadBlock,
-                            '"temperatures":{',
-                            '"set":"',
-                            '"',
-                        )
-                        if afterPos > startPos:
                             startPos = afterPos
-                            afterPos = txt.find('"hk":"', startPos)
-                            if afterPos != -1:
-                                heatCircuitLetter = txt[afterPos + 6]
-                                if (heatCircuitLetter >= "A") and (
-                                    heatCircuitLetter <= "G"
-                                ):
-                                    answerData.addResp(
-                                        "flow_temp_set_hc_" + heatCircuitLetter, valStr
-                                    )
-                                    if hc_mode != "":
-                                        answerData.addResp(
-                                            "mode_heatcirc_" + heatCircuitLetter,
-                                            hc_mode,
-                                        )
-                                startPos = afterPos
-                            else:
-                                afterPos = (
-                                    startPos  # restore afterPos for futher values
-                                )
-                                startPos = -1  # to abort this while loop
+
+                        _LOGGER.debug("hc_mode=%s, heatCircuitLetter=%s, startPos=%d", hc_mode, heatCircuitLetter, startPos)
+
+                        if heatCircuitLetter != "":
+                            (valStr, afterPos) = extractParameterRaw(txt, startPos, startPos+idmReadAheadBlock,
+                                '"temperatures":{', '"set":"', '"')
+                            if (afterPos > startPos) and (afterPos < savedAfterPos):
+                                answerData.addResp("flow_temp_set_hc_" + heatCircuitLetter, valStr)
+
+                            startPos = savedAfterPos  # restore afterPos
+                            afterPos = savedAfterPos
+
+                            if hc_mode != "":
+                                answerData.addResp("mode_heatcirc_" + heatCircuitLetter,hc_mode)
+
                         else:
+                            afterPos = startPos
                             startPos = -1  # this aborts while loop
 
                     startPos = afterPos  # search new values after heat circuit set temperatures
@@ -597,14 +597,8 @@ class idmHeatpumpWeb:
                     if afterPos > startPos:
                         answerData.addResp("cur_el_power_pre", valStr)
                     startPos = afterPos  # search new values after heat circuit set temperatures
-                    (valStr, afterPos) = extractParameterRaw(
-                        txt,
-                        startPos,
-                        startPos + idmReadAheadBlock,
-                        '"system":{"q":{',
-                        '"value":"',
-                        '"',
-                    )
+                    (valStr, afterPos) = extractParameterRaw(txt, startPos, startPos + idmReadAheadBlock,
+                        '"system":{"q":{', '"value":"', '"')
                     if afterPos > startPos:
                         answerData.addResp("cur_heat_power", valStr)
                         self.hasQheatSensor = 1  # we have seen the Q value, so a gen. heat sesnor is available (may not be the case for all iDM heatpumps)
@@ -612,9 +606,7 @@ class idmHeatpumpWeb:
                         # if we previously have seen a Q sensor, not providing it now means 0 heat generation, however do not create sensor, if no sensor have seen at all
                         answerData.addResp("cur_heat_power", "0.0")
                     startPos = afterPos
-                    afterPos = txt.find(
-                        '"stages":', startPos, startPos + idmReadAheadBlock
-                    )
+                    afterPos = txt.find('"stages":', startPos, startPos + idmReadAheadBlock)
                     valStr = "off"  # there is no value for compressor off, therefore we default it to off
                     if afterPos > startPos:
                         # if stages exist, it means the heatpump compressor or heater runs
@@ -627,12 +619,8 @@ class idmHeatpumpWeb:
                             valStr = "on_2"  # assuming this is seens as the 2nd source
                         # we do not expect other values than 0,1,2 if it occurs we just leave it to the entity...
                         startPos = afterPos
-                    answerData.addResp(  # this is special to compressor state, we always write the state, even attribute is not found
-                        "heatpump_compressor", valStr
-                    )
-                    afterPos = txt.find(
-                        '"sysmode":', startPos, startPos + idmReadAheadBlock
-                    )
+                    answerData.addResp("heatpump_compressor", valStr)  # this is special to compressor state, we always write the state, even attribute is not found # this is special to compressor state, we always write the state, even attribute is not found
+                    afterPos = txt.find('"sysmode":', startPos, startPos + idmReadAheadBlock)
                     if afterPos > startPos:
                         valStr = txt[afterPos + 10]
                         if valStr == "0":
@@ -643,6 +631,8 @@ class idmHeatpumpWeb:
                             valStr = "cooling"
                         elif valStr == "4":
                             valStr = "hotwater"
+                            if _hotWaterBoostMode:
+                                valStr = "hotwater_boost"
                         elif valStr == "8":
                             valStr = "defrost"
 
@@ -759,30 +749,18 @@ class idmHeatpumpWeb:
                                 startPos = txt.find('"datetime":"')
                                 if startPos != -1:
                                     idmTime = txt[startPos + 12 : startPos + 31]
-                                    dtIdm = datetime.strptime(
-                                        idmTime, "%Y-%m-%d %H:%M:%S"
-                                    )
-                                    delta = abs(
-                                        (
-                                            dtIdm - compareTime.replace(tzinfo=None)
-                                        ).total_seconds()
-                                    )  # we need to remove the local string, because the dtIdm object do not have it as well
-                                    if (
-                                        delta > (60 * 35)
-                                    ):  # if time difference is more than 35 minutes, something is very wrong, do not touch ...
+                                    dtIdm = datetime.strptime(idmTime, "%Y-%m-%d %H:%M:%S")
+                                    delta = abs((dtIdm - compareTime.replace(tzinfo=None)).total_seconds())  # we need to remove the local string, because the dtIdm object do not have it as well
+                                    if (delta > (60 * 35)):  # if time difference is more than 35 minutes, something is very wrong, do not touch ...
                                         _LOGGER.warning(
                                             "Timesync: Detected a very big time difference! Adjust iDM clock manually before autosync keeps it in sync"
                                             + "Detected deviation: "
                                             + str(round(delta / 60, 2))
                                             + " minutes; Max. allowed are 35 minutes."
                                         )
-
                                     elif delta > (self.clkSet + 0.5):
                                         # deviation is bigger than acceptable, therefore start correction now...
-                                        _LOGGER.info(
-                                            " .. Timesync actually needed! Diff: "
-                                            + str(round(delta, 2))
-                                        )
+                                        _LOGGER.info(" .. Timesync actually needed! Diff: "+ str(round(delta, 2)))
                                         time.sleep(0.4)
                                         setIdmTime = (
                                             dt_util.now() + timedelta(seconds=2)
