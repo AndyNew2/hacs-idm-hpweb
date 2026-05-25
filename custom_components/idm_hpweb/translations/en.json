@@ -216,6 +216,7 @@
                     "defrost": "Defrost",
                     "heating": "Heating",
                     "hotwater": "Hotwater",
+                    "hotwater_boost": "Hotwater boost",
                     "off": "Off"
                 }
             },
