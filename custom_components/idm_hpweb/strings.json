@@ -758,6 +758,7 @@
           "heating": "Heating",
           "cooling": "Cooling",
           "hotwater": "Hotwater",
+          "hotwater_boost": "Hotwater boost",
           "defrost": "Defrost"
         }
       },
