@@ -445,6 +445,7 @@
                     "heating": "Heizen",
                     "cooling": "Kühlen",
                     "hotwater": "Heißwasser",
+                    "hotwater_boost": "Heißwasser Boost",
                     "defrost": "Abtauen"
                 }
             },
