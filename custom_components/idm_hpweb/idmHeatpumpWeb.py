@@ -5,6 +5,7 @@ import requests
 import logging
 
 from functools import partial
+from homeassistant.components.demo import text
 from homeassistant.core import HomeAssistant
 from datetime import datetime
 from datetime import timedelta
@@ -662,6 +663,25 @@ class idmHeatpumpWeb:
                         if response.status_code == 200:
                             txt = response.text
 
+                            unitFactor: float = 1.0 # by default we assume kWh or nor recalculation is required
+                            startPos = txt.find('"unitTotal":"')
+                            if startPos != -1:
+                                unitStr = txt[startPos + 13 : startPos + 16]
+                                if unitStr == 'Wh"':
+                                    unitFactor = 0.001
+                                elif unitStr == "MWh":
+                                    unitFactor = 1000.0
+                                elif unitStr == "kWh":
+                                    unitFactor = 1.0
+                                elif unitStr == "GWh":
+                                    unitFactor = 1000000.0
+                                elif unitStr == 'h",':
+                                    unitFactor = 1.0  # for runtime statistics, we assume hours, no recalculation required
+                                elif unitStr == "min":
+                                    unitFactor = 1.0 / 60.0  # for runtime statistics, we assume minutes, recalculate to hours
+                                else:
+                                    _LOGGER.debug("Unknown unit %s found in statistics response, assuming kWh", unitStr)
+
                             startPos = txt.find(',"total":')
                             if startPos != -1:
                                 index = 0
@@ -676,9 +696,14 @@ class idmHeatpumpWeb:
                                         "}",
                                     )
                                     if afterPos > startPos:  # something found
-                                        answerData.addResp(
-                                            keyValIntro + "total_" + v, valStr
-                                        )
+                                        if (unitFactor != 1.0) and (valStr != ""):
+                                            try:
+                                                valFloat = float(valStr)
+                                                valFloat = valFloat * unitFactor
+                                                valStr = str(valFloat)
+                                            except ValueError:
+                                                _LOGGER.debug("Cannot convert value %s to float for statistics key %s", valStr, k)
+                                        answerData.addResp( keyValIntro + "total_" + v, valStr )
                                         startPos = afterPos
                                         foundStat[index] = 1
                                     else:
@@ -697,14 +722,9 @@ class idmHeatpumpWeb:
                                 if afterPos > startPos:
                                     for k, v in self.idmStatDefn.items():
                                         if foundStat[index] == 1:
-                                            if (
-                                                valStr == ""
-                                            ):  # happens for defrost at begin of year, prevent writing unvalid string to entity
+                                            if ( valStr == "" ):  # happens for defrost at begin of year, prevent writing unvalid string to entity
                                                 valStr = "0.0"
-                                            answerData.addResp(
-                                                keyValIntro + "cur_year_" + v,
-                                                valStr,
-                                            )
+                                            answerData.addResp( keyValIntro + "cur_year_" + v, valStr )
                                             startPos = afterPos
                                             while (afterPos < len(txt)) and (
                                                 (
