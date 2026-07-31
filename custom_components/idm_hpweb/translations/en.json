@@ -312,6 +312,9 @@
             "return_temperature": {
                 "name": "B E Return temp"
             },
+            "room_temperature_HK_A": {
+                "name": "B E Room temp heatcircuit A"
+            },
             "runtime_cooling": {
                 "name": "A H Runtime cooling"
             },
@@ -477,6 +480,17 @@
             "options": {
                 "false": "",
                 "true": "I am an advanced user, I have read IDM's documentation in detail, I know what effect setting this value has and I accept the additional risks in case of misuse or problems."
+            }
+        },
+        "heat_circuit_options": {
+            "options": {
+                "A": "A",
+                "B": "B",
+                "C": "C",
+                "D": "D",
+                "E": "E",
+                "F": "F",
+                "G": "G"
             }
         },
         "heatpump_operation_modes": {
@@ -680,6 +694,30 @@
             },
             "name": "Set maximum flow pump power"
         },
+        "set_max_flowtemp_cooling": {
+            "description": "Set the maximum flow temperature for cooling (in degrees Celsius, 8-26\u00b0C).",
+            "fields": {
+                "HC": {
+                    "description": "The heat circuit number to set the maximum flow temperature for cooling (A-G).",
+                    "example": "C",
+                    "name": "Heat Circuit Number"
+                },
+                "acknowledge_risk": {
+                    "description": "I accept the risks.",
+                    "name": "Confirmation"
+                },
+                "acknowledge_risk_advanced": {
+                    "description": "I accept the additional risk of advanced settings.",
+                    "name": "Advanced Risk Confirmation"
+                },
+                "temperature": {
+                    "description": "The maximum flow temperature for cooling to set in degrees Celsius (8-26\u00b0C).",
+                    "example": "15",
+                    "name": "Maximum Flow Temperature Cooling"
+                }
+            },
+            "name": "Set maximum flow temperature cooling"
+        },
         "set_max_heating_power": {
             "description": "Set the maximum heating power of the heat pump (in percent, 25-100%).",
             "fields": {
@@ -736,6 +774,30 @@
                 }
             },
             "name": "Set minimum flow pump power"
+        },
+        "set_min_flowtemp_cooling": {
+            "description": "Set the minimum flow temperature for cooling (in degrees Celsius, 8-20\u00b0C).",
+            "fields": {
+                "HC": {
+                    "description": "The heat circuit number to set the minimum flow temperature for cooling (A-G).",
+                    "example": "C",
+                    "name": "Heat Circuit Number"
+                },
+                "acknowledge_risk": {
+                    "description": "I accept the risks.",
+                    "name": "Confirmation"
+                },
+                "acknowledge_risk_advanced": {
+                    "description": "I accept the additional risk of advanced settings.",
+                    "name": "Advanced Risk Confirmation"
+                },
+                "temperature": {
+                    "description": "The minimum flow temperature for cooling to set in degrees Celsius (8-20\u00b0C).",
+                    "example": "15",
+                    "name": "Minimum Flow Temperature Cooling"
+                }
+            },
+            "name": "Set minimum flow temperature cooling"
         },
         "set_min_heating_power": {
             "description": "Set the minimum heating power of the heat pump (in percent, 20-58%).",
