@@ -332,6 +332,54 @@
           "description": "I accept the additional risk of advanced settings."
         }
       }
+    },
+    "set_max_flowtemp_cooling": {
+      "name": "Set maximum flow temperature cooling",
+      "description": "Set the maximum flow temperature for cooling (in degrees Celsius, 8-26°C).",
+      "fields": {
+        "temperature": {
+          "name": "Maximum Flow Temperature Cooling",
+          "description": "The maximum flow temperature for cooling to set in degrees Celsius (8-26°C).",
+          "example": "15"
+        },
+        "HC": {
+          "name": "Heat Circuit Number",
+          "description": "The heat circuit number to set the maximum flow temperature for cooling (A-G).",
+          "example": "C"
+        },
+        "acknowledge_risk": {
+          "name": "Confirmation",
+          "description": "I accept the risks."
+        },
+        "acknowledge_risk_advanced": {
+          "name": "Advanced Risk Confirmation",
+          "description": "I accept the additional risk of advanced settings."
+        }
+      }
+    },
+    "set_min_flowtemp_cooling": {
+      "name": "Set minimum flow temperature cooling",
+      "description": "Set the minimum flow temperature for cooling (in degrees Celsius, 8-20°C).",
+      "fields": {
+        "temperature": {
+          "name": "Minimum Flow Temperature Cooling",
+          "description": "The minimum flow temperature for cooling to set in degrees Celsius (8-20°C).",
+          "example": "15"
+        },
+        "HC": {
+          "name": "Heat Circuit Number",
+          "description": "The heat circuit number to set the minimum flow temperature for cooling (A-G).",
+          "example": "C"
+        },
+        "acknowledge_risk": {
+          "name": "Confirmation",
+          "description": "I accept the risks."
+        },
+        "acknowledge_risk_advanced": {
+          "name": "Advanced Risk Confirmation",
+          "description": "I accept the additional risk of advanced settings."
+        }
+      }
     }
   },
   "selector": {
@@ -355,6 +403,17 @@
       "options": {
         "standard_generation": "Standard Generation",
         "boost_generation": "Boost Generation (using Boost Temp)"
+      }
+    },
+    "heat_circuit_options": {
+      "options": {
+        "A": "A",
+        "B": "B",
+        "C": "C",
+        "D": "D",
+        "E": "E",
+        "F": "F",
+        "G": "G"
       }
     },
     "acknowledge_set_value": {
@@ -421,6 +480,9 @@
       },
       "heatstore_temperature": {
         "name": "B E S Heatstore temp"
+      },
+      "room_temperature_HK_A": {
+        "name": "B E Room temp heatcircuit A"
       },
       "water_temp_top": {
         "name": "B N Hotwater temp top"
