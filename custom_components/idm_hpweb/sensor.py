@@ -572,6 +572,14 @@ SENSOR_TYPES: tuple[SensorEntityDescription, ...] = (
         suggested_display_precision=1,
     ),
     SensorEntityDescription(
+        key="B61",
+        translation_key="room_temperature_HK_A",
+        state_class=SensorStateClass.MEASUREMENT,
+        device_class=SensorDeviceClass.TEMPERATURE,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        suggested_display_precision=1,
+    ),
+    SensorEntityDescription(
         key="B79",
         translation_key="vaporize_start_temperature",
         state_class=SensorStateClass.MEASUREMENT,
