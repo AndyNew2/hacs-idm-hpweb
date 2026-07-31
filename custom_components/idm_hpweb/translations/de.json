@@ -190,6 +190,9 @@
             "heatstore_temperature": {
                 "name": "B E S Wärmespeichertemp"
             },
+            "room_temperature_HK_A": {
+                "name": "B E Raumtemperatur HK A"
+            },
             "runtime_cooling": {
                 "name": "A H Laufzeit Kühlen"
             },
@@ -765,6 +768,54 @@
                 }
             },
             "name": "Löse einmaliges Abtauen aus"
+        },
+        "set_max_flowtemp_cooling": {
+            "description": "Setzt die maximale Vorlauftemperatur für die Kühlung (in Grad Celsius, 8-26\u00b0C).",
+            "fields": {
+                "HC": {
+                    "description": "Heizkreis (A-G) für die maximale Vorlauftemperatur der Kühlung.",
+                    "example": "C",
+                    "name": "Heizkreis Kennung"
+                },
+                "acknowledge_risk": {
+                    "description": "Ich akzeptiere die Risiken.",
+                    "name": "Risikobestätigung!"
+                },
+                "acknowledge_risk_advanced": {
+                    "description": "Ich akzeptiere die zusätzlichen Risiken.",
+                    "name": "Erweiterte Risikobestätigung!"
+                },
+                "temperature": {
+                    "description": "Die maximale Vorlauftemperatur für die Kühlung in Grad Celsius (8-26\u00b0C).",
+                    "example": "15",
+                    "name": "Maximale Vorlauftemperatur Kühlung"
+                }
+            },
+            "name": "Setzt die maximale Vorlauftemperatur für die Kühlung"
+        },
+        "set_min_flowtemp_cooling": {
+            "description": "Setzt die minimale Vorlauftemperatur für die Kühlung (in Grad Celsius, 8-20\u00b0C).",
+            "fields": {
+                "HC": {
+                    "description": "Heizkreis (A-G), für die die minimale Vorlauftemperatur für die Kühlung gesetzt werden soll.",
+                    "example": "C",
+                    "name": "Heizkreis Kennung"
+                },
+                "acknowledge_risk": {
+                    "description": "Ich akzeptiere die Risiken.",
+                    "name": "Risikobestätigung!"
+                },
+                "acknowledge_risk_advanced": {
+                    "description": "Ich akzeptiere die zusätzlichen Risiken.",
+                    "name": "Erweiterte Risikobestätigung!"
+                },
+                "temperature": {
+                    "description": "Die minimale Vorlauftemperatur für die Kühlung in Grad Celsius (8-20\u00b0C).",
+                    "example": "15",
+                    "name": "Minimale Vorlauftemperatur Kühlung"
+                }
+            },
+            "name": "Setzt die minimale Vorlauftemperatur für die Kühlung"
         }
     }
 }
