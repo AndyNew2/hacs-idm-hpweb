@@ -163,8 +163,14 @@
             "flow_temp_heatcircuit_a": {
                 "name": "B D Flow temp heatcircuit A"
             },
+            "flow_temp_heatcircuit_b": {
+                "name": "B D Flow temp heatcircuit B"
+            },
             "flow_temp_heatcircuit_c": {
                 "name": "B D Flow temp heatcircuit C"
+            },
+            "flow_temp_heatcircuit_d": {
+                "name": "B D Flow temp heatcircuit D"
             },
             "flow_temp_set_hc_a": {
                 "name": "I A Flow temp. set for hc A"
@@ -228,6 +234,9 @@
             },
             "hotwater_circulation_pump": {
                 "name": "E A Hotwater circulation pump"
+            },
+            "humidity_HK_A": {
+                "name": "B E Humidity heatcircuit A"
             },
             "liquid_temperature": {
                 "name": "B F Heatpump liquid temp"
