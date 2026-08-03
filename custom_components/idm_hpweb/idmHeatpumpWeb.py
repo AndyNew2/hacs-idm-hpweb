@@ -75,12 +75,16 @@ iDMExtraData_de = [
 idmSensorDefinitions_de = {
     # idm Input Output values
     "B32": "outside_air_temperature",
+    "B31": "humidity_HK_A",
     "B33": "flow_temperature",
     "B34": "return_temperature",
     "B38": "heatstore_temperature",
     "B48": "water_temp_top",
     "B41": "water_temp_bottom",
+    "B51": "flow_temp_HK_A",
+    "B52": "flow_temp_HK_B",
     "B53": "flow_temp_HK_C",
+    "B54": "flow_temp_HK_D",
     "B71": "hotgas_temperature",
     "B37": "airsource_temperature",
     "B61": "room_temperature_HK_A",
@@ -168,12 +172,16 @@ iDMExtraData_en = [
 idmSensorDefinitions_en = {
     # idm Input Output values
     "B32": "outside_air_temperature",
+    "B31": "humidity_HK_A",
     "B33": "flow_temperature",
     "B34": "return_temperature",
     "B38": "heatstore_temperature",
     "B48": "water_temp_top",
     "B41": "water_temp_bottom",
+    "B51": "flow_temp_HK_A",
+    "B52": "flow_temp_HK_B",
     "B53": "flow_temp_HK_C",
+    "B54": "flow_temp_HK_D",
     "B71": "hotgas_temperature",
     "B37": "airsource_temperature",
     "B61": "room_temperature_HK_A",
