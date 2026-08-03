@@ -139,11 +139,20 @@
             "loading_temperature": {
                 "name": "B C Ladetemperatur"
             },
+            "humidity_HK_A": {
+                "name": "B E Feuchtesensor HK A"
+            },
             "flow_temp_heatcircuit_a": {
                 "name": "B D Vorlauftemp HK A"
             },
+            "flow_temp_heatcircuit_b": {
+                "name": "B D Vorlauftemp HK B"
+            },
             "flow_temp_heatcircuit_c": {
                 "name": "B D Vorlauftemp HK C"
+            },
+            "flow_temp_heatcircuit_d": {
+                "name": "B D Vorlauftemp HK D"
             },
             "flow_temperature": {
                 "name": "B C Vorlauftemp"
