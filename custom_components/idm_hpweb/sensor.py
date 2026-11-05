@@ -725,6 +725,20 @@ SENSOR_TYPES: tuple[SensorEntityDescription, ...] = (
         suggested_display_precision=1,
     ),
     SensorEntityDescription(
+        key="M125",
+        translation_key="intermediate_pump_speed",
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement="%",
+        suggested_display_precision=0,
+    ),
+    SensorEntityDescription(
+        key="M22#2",
+        translation_key="hotwater_station_pump_speed",
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement="%",
+        suggested_display_precision=0,
+    ),
+    SensorEntityDescription(
         key="ainout_80_81",
         translation_key="ainout_80_81",
         state_class=SensorStateClass.MEASUREMENT,

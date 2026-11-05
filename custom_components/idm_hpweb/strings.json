@@ -589,6 +589,12 @@
       "ainout_180_181": {
         "name": "C H AInOut 180-181"
       },
+      "intermediate_pump_speed": {
+        "name": "C I Intermediate pump speed"
+      },
+      "hotwater_station_pump_speed": {
+        "name": "C J Hot water station pump speed"
+      },
       "flow_pumpe_actstate": {
         "name": "E C Flow pump act state"
       },

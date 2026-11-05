@@ -78,6 +78,8 @@ idmSensorDefinitions_de = {
     "B31": "humidity_HK_A",
     "B33": "flow_temperature",
     "B34": "return_temperature",
+    "B33/B113": "B33",  # label on heat pumps with an intermediate circuit
+    "B34/B114": "B34",  # label on heat pumps with an intermediate circuit
     "B38": "heatstore_temperature",
     "B48": "water_temp_top",
     "B41": "water_temp_bottom",
@@ -109,6 +111,8 @@ idmSensorDefinitions_de = {
     # idm Anlogue Outputs
     "M73#2": "flow_pump_percentage",
     "M13#2": "ventilator_voltage",
+    "M125#2": "M125",  # charge pump of the intermediate circuit
+    "M22#2": "hotwater_station_percentage",
     "AInOut 80-81": "ainout_80_81",
     "AInOut 82-83": "ainout_82_83",
     "AInOut 84-85": "ainout_84_85",
@@ -175,6 +179,8 @@ idmSensorDefinitions_en = {
     "B31": "humidity_HK_A",
     "B33": "flow_temperature",
     "B34": "return_temperature",
+    "B33/B113": "B33",  # label on heat pumps with an intermediate circuit
+    "B34/B114": "B34",  # label on heat pumps with an intermediate circuit
     "B38": "heatstore_temperature",
     "B48": "water_temp_top",
     "B41": "water_temp_bottom",
@@ -206,6 +212,8 @@ idmSensorDefinitions_en = {
     # idm Anlogue Outputs
     "M73#2": "flow_pump_percentage",
     "M13#2": "ventilator_voltage",
+    "M125#2": "M125",  # charge pump of the intermediate circuit
+    "M22#2": "hotwater_station_percentage",
     "AInOut 80-81": "ainout_80_81",
     "AInOut 82-83": "ainout_82_83",
     "AInOut 84-85": "ainout_84_85",
