@@ -238,6 +238,12 @@
             "humidity_HK_A": {
                 "name": "B E Humidity heatcircuit A"
             },
+            "hotwater_station_pump_speed": {
+                "name": "C J Hot water station pump speed"
+            },
+            "intermediate_pump_speed": {
+                "name": "C I Intermediate pump speed"
+            },
             "liquid_temperature": {
                 "name": "B F Heatpump liquid temp"
             },

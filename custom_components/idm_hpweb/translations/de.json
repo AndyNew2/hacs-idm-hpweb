@@ -172,6 +172,12 @@
             "hotwater_circulation_pump": {
                 "name": "E A Heißwasser Zirkulationspumpe"
             },
+            "hotwater_station_pump_speed": {
+                "name": "C J Pumpe Warmwasserstation"
+            },
+            "intermediate_pump_speed": {
+                "name": "C I Ladepumpe Zwischenkreis"
+            },
             "liquid_temperature": {
                 "name": "B F Flüssigkeitsleit. Temp"
             },
