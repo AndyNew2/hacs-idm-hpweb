@@ -1,6 +1,6 @@
 {
-  "name": "IDM Heatpump Web",
-  "filename": "idm_heatpump_web.zip",
+  "name": "iDM Heatpump Web",
+  "filename": "hacs-idm-hpweb.zip",
   "content_in_root": false,
   "render_readme": true,
   "zip_release": true,
